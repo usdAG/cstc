@@ -297,8 +297,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		}
 	}
 	
-	public void setInput(String input) {
-		this.inputText.setMessage(input.getBytes(), false);
+	public void setInput(byte[] input) {
+		this.inputText.setMessage(input, false);
 		this.bake(false);
 	}
 
