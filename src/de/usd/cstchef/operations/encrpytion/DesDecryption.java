@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations.encrpytion;
+package de.usd.cstchef.operations.encryption;
 
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;

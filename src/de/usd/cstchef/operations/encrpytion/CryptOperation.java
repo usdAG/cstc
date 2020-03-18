@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations.encrpytion;
+package de.usd.cstchef.operations.encryption;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -6,7 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JComboBox;
 
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.operations.encrpytion.CipherUtils.CipherInfo;
+import de.usd.cstchef.operations.encryption.CipherUtils.CipherInfo;
 import de.usd.cstchef.view.ui.FormatTextField;
 
 public abstract class CryptOperation extends Operation {

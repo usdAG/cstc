@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations.encrpytion;
+package de.usd.cstchef.operations.encryption;
 
 import java.security.Provider;
 import java.security.Security;
