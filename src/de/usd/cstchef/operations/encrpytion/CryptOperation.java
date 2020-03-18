@@ -36,7 +36,13 @@ public abstract class CryptOperation extends Operation {
 		SecretKeySpec secretKeySpec = new SecretKeySpec(key, algorithm);
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
 		Cipher cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
-		cipher.init(cipherMode, secretKeySpec, ivSpec);
+
+        if( mode.equals("ECB") ) {
+            cipher.init(cipherMode, secretKeySpec);
+        } else {
+            cipher.init(cipherMode, secretKeySpec, ivSpec);
+        }
+
 		byte[] encrypted = cipher.doFinal(input);
 
 		return encrypted;
