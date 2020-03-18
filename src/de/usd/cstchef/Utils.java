@@ -69,12 +69,12 @@ import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.HTTPRequest;
 import de.usd.cstchef.operations.setter.GetSetter;
 import de.usd.cstchef.operations.setter.HttpSetUri;
+import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
 import de.usd.cstchef.operations.string.Prefix;
 import de.usd.cstchef.operations.string.Replace;
-import de.usd.cstchef.operations.string.ReplaceBody;
 import de.usd.cstchef.operations.string.StaticString;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
@@ -163,7 +163,7 @@ public class Utils {
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
 				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class,
 				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class,
-				XmlFullSignature.class, XmlMultiSignature.class, ReplaceBody.class,
+				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class,
 				DateTime.class, Addition.class, Subtraction.class, GetSetter.class,
 				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
 	}

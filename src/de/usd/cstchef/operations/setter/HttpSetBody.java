@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations.string;
+package de.usd.cstchef.operations.setter;
 
 import java.util.Arrays;
 
@@ -10,8 +10,8 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.FormatTextField;
 
-@OperationInfos(name = "ReplaceBody", category = OperationCategory.STRING, description = "Replaces HTTP body")
-public class ReplaceBody extends Operation {
+@OperationInfos(name = "HTTP Set Body", category = OperationCategory.SETTER, description = "Set the HTTP body to the given value")
+public class HttpSetBody extends Operation {
 
 	private FormatTextField replacementTxt;
 
@@ -33,7 +33,7 @@ public class ReplaceBody extends Operation {
 	@Override
 	public void createUI() {
 		this.replacementTxt = new FormatTextField();
-		this.addUIElement("Replacement", this.replacementTxt);
+		this.addUIElement("Body", this.replacementTxt);
 	}
 
 }
