@@ -1,11 +1,5 @@
 package de.usd.cstchef.operations.setter;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Arrays;
 
 import javax.swing.JCheckBox;
@@ -13,11 +7,9 @@ import javax.swing.JCheckBox;
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
-import burp.IRequestInfo;
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
-import de.usd.cstchef.view.ui.FormatTextField;
+import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
 @OperationInfos(name = "HTTP SET Uri", category = OperationCategory.SETTER, description = "Sets the given variable as the uri.")
