@@ -113,6 +113,21 @@ public class Utils {
 		return text;
 	}
 
+	public static byte[] replaceVariablesByte(byte[] bytes) {
+		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+
+		byte[] currentKey;
+		for (Entry<String, byte[]> entry : variables.entrySet()) {
+
+			currentKey = ("§" + entry.getKey()).getBytes();
+			if( Arrays.equals(currentKey, bytes) ) {
+					bytes = entry.getValue();
+			}
+
+		}
+		return bytes;
+	}
+
 	public static Class<? extends Operation>[] getOperationsBurp() {
 		ZipInputStream zip = null;
 		List<Class<? extends Operation>> operations = new ArrayList<Class<? extends Operation>>();

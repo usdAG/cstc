@@ -17,6 +17,11 @@ public class VariableTextField extends JTextField {
 		String text = super.getText();
 		return Utils.replaceVariables(text);
 	}
+
+	public byte[] getBytes() {
+		byte[] bytes = super.getText().getBytes();
+		return Utils.replaceVariablesByte(bytes);
+	}
 	
 	public String getRawText() {
 		return super.getText();
