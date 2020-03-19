@@ -44,6 +44,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IParameter;
 import burp.IRequestInfo;
 import burp.Logger;
 import de.usd.cstchef.Utils;
@@ -397,18 +399,15 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		
 		if (BurpUtils.inBurp()) {
 			IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-			IRequestInfo info = callbacks.getHelpers().analyzeRequest(result);
-			int contentLen = result.length - info.getBodyOffset();
-			String headers = new String(result, 0, info.getBodyOffset());
-			Pattern p = Pattern.compile("Content-Length:\\s*(\\d*)");
-			Matcher m = p.matcher(headers);
-			if (m.find()) {
-			    headers = m.replaceFirst("Content-Length: " + String.valueOf(contentLen));
-			}
-			byte[] request = new byte[headers.length() + contentLen];
-			System.arraycopy(headers.getBytes(), 0, request, 0, headers.length());
-			System.arraycopy(result, info.getBodyOffset(), request, headers.length(), contentLen);
-			return request;
+			IExtensionHelpers helpers = callbacks.getHelpers();
+			
+			// To update the content-length header, we just add a dummy parameter and remove it right away.
+			// Burps extension headers will care about updating the length without any string transformations.
+			IParameter dummy = helpers.buildParameter("dummy", "dummy", IParameter.PARAM_BODY);
+			result = helpers.addParameter(result, dummy);
+			result = helpers.removeParameter(result, dummy);
+			return result;
+			
 		} else {
 			return result;
 		}
