@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -48,7 +46,6 @@ import burp.IExtensionHelpers;
 import burp.IParameter;
 import burp.IRequestInfo;
 import burp.Logger;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
 
@@ -401,13 +398,21 @@ public class RecipePanel extends JPanel implements ChangeListener {
 			IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
 			IExtensionHelpers helpers = callbacks.getHelpers();
 			
-			// To update the content-length header, we just add a dummy parameter and remove it right away.
-			// Burps extension headers will care about updating the length without any string transformations.
-			IParameter dummy = helpers.buildParameter("dummy", "dummy", IParameter.PARAM_BODY);
-			result = helpers.addParameter(result, dummy);
-			result = helpers.removeParameter(result, dummy);
-			return result;
+			IRequestInfo info = helpers.analyzeRequest(result);
+			List<java.lang.String> headers = info.getHeaders();
 			
+			for(String header : headers) {
+				if(header.startsWith("Content-Length:")) {
+					// To update the content-length header, we just add a dummy parameter and remove it right away.
+					// Burps extension helpers will care about updating the length without any string transformations.
+					IParameter dummy = helpers.buildParameter("dummy", "dummy", IParameter.PARAM_BODY);
+					result = helpers.addParameter(result, dummy);
+					result = helpers.removeParameter(result, dummy);
+					break;
+				}
+			}
+			return result;
+
 		} else {
 			return result;
 		}
