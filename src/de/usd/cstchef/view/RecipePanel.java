@@ -400,6 +400,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
 			
 			IRequestInfo info = helpers.analyzeRequest(result);
 			List<java.lang.String> headers = info.getHeaders();
+			int offset = info.getBodyOffset();
+			
+			if( result.length == offset ) {
+				// In this case there is no body and we do not need to update the content length header
+				return result;
+			}
 			
 			for(String header : headers) {
 				if(header.startsWith("Content-Length:")) {
