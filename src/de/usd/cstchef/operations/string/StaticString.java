@@ -12,7 +12,7 @@ public class StaticString extends Operation {
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
-		return this.stringTxt.getText().trim().getBytes();
+		return this.stringTxt.getBytes();
 	}
 
 	@Override
