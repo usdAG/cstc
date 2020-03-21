@@ -37,13 +37,13 @@ public class HttpSetUri extends Operation {
 			int length = input.length;
 			
 			int firstMark = helpers.indexOf(input, " ".getBytes(), false, 0, length);
-			int secondMark;
+			int lineMark = helpers.indexOf(input, " ".getBytes(), false, firstMark + 1, length);
 			
-			if( this.checkbox.isSelected() ) {
-				secondMark = helpers.indexOf(input, "?".getBytes(), false, firstMark + 1, length);
-			} else {
-				secondMark = helpers.indexOf(input, " ".getBytes(), false, firstMark + 1, length);
-			}
+			int secondMark = helpers.indexOf(input, "?".getBytes(), false, firstMark + 1, length);
+			
+			if( !this.checkbox.isSelected() || secondMark < 0 || secondMark >= lineMark ) {
+				secondMark = lineMark;
+			} 
 			
 			byte[] method = Arrays.copyOfRange(input, 0, firstMark + 1);
 			byte[] newUri = this.uriTxt.getBytes();
