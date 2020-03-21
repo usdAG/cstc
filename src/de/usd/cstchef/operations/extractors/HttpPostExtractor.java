@@ -6,11 +6,9 @@ import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IParameter;
-import burp.IRequestInfo;
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
-import de.usd.cstchef.view.ui.VariableTextArea;
+import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
 @OperationInfos(name = "HTTP POST Parameter", category = OperationCategory.EXTRACTORS, description = "Extracts a POST parameter of a HTTP request.")
