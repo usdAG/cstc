@@ -4,29 +4,42 @@ import java.util.Arrays;
 
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
-import burp.IRequestInfo;
+import burp.IExtensionHelpers;
+import burp.IParameter;
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
-import de.usd.cstchef.view.ui.VariableTextArea;
+import de.usd.cstchef.operations.OperationCategory;
+import de.usd.cstchef.view.ui.VariableTextField;
 
 @OperationInfos(name = "HTTP POST Parameter", category = OperationCategory.EXTRACTORS, description = "Extracts a POST parameter of a HTTP request.")
 public class HttpPostExtractor extends Operation {
 
-	protected VariableTextArea parameter;
+	protected VariableTextField parameter;
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
 		try {
-            String parameterString = parameter.getText() + "=";
-			IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-			IRequestInfo requestInfo = cbs.getHelpers().analyzeRequest(input);
-			int bodyOffset = requestInfo.getBodyOffset();
+			
+			String parameterName = parameter.getText();
+			IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
+			IExtensionHelpers helpers = callbacks.getHelpers();
 
-			String body = new String(Arrays.copyOfRange(input, bodyOffset, input.length));
-            int start = body.indexOf(parameterString) + parameterString.length();
-            int end = (body.indexOf('&', start) > 0) ? body.indexOf('&', start) : body.length();
-			return body.substring(start, end).getBytes();
+			IParameter param = helpers.getRequestParameter(input, parameterName);
+			if( param == null)
+				throw new ParameterNotFoundException("Parameter name not found.");
+			if( param.getType() != IParameter.PARAM_BODY ) 
+				throw new ParameterWrongType("Parameter type is not POST");
+			
+			int start = param.getValueStart();
+			int end = param.getValueEnd();
+			
+			byte[] result = Arrays.copyOfRange(input, start, end);
+			return result;
+			
+		} catch( ParameterNotFoundException e ) {
+			throw new IllegalArgumentException("Parameter name not found.");
+		} catch( ParameterWrongType e ) {
+			throw new IllegalArgumentException("Parameter type is not POST");
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Provided input is not a valid http request.");
 		}
@@ -34,8 +47,19 @@ public class HttpPostExtractor extends Operation {
 
 	@Override
 	public void createUI() {
-		this.parameter = new VariableTextArea();
+		this.parameter = new VariableTextField();
 		this.addUIElement("Parameter", this.parameter);
 	}
-
+	
+	class ParameterNotFoundException extends Exception {
+	      public ParameterNotFoundException(String message) {
+	         super(message);
+	      }
+	 }
+	
+	class ParameterWrongType extends Exception {
+	      public ParameterWrongType(String message) {
+	         super(message);
+	      }
+	 }
 }

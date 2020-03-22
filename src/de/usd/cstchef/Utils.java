@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -111,6 +112,21 @@ public class Utils {
 		}
 
 		return text;
+	}
+
+	public static byte[] replaceVariablesByte(byte[] bytes) {
+		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+
+		byte[] currentKey;
+		for (Entry<String, byte[]> entry : variables.entrySet()) {
+
+			currentKey = ("§" + entry.getKey()).getBytes();
+			if( Arrays.equals(currentKey, bytes) ) {
+					bytes = entry.getValue();
+			}
+
+		}
+		return bytes;
 	}
 
 	public static Class<? extends Operation>[] getOperationsBurp() {

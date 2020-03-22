@@ -25,7 +25,7 @@ public class FormatTextField extends JPanel implements ActionListener {
 		this.setLayout(new BorderLayout());
 		this.setBackground(new Color(0, 0, 0, 0));
 		this.txtField = new VariableTextField();
-		this.formatBox = new JComboBox<>(new String[] {"UTF-8", "Hex", "Latin1", "Base64"});
+		this.formatBox = new JComboBox<>(new String[] {"Raw", "UTF-8", "Hex", "Latin1", "Base64"});
 		this.formatBox.addActionListener(this);
 
 		Box box = Box.createHorizontalBox();
@@ -51,21 +51,25 @@ public class FormatTextField extends JPanel implements ActionListener {
 	}
 
 	public byte[] getText() throws UnsupportedEncodingException {
-		String text = this.txtField.getText();
+		
+		byte[] raw = this.txtField.getBytes();
 		byte[] result = null;
 
 		switch ((String) this.formatBox.getSelectedItem()) {
+		case "Raw":
+			result = raw;
+			break;
 		case "Hex":
-			result = Hex.decode(text);
+			result = Hex.decode(raw);
 			break;
 		case "Base64":
-			result = Base64.getDecoder().decode(text);
+			result = Base64.getDecoder().decode(raw);
 			break;
 		case "Latin1":
-			result = text.getBytes("ISO-8859-1");
+			result = this.txtField.getText().getBytes("ISO-8859-1");
 			break;
 		case "UTF-8":
-			result = text.getBytes("UTF-8");
+			result = this.txtField.getText().getBytes("UTF-8");
 			break;
 		}
 		return result;

@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -44,9 +42,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IParameter;
 import burp.IRequestInfo;
 import burp.Logger;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
 
@@ -297,8 +296,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		}
 	}
 	
-	public void setInput(String input) {
-		this.inputText.setMessage(input.getBytes(), false);
+	public void setInput(byte[] input) {
+		this.inputText.setMessage(input, false);
 		this.bake(false);
 	}
 
@@ -397,18 +396,29 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		
 		if (BurpUtils.inBurp()) {
 			IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-			IRequestInfo info = callbacks.getHelpers().analyzeRequest(result);
-			int contentLen = result.length - info.getBodyOffset();
-			String headers = new String(result, 0, info.getBodyOffset());
-			Pattern p = Pattern.compile("Content-Length:\\s*(\\d*)");
-			Matcher m = p.matcher(headers);
-			if (m.find()) {
-			    headers = m.replaceFirst("Content-Length: " + String.valueOf(contentLen));
+			IExtensionHelpers helpers = callbacks.getHelpers();
+			
+			IRequestInfo info = helpers.analyzeRequest(result);
+			List<java.lang.String> headers = info.getHeaders();
+			int offset = info.getBodyOffset();
+			
+			if( result.length == offset ) {
+				// In this case there is no body and we do not need to update the content length header
+				return result;
 			}
-			byte[] request = new byte[headers.length() + contentLen];
-			System.arraycopy(headers.getBytes(), 0, request, 0, headers.length());
-			System.arraycopy(result, info.getBodyOffset(), request, headers.length(), contentLen);
-			return request;
+			
+			for(String header : headers) {
+				if(header.startsWith("Content-Length:")) {
+					// To update the content-length header, we just add a dummy parameter and remove it right away.
+					// Burps extension helpers will care about updating the length without any string transformations.
+					IParameter dummy = helpers.buildParameter("dummy", "dummy", IParameter.PARAM_BODY);
+					result = helpers.addParameter(result, dummy);
+					result = helpers.removeParameter(result, dummy);
+					break;
+				}
+			}
+			return result;
+
 		} else {
 			return result;
 		}

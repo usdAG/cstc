@@ -2,6 +2,8 @@ package de.usd.cstchef.operations.string;
 
 import javax.swing.JSpinner;
 
+import org.bouncycastle.util.Arrays;
+
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -14,11 +16,19 @@ public class Substring extends Operation {
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
-		String inputStr = new String(input);
+		
 		int start = (int) startSpinner.getValue();
 		int end = (int) endSpinner.getValue();
-
-		return inputStr.substring(start, end).getBytes();
+		
+		if( start < 0 ) 
+			start = input.length + start;
+		if( end < 0 )
+			end = input.length + end;
+		if( end > input.length )
+			end = input.length + 1;
+		
+		byte[] slice = Arrays.copyOfRange(input, start, end);
+		return slice;
 	}
 
 	@Override
