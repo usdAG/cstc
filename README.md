@@ -1,9 +1,7 @@
-Copyright 2017-2019 usd AG
+Copyright 2017-2020 usd AG
 
 Licensed under the GNU General Public License, Version 3.0 (the "License"); you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-https://www.gnu.org/licenses/gpl-3.0.html
+You may obtain a copy of the License at https://www.gnu.org/licenses/gpl-3.0.html
 
 ![CSTC](media/CSTC_White_Smaller.png)
 
