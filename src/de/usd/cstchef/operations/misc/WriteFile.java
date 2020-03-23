@@ -48,7 +48,7 @@ public class WriteFile extends Operation implements ActionListener {
 
 	public void createUI() {
 		this.fileNameTxt = new VariableTextField();
-		this.addUIElement("Variable name", this.fileNameTxt);
+		this.addUIElement("Filename", this.fileNameTxt);
 
 		JButton chooseFileButton = new JButton("Select file");
 		chooseFileButton.addActionListener(this);
