@@ -9,18 +9,23 @@ public abstract class SetterOperation extends Operation {
 	
 	private VariableTextField whereToSet;
 	private VariableTextField whatToSet;
-	private JCheckBox checkbox;
+	private JCheckBox urlEncode;
+	private JCheckBox urlEncodeAll;
 	
 	@Override
 	public void createUI() {
 		this.whereToSet = new VariableTextField();
 		this.whatToSet = new VariableTextField();
-		this.addUIElement("Where to Set", this.whereToSet);
-		this.addUIElement("What to Set", this.whatToSet);
+		this.addUIElement("Parameter name", this.whereToSet);
+		this.addUIElement("Parameter value", this.whatToSet);
 		
-		this.checkbox = new JCheckBox("URL encode");
-	    this.checkbox.setSelected(false);
-		this.addUIElement(null, this.checkbox);
+		this.urlEncode = new JCheckBox("URL encode");
+	    this.urlEncode.setSelected(false);
+		this.addUIElement(null, this.urlEncode);
+		
+		this.urlEncodeAll = new JCheckBox("URL encode all");
+	    this.urlEncodeAll.setSelected(false);
+		this.addUIElement(null, this.urlEncodeAll);
 	}
 	
 	protected String getWhere() {
@@ -40,6 +45,10 @@ public abstract class SetterOperation extends Operation {
 	}
 	
 	protected boolean urlEncode() {
-		return checkbox.isSelected();
+		return urlEncode.isSelected();
+	}
+	
+	protected boolean urlEncodeAll() {
+		return urlEncodeAll.isSelected();
 	}
 }
