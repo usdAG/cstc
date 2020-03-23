@@ -1,13 +1,14 @@
 package de.usd.cstchef.operations.extractors;
 
 import javax.swing.JTextField;
+
 import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "JSON", category = OperationCategory.EXTRACTORS, description = "Extracts values of json objects.")
 public class JsonExtractor extends Operation {
@@ -27,9 +28,22 @@ public class JsonExtractor extends Operation {
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
 		Object document = provider.parse(new String(input));
-		String result = JsonPath.read(document, fieldTxt.getText());
+		Object result = JsonPath.read(document, fieldTxt.getText());
 
-		return result.getBytes();
+		if( result == null )
+			result = "null";
+		
+		Class<? extends Object> resultClass = result.getClass();
+		
+		if( resultClass == String.class ) {
+			return ((String)result).getBytes();
+		} else if( resultClass == Integer.class || resultClass == Float.class || resultClass == Double.class ) {
+			return String.valueOf(result).getBytes();
+		} else if( resultClass == Boolean.class ) {
+			return String.valueOf(result).getBytes();
+		}
+		
+		throw new IllegalArgumentException("JSON data of unknown type.");
 	}
 
 	@Override
