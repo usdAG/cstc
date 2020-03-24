@@ -1,9 +1,5 @@
 package de.usd.cstchef.operations.extractors;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Arrays;
 
 import javax.swing.JCheckBox;
@@ -12,9 +8,8 @@ import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
-import de.usd.cstchef.view.ui.VariableTextField;
+import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HTTP URI", category = OperationCategory.EXTRACTORS, description = "Extracts the URI of a HTTP request.")
 public class HttpUriExtractor extends Operation {

@@ -1,16 +1,12 @@
 package burp;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.text.JTextComponent;
 
 import de.usd.cstchef.view.FormatTab;
 import de.usd.cstchef.view.RecipePanel;
