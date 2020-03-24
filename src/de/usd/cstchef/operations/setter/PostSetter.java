@@ -13,7 +13,7 @@ import burp.IParameter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HTTP Set POST Parameter", category = OperationCategory.SETTER, description = "Set a POST parameter to the given value.")
+@OperationInfos(name = "HTTP POST Parameter", category = OperationCategory.SETTER, description = "Set a POST parameter to the specified value.")
 public class PostSetter extends SetterOperation {
 
 	@Override

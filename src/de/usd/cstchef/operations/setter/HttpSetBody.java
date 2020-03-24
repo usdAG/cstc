@@ -10,7 +10,7 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.FormatTextField;
 
-@OperationInfos(name = "HTTP Set Body", category = OperationCategory.SETTER, description = "Set the HTTP body to the given value")
+@OperationInfos(name = "HTTP Body", category = OperationCategory.SETTER, description = "Set the HTTP body to the specified value.")
 public class HttpSetBody extends Operation {
 
 	private FormatTextField replacementTxt;

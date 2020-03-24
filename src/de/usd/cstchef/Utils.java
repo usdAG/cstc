@@ -73,6 +73,7 @@ import de.usd.cstchef.operations.networking.HTTPRequest;
 import de.usd.cstchef.operations.setter.GetSetter;
 import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetUri;
+import de.usd.cstchef.operations.setter.PostSetter;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
@@ -175,7 +176,7 @@ public class Utils {
 		return new Class[] { RegexExtractor.class, WriteFile.class, ReadFile.class, Length.class, UrlDecode.class, UrlEncode.class,
 				HTTPRequest.class, SHA1.class, Hmac.class, Gost.class, Median.class, RIPEMD.class, DesDecryption.class,
 				MultiplyList.class, Skein.class, StoreVariable.class, JsonExtractor.class, Sum.class, GetVariable.class,
-				HttpUriExtractor.class, HttpBodyExtractor.class, HttpPostExtractor.class,
+				HttpUriExtractor.class, HttpBodyExtractor.class, HttpPostExtractor.class, PostSetter.class,
 				HttpGetExtractor.class, Sub.class, Replace.class, DivideList.class, ToHex.class, FromHex.class, MD5.class,
 				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class,
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,

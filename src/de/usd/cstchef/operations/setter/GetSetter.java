@@ -12,7 +12,7 @@ import burp.IParameter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HTTP Set GET Parameter", category = OperationCategory.SETTER, description = "Sets the given variable on the given Key.")
+@OperationInfos(name = "HTTP GET Parameter", category = OperationCategory.SETTER, description = "Sets a GET parameter to the specified value.")
 public class GetSetter extends SetterOperation {
 
 	@Override

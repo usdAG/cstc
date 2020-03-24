@@ -12,7 +12,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP SET Uri", category = OperationCategory.SETTER, description = "Sets the given variable as the uri.")
+@OperationInfos(name = "HTTP URI", category = OperationCategory.SETTER, description = "Sets the specified variable as the uri.")
 public class HttpSetUri extends Operation {
 
 	private VariableTextField uriTxt;
