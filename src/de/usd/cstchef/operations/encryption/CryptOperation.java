@@ -5,13 +5,16 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JComboBox;
 
+import org.bouncycastle.util.encoders.Hex;
+import org.bouncycastle.util.encoders.Base64;
+
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.encryption.CipherUtils.CipherInfo;
 import de.usd.cstchef.view.ui.FormatTextField;
 
 public abstract class CryptOperation extends Operation {
 
-	private static String[] inOutModes = new String[] { "Raw", "Hex" };
+	private static String[] inOutModes = new String[] { "Raw", "Hex", "Base64" };
 
 	protected String algorithm;
 	protected FormatTextField ivTxt;
@@ -43,7 +46,20 @@ public abstract class CryptOperation extends Operation {
             cipher.init(cipherMode, secretKeySpec, ivSpec);
         }
 
+        String selectedInputMode = (String)inputMode.getSelectedItem();
+        String selectedOutputMode = (String)outputMode.getSelectedItem();
+        
+        if( selectedInputMode.equals("Hex") )
+        	input = Hex.decode(input);
+        if( selectedInputMode.equals("Base64") )
+        	input = Base64.decode(input);
+      
 		byte[] encrypted = cipher.doFinal(input);
+		
+		if( selectedOutputMode.equals("Hex") )
+			encrypted = Hex.encode(encrypted);
+		if( selectedOutputMode.equals("Base64") )
+			encrypted = Base64.encode(encrypted);
 
 		return encrypted;
 	}
