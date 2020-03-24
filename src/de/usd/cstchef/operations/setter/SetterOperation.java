@@ -11,6 +11,7 @@ public abstract class SetterOperation extends Operation {
 	private VariableTextField whatToSet;
 	private JCheckBox urlEncode;
 	private JCheckBox urlEncodeAll;
+	private JCheckBox addIfNotPresent;
 	
 	@Override
 	public void createUI() {
@@ -26,6 +27,10 @@ public abstract class SetterOperation extends Operation {
 		this.urlEncodeAll = new JCheckBox("URL encode all");
 	    this.urlEncodeAll.setSelected(false);
 		this.addUIElement(null, this.urlEncodeAll);
+		
+		this.addIfNotPresent = new JCheckBox("Add if not present");
+	    this.addIfNotPresent.setSelected(true);
+		this.addUIElement(null, this.addIfNotPresent);
 	}
 	
 	protected String getWhere() {
@@ -50,5 +55,9 @@ public abstract class SetterOperation extends Operation {
 	
 	protected boolean urlEncodeAll() {
 		return urlEncodeAll.isSelected();
+	}
+
+	protected boolean addIfNotPresent() {
+		return addIfNotPresent.isSelected();
 	}
 }

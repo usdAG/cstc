@@ -1,6 +1,7 @@
 package de.usd.cstchef.operations.setter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -12,8 +13,8 @@ import burp.IParameter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HTTP Set GET Parameter", category = OperationCategory.SETTER, description = "Sets the given variable on the given Key.")
-public class GetSetter extends SetterOperation {
+@OperationInfos(name = "HTTP Set POST Parameter", category = OperationCategory.SETTER, description = "Set a POST parameter to the given value.")
+public class PostSetter extends SetterOperation {
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
@@ -49,8 +50,8 @@ public class GetSetter extends SetterOperation {
 		if( !addIfNotPresent() && param == null )
 			return input;
 		
-		if( param == null || param.getType() != IParameter.PARAM_URL ) {
-			param = helpers.buildParameter(parameterName, "dummy", IParameter.PARAM_URL);
+		if( param == null || param.getType() != IParameter.PARAM_BODY) {
+			param = helpers.buildParameter(parameterName, "dummy", IParameter.PARAM_BODY);
 			input = helpers.addParameter(input, param);
 			param = helpers.getRequestParameter(input, parameterName);
 		}
