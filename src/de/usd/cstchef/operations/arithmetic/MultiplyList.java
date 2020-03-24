@@ -3,7 +3,7 @@ package de.usd.cstchef.operations.arithmetic;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
-@OperationInfos(name = "Multiply", category = OperationCategory.ARITHMETIC, description = "Multiplies a list of numbers.")
+@OperationInfos(name = "List - Multiply", category = OperationCategory.ARITHMETIC, description = "Multiplies a list of numbers.")
 public class MultiplyList extends ArithmeticDelimiterOperation {
 
 	@Override

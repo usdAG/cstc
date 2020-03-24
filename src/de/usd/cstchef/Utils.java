@@ -17,9 +17,11 @@ import burp.BurpUtils;
 import burp.Logger;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
+import de.usd.cstchef.operations.arithmetic.Divide;
 import de.usd.cstchef.operations.arithmetic.DivideList;
 import de.usd.cstchef.operations.arithmetic.Mean;
 import de.usd.cstchef.operations.arithmetic.Median;
+import de.usd.cstchef.operations.arithmetic.Multiply;
 import de.usd.cstchef.operations.arithmetic.MultiplyList;
 import de.usd.cstchef.operations.arithmetic.Subtraction;
 import de.usd.cstchef.operations.arithmetic.Sum;
@@ -69,8 +71,8 @@ import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.HTTPRequest;
 import de.usd.cstchef.operations.setter.GetSetter;
-import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.HttpSetBody;
+import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
@@ -179,8 +181,8 @@ public class Utils {
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
 				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class,
 				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class,
-				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class,
-				DateTime.class, Addition.class, Subtraction.class, GetSetter.class,
+				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class,
+				DateTime.class, Addition.class, Subtraction.class, GetSetter.class, Divide.class,
 				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
 	}
 

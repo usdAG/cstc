@@ -5,7 +5,7 @@ import java.util.Arrays;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
-@OperationInfos(name = "Median", category = OperationCategory.ARITHMETIC, description = "Computes the median of a list of numbers.")
+@OperationInfos(name = "List - Median", category = OperationCategory.ARITHMETIC, description = "Computes the median of a list of numbers.")
 public class Median extends ArithmeticDelimiterOperation {
 
 	@Override
