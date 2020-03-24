@@ -14,9 +14,9 @@ public enum OperationCategory {
 	ENCRYPTION("Encryption / Encoding"),
 	SIGNATURE("Signature"),	
 	MISC("Misc"),
-	COMPRESSION("Compression"),
-	LANGUAGE("Language"),
-	FLOWCONTROL("Flow control");
+	COMPRESSION("Compression");
+//	LANGUAGE("Language"),
+//	FLOWCONTROL("Flow control");
 	
     private final String text;
 
