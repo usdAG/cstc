@@ -1,9 +1,6 @@
 package de.usd.cstchef.operations.setter;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-
-import org.bouncycastle.util.encoders.Hex;
+import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
@@ -15,6 +12,10 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HTTP GET Param", category = OperationCategory.SETTER, description = "Sets a GET parameter to the specified value.")
 public class GetSetter extends SetterOperation {
 
+	private JCheckBox addIfNotPresent;
+	private JCheckBox urlEncode;
+	private JCheckBox urlEncodeAll;
+	
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
 		
@@ -26,47 +27,40 @@ public class GetSetter extends SetterOperation {
 		IExtensionHelpers helpers = callbacks.getHelpers();
 		
 		byte[] newValue = getWhatBytes();
-	
-		if( urlEncodeAll() ) {
-			byte[] delimiter = "%".getBytes();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			out.write(delimiter);
-			
-			for (int i = 0; i < newValue.length - 1; i++) {
-				out.write(Hex.encode(new byte[] { newValue[i] }));
-				out.write(delimiter);
-			}
-			
-			out.write(Hex.encode(new byte[] { newValue[newValue.length - 1] }));
-			newValue = out.toByteArray();
-			
-		} else if( urlEncode() ) {
-			newValue = helpers.urlEncode(getWhatBytes());
-		}
 		
-		IParameter param = helpers.getRequestParameter(input, parameterName);
+		if( urlEncodeAll.isSelected() || urlEncode.isSelected() )
+			newValue = urlEncode(newValue, urlEncodeAll.isSelected(), helpers);
 		
-		if( !addIfNotPresent() && param == null )
-			return input;
+		IParameter param = getParameter(input, parameterName, IParameter.PARAM_URL, helpers);
 		
-		if( param == null || param.getType() != IParameter.PARAM_URL ) {
+		if( param == null ) {
+			
+			if( !addIfNotPresent.isSelected() )
+				return input; 
+			
 			param = helpers.buildParameter(parameterName, "dummy", IParameter.PARAM_URL);
 			input = helpers.addParameter(input, param);
-			param = helpers.getRequestParameter(input, parameterName);
+			param = getParameter(input, parameterName, IParameter.PARAM_URL, helpers);
 		}
 
-		int length = input.length;
-		int start = param.getValueStart();
-		int end = param.getValueEnd();
-		
-		byte[] prefix = Arrays.copyOfRange(input, 0, start);
-		byte[] rest = Arrays.copyOfRange(input, end, length);
-		
-		byte[] newRequest = new byte[prefix.length + newValue.length + rest.length];
-		System.arraycopy(prefix, 0, newRequest, 0, prefix.length);
-		System.arraycopy(newValue, 0, newRequest, prefix.length, newValue.length);
-		System.arraycopy(rest, 0, newRequest, prefix.length + newValue.length, rest.length);
-		
+		byte[] newRequest = replaceParam(input, param, newValue);
 		return newRequest;
+	}
+	
+	@Override
+	public void createUI() {
+		super.createUI();
+
+		this.urlEncode = new JCheckBox("URL encode");
+	    this.urlEncode.setSelected(false);
+		this.addUIElement(null, this.urlEncode);
+		
+		this.urlEncodeAll = new JCheckBox("URL encode all");
+	    this.urlEncodeAll.setSelected(false);
+		this.addUIElement(null, this.urlEncodeAll);
+		
+		this.addIfNotPresent = new JCheckBox("Add if not present");
+	    this.addIfNotPresent.setSelected(true);
+		this.addUIElement(null, this.addIfNotPresent);
 	}
 }

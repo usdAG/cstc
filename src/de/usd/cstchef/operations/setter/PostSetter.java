@@ -1,22 +1,21 @@
 package de.usd.cstchef.operations.setter;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-import java.util.List;
-
-import org.bouncycastle.util.encoders.Hex;
+import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IParameter;
-import burp.IRequestInfo;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HTTP POST Param", category = OperationCategory.SETTER, description = "Set a POST parameter to the specified value.")
 public class PostSetter extends SetterOperation {
 
+	private JCheckBox addIfNotPresent;
+	private JCheckBox urlEncode;
+	private JCheckBox urlEncodeAll;
+	
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
 		
@@ -29,29 +28,16 @@ public class PostSetter extends SetterOperation {
 		
 		byte[] newValue = getWhatBytes();
 	
-		if( urlEncodeAll() ) {
-			byte[] delimiter = "%".getBytes();
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			out.write(delimiter);
-			
-			for (int i = 0; i < newValue.length - 1; i++) {
-				out.write(Hex.encode(new byte[] { newValue[i] }));
-				out.write(delimiter);
-			}
-			
-			out.write(Hex.encode(new byte[] { newValue[newValue.length - 1] }));
-			newValue = out.toByteArray();
-			
-		} else if( urlEncode() ) {
-			newValue = helpers.urlEncode(getWhatBytes());
-		}
+		if( urlEncodeAll.isSelected() || urlEncode.isSelected() )
+			newValue = urlEncode(newValue, urlEncodeAll.isSelected(), helpers);
 		
 		IParameter param = getParameter(input, parameterName, IParameter.PARAM_BODY, helpers);
 		
-		if( !addIfNotPresent() && param == null )
-			return input;
-		
 		if( param == null ) {
+			
+			if( !addIfNotPresent.isSelected() )
+				return input; 
+			
 			param = helpers.buildParameter(parameterName, "dummy", IParameter.PARAM_BODY);
 			input = helpers.addParameter(input, param);
 			param = getParameter(input, parameterName, IParameter.PARAM_BODY, helpers);
@@ -61,37 +47,25 @@ public class PostSetter extends SetterOperation {
 				throw new IllegalArgumentException("Failure while adding the parameter. Operation cannot be used on XML or JSON.");
 		}
 
-		int length = input.length;
-		int start = param.getValueStart();
-		int end = param.getValueEnd();
-		
-		byte[] prefix = Arrays.copyOfRange(input, 0, start);
-		byte[] rest = Arrays.copyOfRange(input, end, length);
-		
-		byte[] newRequest = new byte[prefix.length + newValue.length + rest.length];
-		System.arraycopy(prefix, 0, newRequest, 0, prefix.length);
-		System.arraycopy(newValue, 0, newRequest, prefix.length, newValue.length);
-		System.arraycopy(rest, 0, newRequest, prefix.length + newValue.length, rest.length);
-		
+		byte[] newRequest = replaceParam(input, param, newValue);
 		return newRequest;
 	}
-	
-	// This is required because Burps getRequestParameter returns always the first occurrence of the parameter name.
-	// If you have e.g. a cookie with the same name as the POST parameter, you have no chance of getting the POST
-	// parameter using getRequestParameter (at least I do not know how). 
-	private IParameter getParameter(byte[] request, String paramName, byte type, IExtensionHelpers helpers) {
+
+	@Override
+	public void createUI() {
+		super.createUI();
+
+		this.urlEncode = new JCheckBox("URL encode");
+	    this.urlEncode.setSelected(false);
+		this.addUIElement(null, this.urlEncode);
 		
-		IRequestInfo info = helpers.analyzeRequest(request);
-		List<IParameter> parameters = info.getParameters();
-		IParameter param = null;
+		this.urlEncodeAll = new JCheckBox("URL encode all");
+	    this.urlEncodeAll.setSelected(false);
+		this.addUIElement(null, this.urlEncodeAll);
 		
-		for(IParameter p:parameters) {
-			if( p.getName().equals(paramName) )
-				if( p.getType() == type ) {
-					param = p;
-					break;
-				}
-		}
-		return param;
+		this.addIfNotPresent = new JCheckBox("Add if not present");
+	    this.addIfNotPresent.setSelected(true);
+		this.addUIElement(null, this.addIfNotPresent);
 	}
+	
 }
