@@ -71,9 +71,12 @@ import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.HTTPRequest;
 import de.usd.cstchef.operations.setter.GetSetter;
+import de.usd.cstchef.operations.setter.HeaderSetter;
 import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetUri;
+import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.PostSetter;
+import de.usd.cstchef.operations.setter.XmlSetter;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
@@ -181,9 +184,9 @@ public class Utils {
 				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class,
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
 				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class,
-				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class,
-				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class,
-				DateTime.class, Addition.class, Subtraction.class, GetSetter.class, Divide.class,
+				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HeaderSetter.class,
+				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, XmlSetter.class,
+				DateTime.class, Addition.class, Subtraction.class, GetSetter.class, Divide.class, JsonSetter.class,
 				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
 	}
 
