@@ -1,8 +1,8 @@
 package de.usd.cstchef.operations.setter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bouncycastle.util.encoders.Hex;
 
@@ -10,10 +10,11 @@ import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IParameter;
+import burp.IRequestInfo;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HTTP POST Parameter", category = OperationCategory.SETTER, description = "Set a POST parameter to the specified value.")
+@OperationInfos(name = "HTTP POST Param", category = OperationCategory.SETTER, description = "Set a POST parameter to the specified value.")
 public class PostSetter extends SetterOperation {
 
 	@Override
@@ -45,15 +46,19 @@ public class PostSetter extends SetterOperation {
 			newValue = helpers.urlEncode(getWhatBytes());
 		}
 		
-		IParameter param = helpers.getRequestParameter(input, parameterName);
+		IParameter param = getParameter(input, parameterName, IParameter.PARAM_BODY, helpers);
 		
 		if( !addIfNotPresent() && param == null )
 			return input;
 		
-		if( param == null || param.getType() != IParameter.PARAM_BODY) {
+		if( param == null ) {
 			param = helpers.buildParameter(parameterName, "dummy", IParameter.PARAM_BODY);
 			input = helpers.addParameter(input, param);
-			param = helpers.getRequestParameter(input, parameterName);
+			param = getParameter(input, parameterName, IParameter.PARAM_BODY, helpers);
+			if( param == null )
+				// This case occurs when the HTTP request is a JSON or XML request. Burp does not
+				// support adding parameters to these and therefore the request should stay unmodified.
+				throw new IllegalArgumentException("Failure while adding the parameter. Operation cannot be used on XML or JSON.");
 		}
 
 		int length = input.length;
@@ -69,5 +74,24 @@ public class PostSetter extends SetterOperation {
 		System.arraycopy(rest, 0, newRequest, prefix.length + newValue.length, rest.length);
 		
 		return newRequest;
+	}
+	
+	// This is required because Burps getRequestParameter returns always the first occurrence of the parameter name.
+	// If you have e.g. a cookie with the same name as the POST parameter, you have no chance of getting the POST
+	// parameter using getRequestParameter (at least I do not know how). 
+	private IParameter getParameter(byte[] request, String paramName, byte type, IExtensionHelpers helpers) {
+		
+		IRequestInfo info = helpers.analyzeRequest(request);
+		List<IParameter> parameters = info.getParameters();
+		IParameter param = null;
+		
+		for(IParameter p:parameters) {
+			if( p.getName().equals(paramName) )
+				if( p.getType() == type ) {
+					param = p;
+					break;
+				}
+		}
+		return param;
 	}
 }
