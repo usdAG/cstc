@@ -46,6 +46,7 @@ import de.usd.cstchef.operations.encryption.AesEncryption;
 import de.usd.cstchef.operations.encryption.DesDecryption;
 import de.usd.cstchef.operations.encryption.DesEncryption;
 import de.usd.cstchef.operations.extractors.HttpBodyExtractor;
+import de.usd.cstchef.operations.extractors.HttpCookieExtractor;
 import de.usd.cstchef.operations.extractors.HttpGetExtractor;
 import de.usd.cstchef.operations.extractors.HttpHeaderExtractor;
 import de.usd.cstchef.operations.extractors.HttpMethodExtractor;
@@ -182,7 +183,7 @@ public class Utils {
 				MultiplyList.class, Skein.class, StoreVariable.class, JsonExtractor.class, Sum.class, GetVariable.class,
 				HttpUriExtractor.class, HttpBodyExtractor.class, HttpPostExtractor.class, PostSetter.class,
 				HttpGetExtractor.class, Sub.class, Replace.class, DivideList.class, ToHex.class, FromHex.class, MD5.class,
-				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class,
+				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class, HttpCookieExtractor.class,
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
 				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class, HttpSetCookie.class,
 				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HeaderSetter.class,
