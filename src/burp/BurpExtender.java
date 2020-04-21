@@ -75,7 +75,7 @@ public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFacto
 			public void actionPerformed(ActionEvent e) {
 				IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
 				if (msgs != null && msgs.length > 0) {
-					view.getIncomingRecipePanel().setInput(msgs[0].getResponse());
+					view.getIncomingRecipePanel().setInput(msgs[0]);
 				}
 			}
 		});
@@ -85,7 +85,7 @@ public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFacto
 			public void actionPerformed(ActionEvent e) {
 				IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
 				if (msgs != null && msgs.length > 0) {
-					view.getOutgoingRecipePanel().setInput(msgs[0].getRequest());
+					view.getOutgoingRecipePanel().setInput(msgs[0]);
 				}
 
 			}
@@ -96,7 +96,7 @@ public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFacto
 			public void actionPerformed(ActionEvent e) {
 				IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
 				if (msgs != null && msgs.length > 0) {
-					view.getFormatRecipePanel().setInput(msgs[0].getRequest());
+					view.getFormatRecipePanel().setInput(msgs[0]);
 				}
 			}
 		});

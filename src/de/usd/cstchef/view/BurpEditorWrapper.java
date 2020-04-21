@@ -19,9 +19,9 @@ public class BurpEditorWrapper implements IMessageEditor, DocumentListener {
 	boolean isModified;
 	byte[] lastContent;
 
-	public BurpEditorWrapper(boolean editable) {
+	public BurpEditorWrapper(IMessageEditorController controller, boolean editable) {
 		if (BurpUtils.inBurp()) {
-			this.burpEditor = BurpUtils.getInstance().getCallbacks().createMessageEditor(null, editable);
+			this.burpEditor = BurpUtils.getInstance().getCallbacks().createMessageEditor(controller, editable);
 			fallbackMode = false;
 		} else {
 			this.fallbackArea = new JTextArea();
