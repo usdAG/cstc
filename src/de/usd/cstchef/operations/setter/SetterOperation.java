@@ -22,8 +22,8 @@ public abstract class SetterOperation extends Operation {
 	public void createUI() {
 		this.whereToSet = new VariableTextField();
 		this.whatToSet = new VariableTextField();
-		this.addUIElement("Parameter name", this.whereToSet);
-		this.addUIElement("Parameter value", this.whatToSet);
+		this.addUIElement("Key", this.whereToSet);
+		this.addUIElement("Value", this.whatToSet);
 	}
 	
 	protected String getWhere() {
