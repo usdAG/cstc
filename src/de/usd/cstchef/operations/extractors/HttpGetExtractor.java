@@ -18,31 +18,23 @@ public class HttpGetExtractor extends Operation {
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
-		try {
-			
-			String parameterName = parameter.getText();
-			IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-			IExtensionHelpers helpers = callbacks.getHelpers();
+		
+		String parameterName = parameter.getText();
+		IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
+		IExtensionHelpers helpers = callbacks.getHelpers();
 
-			IParameter param = helpers.getRequestParameter(input, parameterName);
-			if( param == null)
-				throw new ParameterNotFoundException("Parameter name not found.");
-			if( param.getType() != IParameter.PARAM_URL ) 
-				throw new ParameterWrongType("Parameter type is not GET");
-			
-			int start = param.getValueStart();
-			int end = param.getValueEnd();
-			
-			byte[] result = Arrays.copyOfRange(input, start, end);
-			return result;
-			
-		} catch( ParameterNotFoundException e ) {
+		IParameter param = helpers.getRequestParameter(input, parameterName);
+		if( param == null)
 			throw new IllegalArgumentException("Parameter name not found.");
-		} catch( ParameterWrongType e ) {
-			throw new IllegalArgumentException("Parameter type is not POST");
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Provided input is not a valid http request.");
-		}
+		if( param.getType() != IParameter.PARAM_URL ) 
+			throw new IllegalArgumentException("Parameter type is not GET.");
+		
+		int start = param.getValueStart();
+		int end = param.getValueEnd();
+		
+		byte[] result = Arrays.copyOfRange(input, start, end);
+		return result;
+		
 	}
 
 	@Override
@@ -51,15 +43,4 @@ public class HttpGetExtractor extends Operation {
 		this.addUIElement("Parameter", this.parameter);
 	}
 	
-	class ParameterNotFoundException extends Exception {
-	      public ParameterNotFoundException(String message) {
-	         super(message);
-	      }
-	 }
-	
-	class ParameterWrongType extends Exception {
-	      public ParameterWrongType(String message) {
-	         super(message);
-	      }
-	 }
 }
