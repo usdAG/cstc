@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.usd.CSTC</groupId>
   <artifactId>CSTC</artifactId>
-  <version>0.1.1</version>
+  <version>1.0.0</version>
   <name>CSTC</name>
   <description>CSTC</description>
   <build>
