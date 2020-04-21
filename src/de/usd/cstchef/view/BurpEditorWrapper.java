@@ -10,6 +10,7 @@ import javax.swing.event.DocumentListener;
 
 import burp.BurpUtils;
 import burp.IMessageEditor;
+import burp.IMessageEditorController;
 
 public class BurpEditorWrapper implements IMessageEditor, DocumentListener {
 
