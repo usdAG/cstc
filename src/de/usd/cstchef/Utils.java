@@ -73,6 +73,7 @@ import de.usd.cstchef.operations.networking.HTTPRequest;
 import de.usd.cstchef.operations.setter.GetSetter;
 import de.usd.cstchef.operations.setter.HeaderSetter;
 import de.usd.cstchef.operations.setter.HttpSetBody;
+import de.usd.cstchef.operations.setter.HttpSetCookie;
 import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.PostSetter;
@@ -183,7 +184,7 @@ public class Utils {
 				HttpGetExtractor.class, Sub.class, Replace.class, DivideList.class, ToHex.class, FromHex.class, MD5.class,
 				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class,
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
-				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class,
+				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class, HttpSetCookie.class,
 				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HeaderSetter.class,
 				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, XmlSetter.class,
 				DateTime.class, Addition.class, Subtraction.class, GetSetter.class, Divide.class, JsonSetter.class,
