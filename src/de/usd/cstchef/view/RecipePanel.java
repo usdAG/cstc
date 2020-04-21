@@ -55,6 +55,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 	
 	private int operationSteps = 10;
 	private boolean autoBake = true;
+	private boolean isRequest = true;
 	private int bakeThreshold = 400;
 	private String recipeName;
 	private int filterMask;
@@ -67,9 +68,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
 	private Timer bakeTimer;
 	
-	public RecipePanel(String recipeName) {
+	public RecipePanel(String recipeName, boolean isRequest) {
 		
 		this.recipeName = recipeName;
+        this.isRequest = isRequest;
 		
 		ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
 		tooltipManager.setInitialDelay(0);
@@ -297,7 +299,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 	}
 	
 	public void setInput(byte[] input) {
-		this.inputText.setMessage(input, false);
+		this.inputText.setMessage(input, isRequest);
 		this.bake(false);
 	}
 
@@ -437,7 +439,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						outputText.setMessage(result, true);
+						outputText.setMessage(result, isRequest);
 						VariablesWindow vw = VariablesWindow.getInstance();
 						if (vw.isVisible()) {
 							vw.refresh(variables);
