@@ -1,6 +1,6 @@
 *Copyright 2017-2020 usd AG*
 
-Licensed under the *GNU General Public License, Version 3.0* (the "License"). You may not use this file except in compliance with the License.
+Licensed under the *GNU General Public License, Version 3.0* (the "License"). You may not use this tool except in compliance with the License.
 You may obtain a copy of the License at https://www.gnu.org/licenses/gpl-3.0.html
 
 ![CSTC](media/CSTC_White_Smaller.png)
@@ -9,7 +9,7 @@ You may obtain a copy of the License at https://www.gnu.org/licenses/gpl-3.0.htm
 
 *The Cyber Security Transformation Chef* (*CSTC*) is a *Burp Suite* extension. It is build for security experts to
 extend *Burp Suite* for chaining simple operations on each incoming or outgoing *HTTP* message.
-It can also be used to quickly apply custom formatting for each message.
+It can also be used to quickly apply custom formatting on each message.
 
 ![CSTC-Workflow](media/CSTC_Workflow.gif)
 
@@ -40,11 +40,11 @@ The plugin has been successfully tested and decreased the time for performing te
 
 ## Prerequisites
 
-The *CSTC* can be used with either *Burp Suite Community Edition* or *Burp Suite Professional*.
+*CSTC* can be used with either *Burp Suite Community Edition* or *Burp Suite Professional*.
 
 ## Installation
 
-The *CSTC* is currently not listed in the *Burp Extension Storage* (*BApp Store*), but will be added there as soon as *PortSwigger* acknowledges the extension.
+*CSTC* is currently not listed in the *Burp Extension Storage* (*BApp Store*), but will be added there as soon as *PortSwigger* acknowledges the extension.
 
 We suggest to pull the source code and build it yourself, because you should never trust binaries
 and should always review the code which is used in a productive setting.
