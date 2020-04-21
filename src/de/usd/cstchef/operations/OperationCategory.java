@@ -1,20 +1,20 @@
 package de.usd.cstchef.operations;
 
 public enum OperationCategory {
-	DATAFORMAT("Data format"),
-	EXTRACTORS("Extractors"),
-	SETTER("Setter"),
-	STRING("String"),
-	HASHING("Hashing"),
-	BYTEOPERATION("Byte Operations"),
 	ARITHMETIC("Arithmetic"),
-	NETWORKING("Networking"),	
-	UTILS("Utils"),
+	BYTEOPERATION("Byte Operations"),
+	COMPRESSION("Compression"),
+	DATAFORMAT("Data format"),
 	DATES("Date / Time"),
 	ENCRYPTION("Encryption / Encoding"),
-	SIGNATURE("Signature"),	
+	EXTRACTORS("Extractors"),
+	HASHING("Hashing"),
 	MISC("Misc"),
-	COMPRESSION("Compression");
+	NETWORKING("Networking"),	
+	SETTER("Setter"),
+	SIGNATURE("Signature"),	
+	STRING("String"),
+	UTILS("Utils");
 //	LANGUAGE("Language"),
 //	FLOWCONTROL("Flow control");
 	
@@ -28,5 +28,4 @@ public enum OperationCategory {
     public String toString() {
         return text;
     }
-
 }
