@@ -23,7 +23,7 @@
 * Support *raw* encoding for *FormattedTextFields*.
 * Make all operations work on raw bytes.
 * Implement the so far unimplemented input and output modes for encryption modules.
-* Correct syntax highlithing inside the CSTC pane.
+* Correct syntax highlighting inside the CSTC pane.
 * Fix bugs in several different modules.
 * Update version of *jackson-databind*.
 
