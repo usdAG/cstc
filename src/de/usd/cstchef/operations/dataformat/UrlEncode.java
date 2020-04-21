@@ -13,7 +13,7 @@ import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
-@OperationInfos(name = "Url encode", category = OperationCategory.DATAFORMAT, description = "Url encode")
+@OperationInfos(name = "Url Encode", category = OperationCategory.DATAFORMAT, description = "Url encode")
 public class UrlEncode extends Operation {
 
 	private JCheckBox checkbox;

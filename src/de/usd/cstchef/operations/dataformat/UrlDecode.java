@@ -7,7 +7,7 @@ import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
-@OperationInfos(name = "Url decode", category = OperationCategory.DATAFORMAT, description = "Url decoding")
+@OperationInfos(name = "Url Decode", category = OperationCategory.DATAFORMAT, description = "Url decoding")
 public class UrlDecode extends Operation {
 
 	@Override
