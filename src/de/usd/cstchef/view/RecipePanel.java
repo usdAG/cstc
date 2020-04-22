@@ -418,13 +418,20 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		if (BurpUtils.inBurp()) {
 			IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
 			IExtensionHelpers helpers = callbacks.getHelpers();
-			
-			IRequestInfo info = helpers.analyzeRequest(result);
+
+			IRequestInfo info;
+            try {
+                info = helpers.analyzeRequest(result);
+            } catch( IllegalArgumentException e ) {
+				// In this case there is no valid HTTP request and no Content-Length update is requried.
+                return result;
+            }
+
 			List<java.lang.String> headers = info.getHeaders();
 			int offset = info.getBodyOffset();
 			
 			if( result.length == offset ) {
-				// In this case there is no body and we do not need to update the content length header
+				// In this case there is no body and we do not need to update the content length header.
 				return result;
 			}
 			
