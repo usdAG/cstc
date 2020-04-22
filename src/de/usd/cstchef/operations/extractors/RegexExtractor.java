@@ -37,6 +37,9 @@ public class RegexExtractor extends Operation {
 			}
 		}
 
+        if( buf.length() > 0 )
+            buf.setLength(buf.length() - 1);
+
 		return buf.toString().getBytes();
 	}
 
@@ -48,5 +51,4 @@ public class RegexExtractor extends Operation {
 		this.outputBox = new JComboBox<>(new String[] { LIST_MATCHES, LIST_GROUPS });
 		this.addUIElement("Output format", this.outputBox);
 	}
-
 }

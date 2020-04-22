@@ -3,7 +3,7 @@ package de.usd.cstchef.operations.arithmetic;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "Add", category = OperationCategory.ARITHMETIC, description = "Adds to the input the given number.")
+@OperationInfos(name = "Single - Add", category = OperationCategory.ARITHMETIC, description = "Add to the input the given number.")
 public class Addition extends ArithmeticOperation {
 
 	@Override

@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -16,9 +17,11 @@ import burp.BurpUtils;
 import burp.Logger;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
+import de.usd.cstchef.operations.arithmetic.Divide;
 import de.usd.cstchef.operations.arithmetic.DivideList;
 import de.usd.cstchef.operations.arithmetic.Mean;
 import de.usd.cstchef.operations.arithmetic.Median;
+import de.usd.cstchef.operations.arithmetic.Multiply;
 import de.usd.cstchef.operations.arithmetic.MultiplyList;
 import de.usd.cstchef.operations.arithmetic.Subtraction;
 import de.usd.cstchef.operations.arithmetic.Sum;
@@ -38,16 +41,19 @@ import de.usd.cstchef.operations.dataformat.UrlDecode;
 import de.usd.cstchef.operations.dataformat.UrlEncode;
 import de.usd.cstchef.operations.datetime.DateTime;
 import de.usd.cstchef.operations.datetime.UnixTimestamp;
-import de.usd.cstchef.operations.encrpytion.AesDecryption;
-import de.usd.cstchef.operations.encrpytion.AesEncryption;
-import de.usd.cstchef.operations.encrpytion.DesDecryption;
-import de.usd.cstchef.operations.encrpytion.DesEncryption;
+import de.usd.cstchef.operations.encryption.AesDecryption;
+import de.usd.cstchef.operations.encryption.AesEncryption;
+import de.usd.cstchef.operations.encryption.DesDecryption;
+import de.usd.cstchef.operations.encryption.DesEncryption;
 import de.usd.cstchef.operations.extractors.HttpBodyExtractor;
+import de.usd.cstchef.operations.extractors.HttpCookieExtractor;
 import de.usd.cstchef.operations.extractors.HttpGetExtractor;
 import de.usd.cstchef.operations.extractors.HttpHeaderExtractor;
+import de.usd.cstchef.operations.extractors.HttpJsonExtractor;
 import de.usd.cstchef.operations.extractors.HttpMethodExtractor;
 import de.usd.cstchef.operations.extractors.HttpPostExtractor;
 import de.usd.cstchef.operations.extractors.HttpUriExtractor;
+import de.usd.cstchef.operations.extractors.HttpXmlExtractor;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
 import de.usd.cstchef.operations.extractors.RegexExtractor;
 import de.usd.cstchef.operations.hashing.Blake;
@@ -67,14 +73,20 @@ import de.usd.cstchef.operations.hashing.Whirlpool;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.HTTPRequest;
-import de.usd.cstchef.operations.setter.GetSetter;
+import de.usd.cstchef.operations.setter.HttpGetSetter;
+import de.usd.cstchef.operations.setter.HttpHeaderSetter;
+import de.usd.cstchef.operations.setter.HttpJsonSetter;
+import de.usd.cstchef.operations.setter.HttpPostSetter;
+import de.usd.cstchef.operations.setter.HttpSetBody;
+import de.usd.cstchef.operations.setter.HttpSetCookie;
 import de.usd.cstchef.operations.setter.HttpSetUri;
+import de.usd.cstchef.operations.setter.HttpXmlSetter;
+import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
 import de.usd.cstchef.operations.string.Prefix;
 import de.usd.cstchef.operations.string.Replace;
-import de.usd.cstchef.operations.string.ReplaceBody;
 import de.usd.cstchef.operations.string.StaticString;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
@@ -111,6 +123,21 @@ public class Utils {
 		}
 
 		return text;
+	}
+
+	public static byte[] replaceVariablesByte(byte[] bytes) {
+		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+
+		byte[] currentKey;
+		for (Entry<String, byte[]> entry : variables.entrySet()) {
+
+			currentKey = ("§" + entry.getKey()).getBytes();
+			if( Arrays.equals(currentKey, bytes) ) {
+					bytes = entry.getValue();
+			}
+
+		}
+		return bytes;
 	}
 
 	public static Class<? extends Operation>[] getOperationsBurp() {
@@ -154,18 +181,23 @@ public class Utils {
 	// TODO reflection does not work in Burp Suite
 	@SuppressWarnings("unchecked")
 	public static Class<? extends Operation>[] getOperationsDev() {
-		return new Class[] { RegexExtractor.class, WriteFile.class, ReadFile.class, Length.class, UrlDecode.class, UrlEncode.class,
-				HTTPRequest.class, SHA1.class, Hmac.class, Gost.class, Median.class, RIPEMD.class, DesDecryption.class,
-				MultiplyList.class, Skein.class, StoreVariable.class, JsonExtractor.class, Sum.class, GetVariable.class,
-				HttpUriExtractor.class, HttpBodyExtractor.class, HttpPostExtractor.class,
-				HttpGetExtractor.class, Sub.class, Replace.class, DivideList.class, ToHex.class, FromHex.class, MD5.class,
-				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class,
-				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
-				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class,
-				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class,
-				XmlFullSignature.class, XmlMultiSignature.class, ReplaceBody.class,
-				DateTime.class, Addition.class, Subtraction.class, GetSetter.class,
-				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
+		return new Class[] { 
+            Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
+            Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
+            GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
+            HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class, HttpGetSetter.class, HttpHeaderExtractor.class,
+            HttpHeaderSetter.class, HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpPostExtractor.class,
+            HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
+            HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, Inflate.class, JsonExtractor.class,
+            JsonSetter.class, Length.class, MD2.class, MD4.class, MD5.class,
+            Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class,
+            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SHA1.class,
+            SHA2.class, SHA3.class, Skein.class, StaticString.class, StoreVariable.class,
+            Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
+            Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
+            UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
+            Xor.class };
 	}
 
 	public static Class<? extends Operation>[] getOperations() {

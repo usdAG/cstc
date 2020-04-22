@@ -22,9 +22,9 @@ public class View extends JPanel {
 		this.setLayout(new BorderLayout());
 		JTabbedPane tabbedPane = new JTabbedPane();
 
-		incomingRecipePanel = new RecipePanel("Incomming");
-		outgoingRecipePanel = new RecipePanel("Outgoing");
-		formatRecipePanel = new RecipePanel("Formatting");
+		incomingRecipePanel = new RecipePanel("Incomming", false);
+		outgoingRecipePanel = new RecipePanel("Outgoing", true);
+		formatRecipePanel = new RecipePanel("Formatting", true);
 
 		tabbedPane.addTab("Outgoing Requests", null, outgoingRecipePanel, "Outgoing requests from the browser, the repeater or another tool.");
 		tabbedPane.addTab("Incoming Responses", null, incomingRecipePanel, "Responses from the server.");

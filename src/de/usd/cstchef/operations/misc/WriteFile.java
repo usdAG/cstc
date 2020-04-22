@@ -25,7 +25,6 @@ public class WriteFile extends Operation implements ActionListener {
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
 		String path = fileNameTxt.getText();
-		//TODO add ok button? if changed manually, 100 Files are created :D
 		
 		if (!lastPath.equals(path)) {
 			if (out != null) {
@@ -48,7 +47,8 @@ public class WriteFile extends Operation implements ActionListener {
 
 	public void createUI() {
 		this.fileNameTxt = new VariableTextField();
-		this.addUIElement("Variable name", this.fileNameTxt);
+		this.fileNameTxt.setEditable(false);
+		this.addUIElement("Filename", this.fileNameTxt);
 
 		JButton chooseFileButton = new JButton("Select file");
 		chooseFileButton.addActionListener(this);

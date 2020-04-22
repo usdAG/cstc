@@ -3,7 +3,7 @@ package de.usd.cstchef.operations.arithmetic;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
-@OperationInfos(name = "Mean", category = OperationCategory.ARITHMETIC, description = "Computes the mean of a list of numbers.")
+@OperationInfos(name = "List - Mean", category = OperationCategory.ARITHMETIC, description = "Computes the mean of a list of numbers.")
 public class Mean extends ArithmeticDelimiterOperation {
 
 	@Override

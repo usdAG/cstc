@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
+import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -22,13 +24,20 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class OperationsTree extends JTree {
 	
 	private DefaultTreeModel model;
-	
+	private static ImageIcon nodeIcon = new ImageIcon(Operation.class.getResource("/operation.png"));
+	private static ImageIcon openIcon = new ImageIcon(Operation.class.getResource("/folder_open.png"));
+	private static ImageIcon closedIcon = new ImageIcon(Operation.class.getResource("/folder_closed.png"));
+
 	public OperationsTree() {
 		super();
 		
 		this.model = (DefaultTreeModel) this.getModel();
 		this.model.setRoot(this.createTree());
 		this.setToolTipText("");
+		DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer) this.getCellRenderer();
+		renderer.setLeafIcon(nodeIcon);
+		renderer.setClosedIcon(closedIcon);
+		renderer.setOpenIcon(openIcon);
 	}
 	
 	@Override
@@ -144,5 +153,4 @@ public class OperationsTree extends JTree {
 		}
 		this.expandPath(path);
 	}
-	
 }

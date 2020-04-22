@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -43,10 +41,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import burp.BurpUtils;
+import burp.CstcMessageEditorController;
 import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
+import burp.IHttpRequestResponse;
+import burp.IParameter;
 import burp.IRequestInfo;
 import burp.Logger;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
 
@@ -56,6 +57,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 	
 	private int operationSteps = 10;
 	private boolean autoBake = true;
+	private boolean isRequest = true;
 	private int bakeThreshold = 400;
 	private String recipeName;
 	private int filterMask;
@@ -66,11 +68,15 @@ public class RecipePanel extends JPanel implements ChangeListener {
 	private JPanel operationLines;
 	private RequestFilterDialog requestFilterDialog;
 
+    private CstcMessageEditorController controllerOrig;
+	private CstcMessageEditorController controllerMod;
+
 	private Timer bakeTimer;
 	
-	public RecipePanel(String recipeName) {
+	public RecipePanel(String recipeName, boolean isRequest) {
 		
 		this.recipeName = recipeName;
+        this.isRequest = isRequest;
 		
 		ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
 		tooltipManager.setInitialDelay(0);
@@ -78,14 +84,17 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
 		JSplitPane inOut = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
+		controllerOrig = new CstcMessageEditorController();
+		controllerMod = new CstcMessageEditorController();
+
 		// create input panel
 		JPanel inputPanel = new LayoutPanel("Input");
-		inputText = new BurpEditorWrapper(true);
+		inputText = new BurpEditorWrapper(controllerOrig, true);
 		inputPanel.add(inputText.getComponent());
 
 		// create output panel
 		JPanel outputPanel = new LayoutPanel("Output");
-		outputText = new BurpEditorWrapper(false);
+		outputText = new BurpEditorWrapper(controllerMod, false);
 		outputPanel.add(outputText.getComponent());
 		
 		JPanel searchTreePanel = new JPanel();
@@ -297,8 +306,19 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		}
 	}
 	
-	public void setInput(String input) {
-		this.inputText.setMessage(input.getBytes(), false);
+	public void setInput(IHttpRequestResponse requestResponse) {
+        if( isRequest )
+			this.inputText.setMessage(requestResponse.getRequest(), true);
+		else {
+			byte[] responseBytes = requestResponse.getResponse();
+			if( responseBytes == null )
+				responseBytes = "Your request has no server response yet :(".getBytes();
+			this.inputText.setMessage(responseBytes, false);
+		}
+
+		this.controllerOrig.setHttpRequestResponse(requestResponse);
+		this.controllerMod.setHttpRequestResponse(requestResponse);
+
 		this.bake(false);
 	}
 
@@ -397,18 +417,36 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		
 		if (BurpUtils.inBurp()) {
 			IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-			IRequestInfo info = callbacks.getHelpers().analyzeRequest(result);
-			int contentLen = result.length - info.getBodyOffset();
-			String headers = new String(result, 0, info.getBodyOffset());
-			Pattern p = Pattern.compile("Content-Length:\\s*(\\d*)");
-			Matcher m = p.matcher(headers);
-			if (m.find()) {
-			    headers = m.replaceFirst("Content-Length: " + String.valueOf(contentLen));
+			IExtensionHelpers helpers = callbacks.getHelpers();
+
+			IRequestInfo info;
+            try {
+                info = helpers.analyzeRequest(result);
+            } catch( IllegalArgumentException e ) {
+				// In this case there is no valid HTTP request and no Content-Length update is requried.
+                return result;
+            }
+
+			List<java.lang.String> headers = info.getHeaders();
+			int offset = info.getBodyOffset();
+			
+			if( result.length == offset ) {
+				// In this case there is no body and we do not need to update the content length header.
+				return result;
 			}
-			byte[] request = new byte[headers.length() + contentLen];
-			System.arraycopy(headers.getBytes(), 0, request, 0, headers.length());
-			System.arraycopy(result, info.getBodyOffset(), request, headers.length(), contentLen);
-			return request;
+			
+			for(String header : headers) {
+				if(header.startsWith("Content-Length:")) {
+					// To update the content-length header, we just add a dummy parameter and remove it right away.
+					// Burps extension helpers will care about updating the length without any string transformations.
+					IParameter dummy = helpers.buildParameter("dummy", "dummy", IParameter.PARAM_BODY);
+					result = helpers.addParameter(result, dummy);
+					result = helpers.removeParameter(result, dummy);
+					break;
+				}
+			}
+			return result;
+
 		} else {
 			return result;
 		}
@@ -427,7 +465,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						outputText.setMessage(result, true);
+                        if( isRequest) {
+							outputText.setMessage(result, true);
+							controllerMod.setRequest(result);
+						} else {
+							outputText.setMessage(result, false);
+							controllerMod.setResponse(result);
+						}
 						VariablesWindow vw = VariablesWindow.getInstance();
 						if (vw.isVisible()) {
 							vw.refresh(variables);

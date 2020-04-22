@@ -1,51 +1,56 @@
 package de.usd.cstchef.operations.extractors;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.HashMap;
+import org.bouncycastle.util.Arrays;
 
+import burp.BurpUtils;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP header", category = OperationCategory.EXTRACTORS, description = "Extracts a header of a HTTP request.")
+@OperationInfos(name = "HTTP Header", category = OperationCategory.EXTRACTORS, description = "Extracts a header of a HTTP request.")
 public class HttpHeaderExtractor extends Operation {
 
-	private VariableTextField headerTxt;
+	private VariableTextField headerNameField;
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
-		HashMap<String, String> headers = new HashMap<>();
-
-		try {
-
-			Reader in = new InputStreamReader(new ByteArrayInputStream(input));
-			BufferedReader reader = new BufferedReader(in);
-			reader.readLine(); // skip first line
-
-			String header = reader.readLine();
-			while (header.length() > 0) {
-				String[] values = header.split(":",2);
-				headers.put(values[0].trim(), values[1].trim());
-				header = reader.readLine();
-			}
-			String headerKey = headerTxt.getText();
-			String headerValue = headers.getOrDefault(headerKey, "");
-			
-			return headerValue.getBytes();
-			
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Provided input is not a valid http request.");
-		}
+		
+		byte[] headerName = headerNameField.getBytes();
+		if( headerName.length == 0 )
+			return input;
+		
+		byte[] headerSearch = new byte[headerName.length + 4];
+		System.arraycopy("\r\n".getBytes(), 0, headerSearch, 0, 2);
+		System.arraycopy(headerName, 0, headerSearch, 2, headerName.length);
+		System.arraycopy(": ".getBytes(), 0, headerSearch, headerName.length + 2, 2);
+		
+		IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
+		IExtensionHelpers helpers = callbacks.getHelpers();
+		int length = input.length;
+		
+		int offset = helpers.indexOf(input, headerSearch, true, 0, length);
+		
+		if( offset < 0 )
+			throw new IllegalArgumentException("Header not found.");
+		
+		int valueStart = helpers.indexOf(input, " ".getBytes(), false, offset, length);
+		if( valueStart < 0 )
+			throw new IllegalArgumentException("Invalid Header format.");
+		int valueEnd = helpers.indexOf(input, "\r\n".getBytes(), false, valueStart, length);
+		if( valueEnd < 0 )
+			throw new IllegalArgumentException("Invalid Header format.");
+		
+		byte[] result = Arrays.copyOfRange(input, valueStart + 1, valueEnd);
+		return result;
 	}
 
 	@Override
 	public void createUI() {
-		this.headerTxt = new VariableTextField();
-		this.addUIElement("Name", this.headerTxt);
+		this.headerNameField = new VariableTextField();
+		this.addUIElement("Name", this.headerNameField);
 	}
-
+	
 }

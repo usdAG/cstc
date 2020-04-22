@@ -26,7 +26,7 @@ public class FromHex extends Operation {
 		
 		String delimiterStr = new String(delimiter.value);		
 		String inputStr = new String(input);
-		inputStr = inputStr.replaceAll(delimiterStr, "");
+		inputStr = inputStr.replace(delimiterStr, "");
 		
 		return Hex.decode(inputStr);
 	}

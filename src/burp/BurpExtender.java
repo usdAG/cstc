@@ -1,16 +1,12 @@
 package burp;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.JMenuItem;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-import javax.swing.text.JTextComponent;
 
 import de.usd.cstchef.view.FormatTab;
 import de.usd.cstchef.view.RecipePanel;
@@ -79,7 +75,7 @@ public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFacto
 			public void actionPerformed(ActionEvent e) {
 				IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
 				if (msgs != null && msgs.length > 0) {
-					view.getIncomingRecipePanel().setInput(new String(msgs[0].getResponse()));
+					view.getIncomingRecipePanel().setInput(msgs[0]);
 				}
 			}
 		});
@@ -89,7 +85,7 @@ public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFacto
 			public void actionPerformed(ActionEvent e) {
 				IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
 				if (msgs != null && msgs.length > 0) {
-					view.getOutgoingRecipePanel().setInput(new String(msgs[0].getRequest()));
+					view.getOutgoingRecipePanel().setInput(msgs[0]);
 				}
 
 			}
@@ -100,7 +96,7 @@ public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFacto
 			public void actionPerformed(ActionEvent e) {
 				IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
 				if (msgs != null && msgs.length > 0) {
-					view.getFormatRecipePanel().setInput(new String(msgs[0].getRequest()));
+					view.getFormatRecipePanel().setInput(msgs[0]);
 				}
 			}
 		});

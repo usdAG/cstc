@@ -23,6 +23,11 @@ public class VariableTextArea extends JScrollPane {
 		String text = this.txtArea.getText();
 		return Utils.replaceVariables(text);
 	}
+
+	public byte[] getBytes() {
+		byte[] bytes = this.txtArea.getText().getBytes();
+		return Utils.replaceVariablesByte(bytes);
+	}
 	
 	public void setText(String text) {
 		this.txtArea.setText(text);
