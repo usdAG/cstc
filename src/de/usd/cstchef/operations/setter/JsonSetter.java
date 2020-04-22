@@ -64,7 +64,7 @@ public class JsonSetter extends SetterOperation implements ActionListener {
 			public void focusGained(FocusEvent e) {
 			    if (path.getText().equals("Insert-Path")) {
 			    	path.setText("");
-			    	path.setForeground(Color.BLACK);
+			    	path.setForeground(null);
 			    }
 			}
 			@Override
