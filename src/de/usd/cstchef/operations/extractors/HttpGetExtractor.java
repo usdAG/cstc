@@ -11,7 +11,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP GET Parameter", category = OperationCategory.EXTRACTORS, description = "Extracts a GET Parameter of a HTTP request.")
+@OperationInfos(name = "HTTP GET Param", category = OperationCategory.EXTRACTORS, description = "Extracts a GET Parameter of a HTTP request.")
 public class HttpGetExtractor extends Operation {
 
 	protected VariableTextField parameter;
