@@ -27,6 +27,10 @@ public class JsonExtractor extends Operation {
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
+
+        if( fieldTxt.getText().equals("") )
+            return input;
+
 		Object document = provider.parse(new String(input));
 		Object result = JsonPath.read(document, fieldTxt.getText());
 
