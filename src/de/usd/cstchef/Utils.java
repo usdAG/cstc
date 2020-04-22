@@ -49,6 +49,7 @@ import de.usd.cstchef.operations.extractors.HttpBodyExtractor;
 import de.usd.cstchef.operations.extractors.HttpCookieExtractor;
 import de.usd.cstchef.operations.extractors.HttpGetExtractor;
 import de.usd.cstchef.operations.extractors.HttpHeaderExtractor;
+import de.usd.cstchef.operations.extractors.HttpJsonExtractor;
 import de.usd.cstchef.operations.extractors.HttpMethodExtractor;
 import de.usd.cstchef.operations.extractors.HttpPostExtractor;
 import de.usd.cstchef.operations.extractors.HttpUriExtractor;
@@ -189,7 +190,7 @@ public class Utils {
 				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class, HttpSetCookie.class,
 				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HeaderSetter.class,
 				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, XmlSetter.class,
-				DateTime.class, Addition.class, Subtraction.class, GetSetter.class, Divide.class, JsonSetter.class,
+				DateTime.class, Addition.class, Subtraction.class, GetSetter.class, Divide.class, JsonSetter.class, HttpJsonExtractor.class,
 				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
 	}
 
