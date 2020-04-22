@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Correct syntax highlighting inside the CSTC pane.
 * Fix bugs in several different modules.
 * Update version of *jackson-databind*.
+* Adjust image icons displayed inside the nodetree.
 
 ### Removed
 
