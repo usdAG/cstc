@@ -309,8 +309,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
 	public void setInput(IHttpRequestResponse requestResponse) {
         if( isRequest )
 			this.inputText.setMessage(requestResponse.getRequest(), true);
-		else
-			this.inputText.setMessage(requestResponse.getResponse(), false);
+		else {
+			byte[] responseBytes = requestResponse.getResponse();
+			if( responseBytes == null )
+				responseBytes = "Your request has no server response yet :(".getBytes();
+			this.inputText.setMessage(responseBytes, false);
+		}
 
 		this.controllerOrig.setHttpRequestResponse(requestResponse);
 		this.controllerMod.setHttpRequestResponse(requestResponse);
