@@ -37,7 +37,9 @@ public class RegexExtractor extends Operation {
 			}
 		}
 
-		buf.setLength(buf.length() - 1);
+        if( buf.length() > 0 )
+            buf.setLength(buf.length() - 1);
+
 		return buf.toString().getBytes();
 	}
 

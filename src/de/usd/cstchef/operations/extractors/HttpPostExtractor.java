@@ -20,6 +20,9 @@ public class HttpPostExtractor extends Operation {
 	protected byte[] perform(byte[] input) throws Exception {
 		
 		String parameterName = parameter.getText();
+        if( parameterName.equals("") )
+            return input;
+
 		IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
 		IExtensionHelpers helpers = callbacks.getHelpers();
 
