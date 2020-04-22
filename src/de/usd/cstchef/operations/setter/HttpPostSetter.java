@@ -10,7 +10,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HTTP POST Param", category = OperationCategory.SETTER, description = "Set a POST parameter to the specified value.")
-public class PostSetter extends SetterOperation {
+public class HttpPostSetter extends SetterOperation {
 
 	private JCheckBox addIfNotPresent;
 	private JCheckBox urlEncode;

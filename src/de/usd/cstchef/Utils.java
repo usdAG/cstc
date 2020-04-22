@@ -73,14 +73,14 @@ import de.usd.cstchef.operations.hashing.Whirlpool;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.HTTPRequest;
-import de.usd.cstchef.operations.setter.GetSetter;
-import de.usd.cstchef.operations.setter.HeaderSetter;
+import de.usd.cstchef.operations.setter.HttpGetSetter;
+import de.usd.cstchef.operations.setter.HttpHeaderSetter;
+import de.usd.cstchef.operations.setter.HttpPostSetter;
 import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetCookie;
 import de.usd.cstchef.operations.setter.HttpSetUri;
+import de.usd.cstchef.operations.setter.HttpXmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
-import de.usd.cstchef.operations.setter.PostSetter;
-import de.usd.cstchef.operations.setter.XmlSetter;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
@@ -183,14 +183,14 @@ public class Utils {
 		return new Class[] { RegexExtractor.class, WriteFile.class, ReadFile.class, Length.class, UrlDecode.class, UrlEncode.class,
 				HTTPRequest.class, SHA1.class, Hmac.class, Gost.class, Median.class, RIPEMD.class, DesDecryption.class,
 				MultiplyList.class, Skein.class, StoreVariable.class, JsonExtractor.class, Sum.class, GetVariable.class,
-				HttpUriExtractor.class, HttpBodyExtractor.class, HttpPostExtractor.class, PostSetter.class, HttpXmlExtractor.class,
+				HttpUriExtractor.class, HttpBodyExtractor.class, HttpPostExtractor.class, HttpPostSetter.class, HttpXmlExtractor.class,
 				HttpGetExtractor.class, Sub.class, Replace.class, DivideList.class, ToHex.class, FromHex.class, MD5.class,
 				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class, HttpCookieExtractor.class,
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
 				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class, HttpSetCookie.class,
-				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HeaderSetter.class,
-				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, XmlSetter.class,
-				DateTime.class, Addition.class, Subtraction.class, GetSetter.class, Divide.class, JsonSetter.class, HttpJsonExtractor.class,
+				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HttpHeaderSetter.class,
+				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, HttpXmlSetter.class, JsonSetter.class,
+				DateTime.class, Addition.class, Subtraction.class, HttpGetSetter.class, Divide.class, JsonSetter.class, HttpJsonExtractor.class,
 				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
 	}
 

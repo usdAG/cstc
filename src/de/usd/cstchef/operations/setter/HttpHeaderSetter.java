@@ -12,7 +12,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HTTP Header", category = OperationCategory.SETTER, description = "Set a HTTP header to the specified value.")
-public class HeaderSetter extends SetterOperation {
+public class HttpHeaderSetter extends SetterOperation {
 	
 	private JCheckBox addIfNotPresent;
 	

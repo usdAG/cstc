@@ -18,9 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * *HeaderSetter* (Set *HTTP* headers).
   * *HttpSetBody* (Set *HTTP* body).
   * *HttpSetCookie* (Set *HTTP* cookie).
-  * *JsonSetter* (Set a field in JSON data).
+  * *HttpJsonSetter* (Set a JSON field in a HTTP request).
+  * *JsonSetter* (Set a value inside of a JSON string).
   * *PostSetter* (Set a POST parameter).
-  * *XmlSetter* (Set a field in XML data).
+  * *XmlSetter* (Set a XML field in a HTTP request ).
+  * *HttpXmlExtractor* (Get a XML value from a HTTP request).
+  * *HttpJsonExtractor* (Get a JSON value from a HTTP request).
 * Add workflow demonstration in form of a GIF to README.md
 * Add a changelog :)
 

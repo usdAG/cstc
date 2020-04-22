@@ -7,8 +7,8 @@ import burp.IParameter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HTTP XML", category = OperationCategory.SETTER, description = "Set a XML parameter to the specified value.")
-public class XmlSetter extends SetterOperation {
+@OperationInfos(name = "HTTP JSON", category = OperationCategory.SETTER, description = "Set a JSON parameter to the specified value.")
+public class HttpJsonSetter extends SetterOperation {
 	
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
@@ -21,7 +21,7 @@ public class XmlSetter extends SetterOperation {
 		IExtensionHelpers helpers = callbacks.getHelpers();
 		
 		byte[] newValue = getWhatBytes();
-		IParameter param = getParameter(input, parameterName, IParameter.PARAM_XML, helpers);
+		IParameter param = getParameter(input, parameterName, IParameter.PARAM_JSON, helpers);
 		
 		if( param == null )
 			return input; 

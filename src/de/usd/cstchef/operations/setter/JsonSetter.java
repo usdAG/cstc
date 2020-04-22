@@ -1,33 +1,91 @@
 package de.usd.cstchef.operations.setter;
 
-import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
+import javax.swing.JCheckBox;
+
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
+import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP JSON", category = OperationCategory.SETTER, description = "Set a JSON parameter to the specified value.")
-public class JsonSetter extends SetterOperation {
+@OperationInfos(name = "JSON", category = OperationCategory.SETTER, description = "Set value of json object.")
+public class JsonSetter extends SetterOperation implements ActionListener {
+
+	private JCheckBox addIfNotPresent;
+	private VariableTextField path;
 	
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
 		
-		String parameterName = getWhere();
-		if( parameterName.equals("") )
-			return input;
-			
-		IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-		IExtensionHelpers helpers = callbacks.getHelpers();
-		
-		byte[] newValue = getWhatBytes();
-		IParameter param = getParameter(input, parameterName, IParameter.PARAM_JSON, helpers);
-		
-		if( param == null )
+		if( getWhere().equals("") )
 			return input; 
-
-		byte[] newRequest = replaceParam(input, param, newValue);
-		return newRequest;
+		
+		DocumentContext document = JsonPath.parse(new String(input));
+		
+		try {
+			document.read(getWhere());
+		} catch( Exception e ) {
+			
+			if( !addIfNotPresent.isSelected() )
+				throw new IllegalArgumentException("Key not found.");
+			
+			String insertPath = this.path.getText();
+			if( insertPath.equals("Insert-Path") || insertPath.equals("") )
+				insertPath = "$";
+				
+			document = document.put(insertPath, getWhere(), getWhat());
+			return document.jsonString().getBytes();
+		}
+		
+		document.set(getWhere(), getWhat());
+		return document.jsonString().getBytes();
 	}
 	
+	@Override
+	public void createUI() {
+		super.createUI();
+		this.addIfNotPresent = new JCheckBox("Add if not present");
+	    this.addIfNotPresent.setSelected(true);
+	    this.addIfNotPresent.addActionListener(this);
+		this.addUIElement(null, this.addIfNotPresent);
+		
+		this.path = new VariableTextField();
+		this.path.setText("Insert-Path");
+    	this.path.setForeground(Color.GRAY);
+		this.path.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+			    if (path.getText().equals("Insert-Path")) {
+			    	path.setText("");
+			    	path.setForeground(Color.BLACK);
+			    }
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+			    if (path.getText().isEmpty()) {
+			    	path.setForeground(Color.GRAY);
+			    	path.setText("Insert-Path");
+			    }
+			}
+		});
+        this.addUIElement(null, this.path);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+        if( arg0.getSource() == this.addIfNotPresent ) {
+          if( this.addIfNotPresent.isSelected() ) {
+        	  this.path.setVisible(true);
+          } else {
+        	  this.path.setVisible(false);
+          }
+        } 
+	}
 }
