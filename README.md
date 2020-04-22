@@ -74,6 +74,12 @@ from the the last *lane* which has an active operation. This initially takes get
 Take a look at our basic tutorial on [YouTube](https://www.youtube.com/watch?v=BUXvWfb_YWU) and make sure to read our initial
 *CSTC* [blog post](https://herolab.usd.de/news-cyber-security-transformation-chef/).
 
+
+## Known Issues
+
+Unfortunately, the GUI of some *CSTC Operations* does not really work well together with the **dark theme** of *Burp Suite*. Therefore,
+we recommend to use a **light theme** for the best user experience.
+
 ## Feedback
 
 We gladly appreciate all feedback, bug reports and feature requests.
