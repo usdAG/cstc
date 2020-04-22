@@ -75,6 +75,7 @@ import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.HTTPRequest;
 import de.usd.cstchef.operations.setter.HttpGetSetter;
 import de.usd.cstchef.operations.setter.HttpHeaderSetter;
+import de.usd.cstchef.operations.setter.HttpJsonSetter;
 import de.usd.cstchef.operations.setter.HttpPostSetter;
 import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetCookie;
@@ -189,7 +190,7 @@ public class Utils {
 				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
 				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class, HttpSetCookie.class,
 				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HttpHeaderSetter.class,
-				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, HttpXmlSetter.class, JsonSetter.class,
+				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, HttpXmlSetter.class, HttpJsonSetter.class,
 				DateTime.class, Addition.class, Subtraction.class, HttpGetSetter.class, Divide.class, JsonSetter.class, HttpJsonExtractor.class,
 				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
 	}
