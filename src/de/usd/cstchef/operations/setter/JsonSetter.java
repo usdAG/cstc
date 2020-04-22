@@ -82,9 +82,9 @@ public class JsonSetter extends SetterOperation implements ActionListener {
 	public void actionPerformed(ActionEvent arg0) {
         if( arg0.getSource() == this.addIfNotPresent ) {
           if( this.addIfNotPresent.isSelected() ) {
-        	  this.path.setVisible(true);
+        	  this.path.setEditable(true);
           } else {
-        	  this.path.setVisible(false);
+        	  this.path.setEditable(false);
           }
         } 
 	}
