@@ -181,18 +181,23 @@ public class Utils {
 	// TODO reflection does not work in Burp Suite
 	@SuppressWarnings("unchecked")
 	public static Class<? extends Operation>[] getOperationsDev() {
-		return new Class[] { RegexExtractor.class, WriteFile.class, ReadFile.class, Length.class, UrlDecode.class, UrlEncode.class,
-				HTTPRequest.class, SHA1.class, Hmac.class, Gost.class, Median.class, RIPEMD.class, DesDecryption.class,
-				MultiplyList.class, Skein.class, StoreVariable.class, JsonExtractor.class, Sum.class, GetVariable.class,
-				HttpUriExtractor.class, HttpBodyExtractor.class, HttpPostExtractor.class, HttpPostSetter.class, HttpXmlExtractor.class,
-				HttpGetExtractor.class, Sub.class, Replace.class, DivideList.class, ToHex.class, FromHex.class, MD5.class,
-				AesDecryption.class, Suffix.class, SHA2.class, Prefix.class, MD4.class, Whirlpool.class, HttpCookieExtractor.class,
-				StaticString.class, AddKey.class, FromBase64.class, DSTU7564.class, Substring.class, ToBase64.class,
-				SHA3.class, HttpMethodExtractor.class, MD2.class, Blake.class, AesEncryption.class, HttpSetCookie.class,
-				Tiger.class, DesEncryption.class, HttpHeaderExtractor.class, And.class, Mean.class, HttpHeaderSetter.class,
-				XmlFullSignature.class, XmlMultiSignature.class, HttpSetBody.class, Multiply.class, HttpXmlSetter.class, HttpJsonSetter.class,
-				DateTime.class, Addition.class, Subtraction.class, HttpGetSetter.class, Divide.class, JsonSetter.class, HttpJsonExtractor.class,
-				Deflate.class, Inflate.class, Gzip.class, GUnzip.class, UnixTimestamp.class, Xor.class, HttpSetUri.class };
+		return new Class[] { 
+            Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
+            Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
+            GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
+            HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class, HttpGetSetter.class, HttpHeaderExtractor.class,
+            HttpHeaderSetter.class, HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpPostExtractor.class,
+            HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
+            HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, Inflate.class, JsonExtractor.class,
+            JsonSetter.class, Length.class, MD2.class, MD4.class, MD5.class,
+            Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class,
+            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SHA1.class,
+            SHA2.class, SHA3.class, Skein.class, StaticString.class, StoreVariable.class,
+            Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
+            Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
+            UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
+            Xor.class };
 	}
 
 	public static Class<? extends Operation>[] getOperations() {
