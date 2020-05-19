@@ -89,6 +89,7 @@ import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
 import de.usd.cstchef.operations.string.Prefix;
 import de.usd.cstchef.operations.string.Replace;
+import de.usd.cstchef.operations.string.SplitAndSelect;
 import de.usd.cstchef.operations.string.StaticString;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
@@ -197,7 +198,7 @@ public class Utils {
             JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class, MD2.class, MD4.class, MD5.class,
             Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
             ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SetIfEmpty.class, SHA1.class,
-            SHA2.class, SHA3.class, Skein.class, StaticString.class, StoreVariable.class,
+            SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class, StoreVariable.class,
             Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
             Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
             UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
