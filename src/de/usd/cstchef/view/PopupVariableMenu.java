@@ -44,7 +44,7 @@ public class PopupVariableMenu extends JPopupMenu implements ActionListener, Pop
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		parent.setText(parent.getText() + "§" + arg0.getActionCommand());
+		parent.setText(parent.getText() + "$" + arg0.getActionCommand());
 	}
 
 	@Override
