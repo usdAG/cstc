@@ -91,6 +91,8 @@ import de.usd.cstchef.operations.string.StaticString;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.utils.GetVariable;
+import de.usd.cstchef.operations.utils.RandomNumber;
+import de.usd.cstchef.operations.utils.SetIfEmpty;
 import de.usd.cstchef.operations.utils.StoreVariable;
 import de.usd.cstchef.view.View;
 
@@ -190,9 +192,9 @@ public class Utils {
             HttpHeaderSetter.class, HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpPostExtractor.class,
             HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
             HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, Inflate.class, JsonExtractor.class,
-            JsonSetter.class, Length.class, MD2.class, MD4.class, MD5.class, RandomNumber.class,
-            Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class,
-            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SHA1.class,
+            JsonSetter.class, Length.class, MD2.class, MD4.class, MD5.class,
+            Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
+            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SetIfEmpty.class, SHA1.class,
             SHA2.class, SHA3.class, Skein.class, StaticString.class, StoreVariable.class,
             Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
             Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
