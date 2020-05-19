@@ -55,6 +55,7 @@ import de.usd.cstchef.operations.extractors.HttpPostExtractor;
 import de.usd.cstchef.operations.extractors.HttpUriExtractor;
 import de.usd.cstchef.operations.extractors.HttpXmlExtractor;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
+import de.usd.cstchef.operations.extractors.LineExtractor;
 import de.usd.cstchef.operations.extractors.RegexExtractor;
 import de.usd.cstchef.operations.hashing.Blake;
 import de.usd.cstchef.operations.hashing.DSTU7564;
@@ -192,7 +193,7 @@ public class Utils {
             HttpHeaderSetter.class, HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpPostExtractor.class,
             HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
             HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, Inflate.class, JsonExtractor.class,
-            JsonSetter.class, Length.class, MD2.class, MD4.class, MD5.class,
+            JsonSetter.class, Length.class, LineExtractor.class, MD2.class, MD4.class, MD5.class,
             Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
             ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SetIfEmpty.class, SHA1.class,
             SHA2.class, SHA3.class, Skein.class, StaticString.class, StoreVariable.class,
