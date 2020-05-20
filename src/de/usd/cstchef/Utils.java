@@ -14,6 +14,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import burp.BurpUtils;
+import burp.IBurpExtenderCallbacks;
+import burp.IExtensionHelpers;
 import burp.Logger;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
@@ -133,16 +135,34 @@ public class Utils {
 	public static byte[] replaceVariablesByte(byte[] bytes) {
 		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
 
+        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
+		IExtensionHelpers helpers = callbacks.getHelpers();
+
 		byte[] currentKey;
 		for (Entry<String, byte[]> entry : variables.entrySet()) {
 
+            int offset = 0;
 			currentKey = ("$" + entry.getKey()).getBytes();
-			if( Arrays.equals(currentKey, bytes) ) {
-					bytes = entry.getValue();
-			}
 
+            while( offset >= 0 ) {
+                offset = helpers.indexOf(bytes, currentKey, true, offset, bytes.length);
+                if( offset >= 0 )
+                    bytes = insertAtOffset(bytes, offset, offset + currentKey.length, entry.getValue());
+            }
 		}
 		return bytes;
+	}
+
+    public static byte[] insertAtOffset(byte[] input, int start, int end, byte[] newValue) {
+		byte[] prefix = Arrays.copyOfRange(input, 0, start);
+		byte[] rest = Arrays.copyOfRange(input, end, input.length);
+
+		byte[] output = new byte[prefix.length + newValue.length + rest.length];
+		System.arraycopy(prefix, 0, output, 0, prefix.length);
+		System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
+		System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
+
+		return output;
 	}
 
 	public static Class<? extends Operation>[] getOperationsBurp() {
