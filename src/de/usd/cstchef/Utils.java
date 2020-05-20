@@ -55,6 +55,7 @@ import de.usd.cstchef.operations.extractors.HttpPostExtractor;
 import de.usd.cstchef.operations.extractors.HttpUriExtractor;
 import de.usd.cstchef.operations.extractors.HttpXmlExtractor;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
+import de.usd.cstchef.operations.extractors.LineExtractor;
 import de.usd.cstchef.operations.extractors.RegexExtractor;
 import de.usd.cstchef.operations.hashing.Blake;
 import de.usd.cstchef.operations.hashing.DSTU7564;
@@ -82,15 +83,19 @@ import de.usd.cstchef.operations.setter.HttpSetCookie;
 import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.HttpXmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
+import de.usd.cstchef.operations.setter.LineSetter;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
 import de.usd.cstchef.operations.string.Prefix;
 import de.usd.cstchef.operations.string.Replace;
+import de.usd.cstchef.operations.string.SplitAndSelect;
 import de.usd.cstchef.operations.string.StaticString;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.utils.GetVariable;
+import de.usd.cstchef.operations.utils.RandomNumber;
+import de.usd.cstchef.operations.utils.SetIfEmpty;
 import de.usd.cstchef.operations.utils.StoreVariable;
 import de.usd.cstchef.view.View;
 
@@ -119,7 +124,7 @@ public class Utils {
 		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
 		for (Entry<String, byte[]> entry : variables.entrySet()) {
 			// TODO this is easy, but very bad, how to do this right?
-			text = text.replaceAll("§" + entry.getKey(), new String(entry.getValue()));
+			text = text.replaceAll("$" + entry.getKey(), new String(entry.getValue()));
 		}
 
 		return text;
@@ -131,7 +136,7 @@ public class Utils {
 		byte[] currentKey;
 		for (Entry<String, byte[]> entry : variables.entrySet()) {
 
-			currentKey = ("§" + entry.getKey()).getBytes();
+			currentKey = ("$" + entry.getKey()).getBytes();
 			if( Arrays.equals(currentKey, bytes) ) {
 					bytes = entry.getValue();
 			}
@@ -190,10 +195,10 @@ public class Utils {
             HttpHeaderSetter.class, HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpPostExtractor.class,
             HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
             HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, Inflate.class, JsonExtractor.class,
-            JsonSetter.class, Length.class, MD2.class, MD4.class, MD5.class,
-            Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class,
-            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SHA1.class,
-            SHA2.class, SHA3.class, Skein.class, StaticString.class, StoreVariable.class,
+            JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class, MD2.class, MD4.class, MD5.class,
+            Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
+            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SetIfEmpty.class, SHA1.class,
+            SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class, StoreVariable.class,
             Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
             Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
             UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
