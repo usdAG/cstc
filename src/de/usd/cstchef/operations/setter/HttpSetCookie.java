@@ -1,13 +1,12 @@
 package de.usd.cstchef.operations.setter;
 
-import java.util.Arrays;
-
 import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
 import burp.IResponseInfo;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -52,7 +51,7 @@ public class HttpSetCookie extends SetterOperation {
 			if( end < 0 )
 				end = line_end;
 			
-			return insertAtOffset(input, start + cookieSearch.length, end, newValue);
+			return Utils.insertAtOffset(input, start + cookieSearch.length, end, newValue);
 			
 		} catch( IllegalArgumentException e ) {
 			
@@ -66,7 +65,7 @@ public class HttpSetCookie extends SetterOperation {
 				System.arraycopy("=".getBytes(), 0, value, cookieName.length, 1);
 				System.arraycopy(newValue, 0, value, cookieName.length + 1, newValue.length);
 				System.arraycopy("; ".getBytes(), 0, value, cookieName.length + 1 + newValue.length, 2);
-				return insertAtOffset(input, offset + cookieHeaderLength, offset + cookieHeaderLength, value);
+				return Utils.insertAtOffset(input, offset + cookieHeaderLength, offset + cookieHeaderLength, value);
 				
 			} else {
 				
@@ -77,7 +76,7 @@ public class HttpSetCookie extends SetterOperation {
 				System.arraycopy("=".getBytes(), 0, value, cookieHeaderLength + cookieName.length, 1);
 				System.arraycopy(newValue, 0, value, cookieHeaderLength + cookieName.length + 1, newValue.length);
 				System.arraycopy(";".getBytes(), 0, value, cookieHeaderLength + cookieName.length + 1 + newValue.length, 1);
-				return insertAtOffset(input, bodyOffset, bodyOffset, value);
+				return Utils.insertAtOffset(input, bodyOffset, bodyOffset, value);
 			}
 		}
 	}
@@ -89,16 +88,5 @@ public class HttpSetCookie extends SetterOperation {
 	    this.addIfNotPresent.setSelected(true);
 		this.addUIElement(null, this.addIfNotPresent);
 	}
-	
-	private byte[] insertAtOffset(byte[] input, int start, int end, byte[] newValue) {
-		byte[] prefix = Arrays.copyOfRange(input, 0, start);
-		byte[] rest = Arrays.copyOfRange(input, end, input.length);
-		
-		byte[] output = new byte[prefix.length + newValue.length + rest.length];
-		System.arraycopy(prefix, 0, output, 0, prefix.length);
-		System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
-		System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
-		
-		return output;
-	}
+
 }
