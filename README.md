@@ -76,8 +76,8 @@ from the the last *lane* which has an active operation. This initially takes get
 Take a look at our basic tutorial on [YouTube](https://www.youtube.com/watch?v=BUXvWfb_YWU) and make sure to read our initial
 *CSTC* [blog post](https://herolab.usd.de/news-cyber-security-transformation-chef/).
 
-**UPDATE:** Due to some incompatibility issues when installing *CSTC* from *BApp Store*, we had to switch to a new variable prefix.
-Variables from other *lanes* have now to be prefixed with ``$`` e.g. like ``$Outgoing_step1``.
+**UPDATE:** Due to some incompatibility issues when installing *CSTC* via *BApp Store*, we had to switch to a new variable prefix.
+Variables from other *lanes* have now to be prefixed by ``$`` e.g. like ``$Outgoing_step1``.
 
 
 ## Known Issues
