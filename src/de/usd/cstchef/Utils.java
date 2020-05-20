@@ -124,7 +124,7 @@ public class Utils {
 		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
 		for (Entry<String, byte[]> entry : variables.entrySet()) {
 			// TODO this is easy, but very bad, how to do this right?
-			text = text.replaceAll("$" + entry.getKey(), new String(entry.getValue()));
+			text = text.replace("$" + entry.getKey(), new String(entry.getValue()));
 		}
 
 		return text;
