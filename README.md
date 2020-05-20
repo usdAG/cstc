@@ -44,14 +44,16 @@ The plugin has been successfully tested and decreased the time for performing te
 
 ## Installation
 
-*CSTC* is currently not listed in the *Burp Extension Storage* (*BApp Store*), but will be added there as soon as *PortSwigger* acknowledges the extension.
+*CSTC* is available inside the *Burp Extension Storage* (*BApp Store*) and listed under the name *CSTC, Modular HTTP Manipulator*. 
+Recently we observed some functionality issues when installing *CSTC* via *BApp Store*. These should be fixed by now, but if you 
+encounter additional problems you may want to install *CSTC* manually.
 
 We suggest to pull the source code and build it yourself, because you should never trust binaries
 and should always review the code which is used in a productive setting.
 
 However, you can also pull a release from *GitHub* and install it by adding it to *Burp Suite*.
 
-### Build Process
+**Build Process**
 
 The build process is fairly easy. It currently requires a installed *JDK* and *Maven* to build.
 You can build the extension with the following commands:
@@ -73,6 +75,9 @@ a new concept which we call *lanes*. The output of a *CSTC* transformation is al
 from the the last *lane* which has an active operation. This initially takes getting used to, but quickly feels intuitive.
 Take a look at our basic tutorial on [YouTube](https://www.youtube.com/watch?v=BUXvWfb_YWU) and make sure to read our initial
 *CSTC* [blog post](https://herolab.usd.de/news-cyber-security-transformation-chef/).
+
+**UPDATE:** Due to some incompatibility issues when installing *CSTC* from *BApp Store*, we had to switch to a new variable prefix.
+Variables from other *lanes* have now to be prefixed with ``$`` e.g. like ``$Outgoing_step1``.
 
 
 ## Known Issues
