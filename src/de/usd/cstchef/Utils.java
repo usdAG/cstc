@@ -37,6 +37,8 @@ import de.usd.cstchef.operations.compression.Gzip;
 import de.usd.cstchef.operations.compression.Inflate;
 import de.usd.cstchef.operations.dataformat.FromBase64;
 import de.usd.cstchef.operations.dataformat.FromHex;
+import de.usd.cstchef.operations.dataformat.HtmlDecode;
+import de.usd.cstchef.operations.dataformat.HtmlEncode;
 import de.usd.cstchef.operations.dataformat.ToBase64;
 import de.usd.cstchef.operations.dataformat.ToHex;
 import de.usd.cstchef.operations.dataformat.UrlDecode;
@@ -214,9 +216,9 @@ public class Utils {
             HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class, HttpGetSetter.class, HttpHeaderExtractor.class,
             HttpHeaderSetter.class, HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpPostExtractor.class,
             HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
-            HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, Inflate.class, JsonExtractor.class,
-            JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class, MD2.class, MD4.class, MD5.class,
-            Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
+            HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
+            Inflate.class, JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class,
+            MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
             ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SetIfEmpty.class, SHA1.class,
             SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class, StoreVariable.class,
             Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
