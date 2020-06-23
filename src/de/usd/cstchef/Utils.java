@@ -49,6 +49,8 @@ import de.usd.cstchef.operations.encryption.AesDecryption;
 import de.usd.cstchef.operations.encryption.AesEncryption;
 import de.usd.cstchef.operations.encryption.DesDecryption;
 import de.usd.cstchef.operations.encryption.DesEncryption;
+import de.usd.cstchef.operations.encryption.RsaDecryption;
+import de.usd.cstchef.operations.encryption.RsaEncryption;
 import de.usd.cstchef.operations.extractors.HttpBodyExtractor;
 import de.usd.cstchef.operations.extractors.HttpCookieExtractor;
 import de.usd.cstchef.operations.extractors.HttpGetExtractor;
@@ -219,9 +221,9 @@ public class Utils {
             HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
             Inflate.class, JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class,
             MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
-            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, SetIfEmpty.class, SHA1.class,
-            SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class, StoreVariable.class,
-            Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
+            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class,
+            SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class,
+            StoreVariable.class, Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
             Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
             UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
             Xor.class };
