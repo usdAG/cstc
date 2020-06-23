@@ -6,81 +6,104 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.security.KeyStore.PrivateKeyEntry;
+import java.security.cert.Certificate;
 import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JPasswordField;
 
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.view.ui.FormatTextField;
 
-public abstract class SignatureOperation extends Operation implements ActionListener {
+public abstract class KeystoreOperation extends Operation implements ActionListener {
 
     protected String[] keyEntries = new String[] {};
     protected String[] keyStoreTypes = new String[] {"PKCS12", "JKS"};
 
+    protected Certificate cert = null;
     protected KeyStore keyStore = null;
     protected PrivateKeyEntry selectedEntry = null;
 
 	protected File keyStoreFile = null;
-	protected FormatTextField keyStorePass;
+	protected JPasswordField keyStorePass;
 
     protected JCheckBox keyStoreOpen;
+    protected JCheckBox certAvailable;
+    protected JCheckBox keyAvailable;
+    
     protected JButton chooseFileButton;
     protected JButton openKeyStoreButton;
 	protected JComboBox<String> keyEntry;
 	protected JComboBox<String> keyStoreType;
 	protected JFileChooser fileChooser = new JFileChooser();
 
-
-	public SignatureOperation() {
+	public KeystoreOperation() {
 		super();
 	}
 
-
 	private void openKeyStore() {
-        try {
-          String storeType = (String)keyStoreType.getSelectedItem();
-          String password = new String(keyStorePass.getText());
-          KeyStore ks = KeyStore.getInstance(storeType);
-          ks.load(new FileInputStream(keyStoreFile), password.toCharArray());
-          this.keyStore = ks;
-          this.keyStoreOpen.setSelected(true);
-          this.updateKeyEntries();
-        } catch( Exception e ) {
-          this.resetKeyStore();
-        }
+		try {
+			
+			String storeType = (String)keyStoreType.getSelectedItem();
+			char[] password = keyStorePass.getPassword();
+			KeyStore ks = KeyStore.getInstance(storeType);
+			ks.load(new FileInputStream(keyStoreFile), password);
+			this.keyStore = ks;
+			this.keyStoreOpen.setSelected(true);
+			this.certAvailable.setSelected(false);
+			this.keyAvailable.setSelected(false);
+			this.updateKeyEntries();
+			
+		} catch( Exception e ) {
+	        this.resetKeyStore();
+		}
 	}
 
-
-    private void updateKeyEntries() {
-        try {
-          Enumeration<String> entries = keyStore.aliases();
-          keyEntry.removeAllItems();
-          while (entries.hasMoreElements()) {
+    private void updateKeyEntries(){
+    	try {
+            Enumeration<String> entries = keyStore.aliases();
+            keyEntry.removeAllItems();
+            while (entries.hasMoreElements()) {
             keyEntry.addItem(entries.nextElement());
           }
         } catch( Exception e ) {
-          this.resetKeyStore();
+            this.resetKeyStore();
         }
     }
 
-
     private void selectKeyEntry() {
+    	
+        String entry = (String)keyEntry.getSelectedItem();
         try {
-          String password = new String(keyStorePass.getText());
-          String entryNumber = (String)keyEntry.getSelectedItem();
-          selectedEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(entryNumber, new KeyStore.PasswordProtection(password.toCharArray()));
+	          this.cert = keyStore.getCertificate(entry);
+	          if ( this.cert != null )
+	        	  this.certAvailable.setSelected(true);
+	          else
+	        	  this.certAvailable.setSelected(false);
         } catch( Exception e ) {
-          this.resetKeyStore();
+      	  this.certAvailable.setSelected(false);
         }
+        
+       char[] password = keyStorePass.getPassword();
+       try {
+		     this.selectedEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(entry, new KeyStore.PasswordProtection(password)); 
+		     if ( this.selectedEntry != null )
+	       	  this.keyAvailable.setSelected(true);
+	         else
+	       	  this.keyAvailable.setSelected(false);
+       } catch( Exception e) {
+	       	  this.keyAvailable.setSelected(false);
+       }
+
     }
 
 
     private void resetKeyStore() {
         this.keyStoreOpen.setSelected(false);
+		this.certAvailable.setSelected(false);
+		this.keyAvailable.setSelected(false);
         keyStore = null;
         selectedEntry = null;
     }
@@ -95,7 +118,7 @@ public abstract class SignatureOperation extends Operation implements ActionList
 		chooseFileButton.addActionListener(this);
 		this.addUIElement(null, this.chooseFileButton);
 
-		this.keyStorePass = new FormatTextField();
+		this.keyStorePass = new JPasswordField();
 		this.addUIElement("PrivKeyPassword", this.keyStorePass);
 
 		openKeyStoreButton = new JButton("Open keystore");
@@ -110,24 +133,43 @@ public abstract class SignatureOperation extends Operation implements ActionList
         this.keyStoreOpen.setSelected(false);
 		this.keyStoreOpen.addActionListener(this);
 		this.addUIElement(null, this.keyStoreOpen);
+		
+		this.certAvailable = new JCheckBox("Certificate available");
+        this.certAvailable.setSelected(false);
+		this.certAvailable.addActionListener(this);
+		this.addUIElement(null, this.certAvailable);
+		
+		this.keyAvailable = new JCheckBox("PrivKey available");
+        this.keyAvailable.setSelected(false);
+		this.keyAvailable.addActionListener(this);
+		this.addUIElement(null, this.keyAvailable);
+
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		
         if( arg0.getSource() == keyStoreType ) {
+        	
           this.resetKeyStore();
+          
         } else if( arg0.getSource() == openKeyStoreButton ) {
+        	
           this.resetKeyStore();
           this.openKeyStore();
+          
         } else if( arg0.getSource() == chooseFileButton ) {
+        	
           this.resetKeyStore();
           int returnVal = fileChooser.showOpenDialog(this);
           if (returnVal == JFileChooser.APPROVE_OPTION) {
             keyStoreFile = fileChooser.getSelectedFile();
           }
+          
         } else if( arg0.getSource() == keyEntry ) {
           this.selectKeyEntry();
         } 
+        
         if( keyStore != null && keyEntry != null ) {
           this.notifyChange();
         }
