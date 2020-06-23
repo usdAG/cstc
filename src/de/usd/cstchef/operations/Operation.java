@@ -190,7 +190,9 @@ public abstract class Operation extends JPanel {
 		} else if (comp instanceof JSpinner) {
 			result = ((JSpinner) comp).getValue();
 		} else if (comp instanceof JComboBox) {
-			result = ((JComboBox<?>) comp).getSelectedItem().toString();
+			result = ((JComboBox<?>) comp).getSelectedItem();
+			if( result != null )
+				result = result.toString();
 		} else if (comp instanceof JCheckBox) {
 			result = ((JCheckBox) comp).isSelected();
 		} else if (comp instanceof FormatTextField) {
