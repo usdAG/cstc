@@ -30,6 +30,10 @@ public class NumberCompare extends ConditionalOperation {
 			if( inputNumber.compareTo(userNumber) == 0 )
 				condition = true;
 			break;
+		case "not equal":
+			if( inputNumber.compareTo(userNumber) != 0 )
+				condition = true;
+			break;
 		case "greater":
 			if( inputNumber < userNumber )
 				condition = true;
@@ -61,7 +65,7 @@ public class NumberCompare extends ConditionalOperation {
 	@Override
 	public void createUI() {
 		super.createUI();
-		this.operationBox = new JComboBox<>(new String[] {"equal", "lower", "greater", "lower equal", "greater equal"});
+		this.operationBox = new JComboBox<>(new String[] {"equal", "not equal", "lower", "greater", "lower equal", "greater equal"});
 		this.operationBox.setSelectedItem("equal");
 		this.addUIElement("Lineseperator", this.operationBox);
 	}
