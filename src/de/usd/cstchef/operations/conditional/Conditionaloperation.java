@@ -14,7 +14,7 @@ public abstract class Conditionaloperation extends Operation {
 	public void setOperationSkip() {
 		
 		try {
-			int operationSkip = Integer.valueOf(laneSkipField.getText());
+			int operationSkip = Integer.valueOf(operationSkipField.getText());
 			this.setOperationSkip(operationSkip);
 		} catch( Exception e ) {
 			throw new IllegalArgumentException("Input is not a number.");
