@@ -35,6 +35,10 @@ import de.usd.cstchef.operations.compression.Deflate;
 import de.usd.cstchef.operations.compression.GUnzip;
 import de.usd.cstchef.operations.compression.Gzip;
 import de.usd.cstchef.operations.compression.Inflate;
+import de.usd.cstchef.operations.conditional.NumberCompare;
+import de.usd.cstchef.operations.conditional.RegexMatch;
+import de.usd.cstchef.operations.conditional.StringContains;
+import de.usd.cstchef.operations.conditional.StringMatch;
 import de.usd.cstchef.operations.dataformat.FromBase64;
 import de.usd.cstchef.operations.dataformat.FromHex;
 import de.usd.cstchef.operations.dataformat.HtmlDecode;
@@ -221,10 +225,10 @@ public class Utils {
             HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
             HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
             Inflate.class, JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class,
-            MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
+            MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class, NumberCompare.class, Prefix.class, RandomNumber.class,
             ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class,
-            SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class,
-            StoreVariable.class, Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
+            RegexMatch.class, SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class,
+            StoreVariable.class, Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class, StringContains.class, StringMatch.class,
             Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
             UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
             Xor.class };
