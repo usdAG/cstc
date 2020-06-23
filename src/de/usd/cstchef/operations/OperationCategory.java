@@ -4,6 +4,7 @@ public enum OperationCategory {
 	ARITHMETIC("Arithmetic"),
 	BYTEOPERATION("Byte Operations"),
 	COMPRESSION("Compression"),
+	CONDITIONAL("Conditional"),
 	DATAFORMAT("Data format"),
 	DATES("Date / Time"),
 	ENCRYPTION("Encryption / Encoding"),

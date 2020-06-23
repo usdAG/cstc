@@ -70,6 +70,9 @@ public abstract class Operation extends JPanel {
 	private Box contentBox;
 	private Map<String, Component> uiElements;
 
+    private int operationSkip = 0;
+    private int laneSkip = 0;
+
 	public Operation() {
 		super();
 		this.uiElements = new HashMap<>();
@@ -392,6 +395,26 @@ public abstract class Operation extends JPanel {
 	public void setError(boolean error) {
 		this.error = error;
 	}
+
+    public void setOperationSkip(int count) {
+        if( count < 0 )
+            count = 0;
+        this.operationSkip = count;
+    }
+
+    public int getOperationSkip() {
+        return this.operationSkip;
+    }
+
+    public void setLaneSkip(int count) {
+        if( count < 0 )
+            count = 0;
+        this.laneSkip = count;
+    }
+
+    public int getLaneSkip() {
+        return this.laneSkip;
+    }
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
