@@ -90,6 +90,7 @@ import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.HttpXmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
+import de.usd.cstchef.operations.signature.RsaSignature;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
@@ -221,7 +222,7 @@ public class Utils {
             HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
             Inflate.class, JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class,
             MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class, Prefix.class, RandomNumber.class,
-            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class,
+            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class,
             SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class,
             StoreVariable.class, Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class,
             Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
