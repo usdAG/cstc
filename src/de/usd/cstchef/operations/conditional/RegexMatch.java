@@ -8,7 +8,7 @@ import javax.swing.JCheckBox;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "Regex Match", category = OperationCategory.CONDITIONAL, description = "Skip if regex matches")
+@OperationInfos(name = "Regex Match", category = OperationCategory.CONDITIONALS, description = "Skip if regex matches")
 public class RegexMatch extends ConditionalOperation {
 
 	private JCheckBox invert;
