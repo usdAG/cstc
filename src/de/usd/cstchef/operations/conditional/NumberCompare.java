@@ -6,7 +6,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "Number Compare", category = OperationCategory.CONDITIONAL, description = "Skip if evaluates to true")
-public class NumberCompare extends Conditionaloperation {
+public class NumberCompare extends ConditionalOperation {
 
 	private JComboBox<String> operationBox;
 

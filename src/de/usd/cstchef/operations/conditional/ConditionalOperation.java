@@ -5,7 +5,7 @@ import javax.swing.JTextField;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-public abstract class Conditionaloperation extends Operation {
+public abstract class ConditionalOperation extends Operation {
 
 	protected VariableTextField expr;
 	private JTextField operationSkipField;

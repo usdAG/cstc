@@ -9,7 +9,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "String Match", category = OperationCategory.CONDITIONAL, description = "Skip if input matches")
-public class StringMatch extends Conditionaloperation {
+public class StringMatch extends ConditionalOperation {
 
 	private JCheckBox invert;
 	private JCheckBox caseSensitive;
