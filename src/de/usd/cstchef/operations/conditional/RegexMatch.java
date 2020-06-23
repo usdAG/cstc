@@ -12,6 +12,7 @@ import de.usd.cstchef.operations.OperationCategory;
 public class RegexMatch extends ConditionalOperation {
 
 	private JCheckBox invert;
+	private JCheckBox find;
 
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
@@ -19,7 +20,14 @@ public class RegexMatch extends ConditionalOperation {
 		Pattern p = Pattern.compile(this.expr.getText());
 		Matcher m = p.matcher(new String(input));
 
-		if( m.matches() ^ invert.isSelected() ) {
+		boolean condition = false;
+		if( find.isSelected() ) {
+			condition = m.find();
+		} else {
+			condition = m.matches();
+		}
+		
+		if( condition ^ invert.isSelected() ) {
 			this.setOperationSkip();
 			this.setLaneSkip();
 		} else {
@@ -35,6 +43,9 @@ public class RegexMatch extends ConditionalOperation {
 		
 		this.invert = new JCheckBox();
 		this.addUIElement("Invert Match", this.invert);
+		
+		this.find = new JCheckBox();
+		this.addUIElement("Find anywhere", this.find);
 	}
 	
 }
