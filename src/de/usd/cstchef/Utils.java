@@ -105,6 +105,7 @@ import de.usd.cstchef.operations.string.StaticString;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.utils.GetVariable;
+import de.usd.cstchef.operations.utils.NoOperation;
 import de.usd.cstchef.operations.utils.RandomNumber;
 import de.usd.cstchef.operations.utils.SetIfEmpty;
 import de.usd.cstchef.operations.utils.StoreVariable;
@@ -220,18 +221,24 @@ public class Utils {
             Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
             Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
             GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
-            HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class, HttpGetSetter.class, HttpHeaderExtractor.class,
-            HttpHeaderSetter.class, HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpPostExtractor.class,
-            HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class, HttpSetCookie.class, HttpSetUri.class,
-            HttpUriExtractor.class, HttpXmlExtractor.class, HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
-            Inflate.class, JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class, LineSetter.class,
-            MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class, NumberCompare.class, Prefix.class, RandomNumber.class,
-            ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class,
-            RegexMatch.class, SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class,
-            StoreVariable.class, Sub.class, Substring.class, Subtraction.class, Suffix.class, Sum.class, StringContains.class, StringMatch.class,
-            Tiger.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class,
-            UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-            Xor.class };
+            HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
+            HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
+            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class,
+            HttpPostExtractor.class, HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class,
+            HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
+            HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
+            JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class,
+            LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
+            Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
+            RandomNumber.class, ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class,
+            RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
+            SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
+            StaticString.class, StoreVariable.class, Sub.class, Substring.class, Subtraction.class,
+            Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
+            ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
+            Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
+            Xor.class
+		};
 	}
 
 	public static Class<? extends Operation>[] getOperations() {
