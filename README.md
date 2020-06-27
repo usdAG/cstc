@@ -6,8 +6,8 @@ You may obtain a copy of the License at https://www.gnu.org/licenses/gpl-3.0.htm
 
 ![CSTC](media/CSTC_White_Smaller.png)
 
-![](https://github.com/usdAG/cstc/workflows/maven/badge.svg?branch=master)
-![](https://github.com/usdAG/cstc/workflows/maven/badge.svg?branch=develop)
+![](https://github.com/usdAG/cstc/workflows/master%20maven%20CI/badge.svg?branch=master)
+![](https://github.com/usdAG/cstc/workflows/develop%20maven%20CI/badge.svg?branch=develop)
 
 # Cyber Security Transformation Chef
 
