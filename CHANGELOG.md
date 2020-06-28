@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Byte operations now also allow multiple variables in one input field
 * *jackson-core* and *jackson-databind* updated to current version
+* Breakpoint operations now assign variables
 
 
 ## [1.1.1] - 2020-05-20
