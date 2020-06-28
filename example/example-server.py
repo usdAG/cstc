@@ -40,7 +40,7 @@ class S(BaseHTTPRequestHandler):
         self.wfile.write(b"<h1>Processing Input: '" + result + b"'...</h1>")
 
 
-def run(server_class=HTTPServer, handler_class=S, port=8080):
+def run(server_class=HTTPServer, handler_class=S, port=8000):
     logging.basicConfig(level=logging.INFO)
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
