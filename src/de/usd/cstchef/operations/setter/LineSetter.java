@@ -8,6 +8,7 @@ import javax.swing.JComboBox;
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
 import burp.IExtensionHelpers;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -70,9 +71,9 @@ public class LineSetter extends SetterOperation {
 			byte[] value = new byte[newValue.length + lineEndings.length];
 			System.arraycopy(lineEndings, 0, value, 0, lineEndings.length);
 			System.arraycopy(newValue, 0, value, lineEndings.length, newValue.length);
-			return insertAtOffset(input, end, end, value);
+			return Utils.insertAtOffset(input, end, end, value);
 		} else {
-			return insertAtOffset(input, start, end, newValue);
+			return Utils.insertAtOffset(input, start, end, newValue);
 		}
 	}
 
@@ -87,15 +88,4 @@ public class LineSetter extends SetterOperation {
 		this.addUIElement("Lineseperator", this.formatBox);
 	}
 
-	private byte[] insertAtOffset(byte[] input, int start, int end, byte[] newValue) {
-		byte[] prefix = Arrays.copyOfRange(input, 0, start);
-		byte[] rest = Arrays.copyOfRange(input, end, input.length);
-
-		byte[] output = new byte[prefix.length + newValue.length + rest.length];
-		System.arraycopy(prefix, 0, output, 0, prefix.length);
-		System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
-		System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
-
-		return output;
-	}
 }

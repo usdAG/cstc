@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
 
 import de.usd.cstchef.view.ui.FormatTextField;
 
-public abstract class XmlSignature extends SignatureOperation {
+public abstract class XmlSignature extends KeystoreOperation {
 
     private boolean multiSignature = false;
     private XMLSignatureFactory signatureFac;

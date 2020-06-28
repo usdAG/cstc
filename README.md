@@ -1,9 +1,13 @@
+
 *Copyright 2017-2020 usd AG*
 
 Licensed under the *GNU General Public License, Version 3.0* (the "License"). You may not use this tool except in compliance with the License.
 You may obtain a copy of the License at https://www.gnu.org/licenses/gpl-3.0.html
 
 ![CSTC](media/CSTC_White_Smaller.png)
+
+![](https://github.com/usdAG/cstc/workflows/master%20maven%20CI/badge.svg?branch=master)
+![](https://github.com/usdAG/cstc/workflows/develop%20maven%20CI/badge.svg?branch=develop)
 
 # Cyber Security Transformation Chef
 

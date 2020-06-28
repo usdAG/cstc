@@ -396,17 +396,26 @@ public class RecipePanel extends JPanel implements ChangeListener {
 			
 			intermediateResult = input;
 			outputChanged = false;
-			// getOperations
-			for (Operation op : ((RecipeStepPanel)  operationLine).getOperations()) {
+
+			List<Operation> operationList = ((RecipeStepPanel)operationLine).getOperations();
+			for(int i = 0; i < operationList.size(); i++) {
+
+				Operation op = operationList.get(i);
 				if (op.isDisabled()) {
 					continue;
 				}
+
 				intermediateResult = op.performOperation(intermediateResult);
 				outputChanged = true;
+
 				if (op.isBreakpoint()) {
 					result = intermediateResult;
-					break out; // TODO wow..
+                    store.setVariable(stepVariableName, intermediateResult);
+					break out;
 				}
+
+				i += op.getOperationSkip();
+				j += op.getLaneSkip();
 			}
 			
 			if (outputChanged) {

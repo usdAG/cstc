@@ -43,12 +43,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.FormatTextField;
 
 @OperationInfos(name = "Soap Multi Signature", category = OperationCategory.ENCRYPTION, description = "Create a Soap signature.")
-public class SoapMultiSignature extends SignatureOperation {
+public class SoapMultiSignature extends KeystoreOperation {
 
     public SoapMultiSignature() {
       super();

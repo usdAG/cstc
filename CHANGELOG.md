@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.2.0] - 2020-06-28
+
+### Added
+
+* Add additional operations:
+  * *HTMLEncode* (Encode HTML special characters)
+  * *HTMLDecode* (Decode HTML special characters)
+  * *RsaEncrypt* (Encrypt data by using a public key)
+  * *RsaDecrypt* (Decrypt data using a private key)
+  * *RsaSignature* (Create an RSA signature)
+  * *NoOperation* (Does nothing :D)
+* Add *conditionals* operation class:
+  * *StringContains* (Skip if input contains a string)
+  * *StringMatch* (Skip if input matches a string)
+  * *RegexMatch* (Skip if input matches the specified regex)
+  * *NumberCompare* (Skip if comparison is true)
+* Add *Maven CI* for the master and development branch
+* Add *dependabot* config to prevent pushes to master
+
+### Changed
+
+* Byte operations now also allow multiple variables in one input field
+* *jackson-core* and *jackson-databind* updated to current version
+* Breakpoint operations now assign variables
+
+
 ## [1.1.1] - 2020-05-20
 
 ### Changed
