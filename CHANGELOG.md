@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * *RsaEncrypt* (Encrypt data by using a public key)
   * *RsaDecrypt* (Decrypt data using a private key)
   * *RsaSignature* (Create an RSA signature)
+  * *NoOperation* (Does nothing :D)
 * Add *conditionals* operation class:
   * *StringContains* (Skip if input contains a string)
   * *StringMatch* (Skip if input matches a string)
