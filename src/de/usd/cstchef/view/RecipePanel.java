@@ -410,6 +410,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
 				if (op.isBreakpoint()) {
 					result = intermediateResult;
+                    store.setVariable(stepVariableName, intermediateResult);
 					break out;
 				}
 
