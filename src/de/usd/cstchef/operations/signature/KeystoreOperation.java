@@ -122,14 +122,14 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
 
 		chooseFileButton = new JButton("Select file");
 		chooseFileButton.addActionListener(this);
-		this.addUIElement(null, this.chooseFileButton, "button1");
+		this.addUIElement(null, this.chooseFileButton, false, "button1");
 
 		this.keyStorePass = new JPasswordField();
 		this.addUIElement("PrivKeyPassword", this.keyStorePass);
 
 		openKeyStoreButton = new JButton("Open keystore");
 		openKeyStoreButton.addActionListener(this);
-		this.addUIElement(null, this.openKeyStoreButton, "button2");
+		this.addUIElement(null, this.openKeyStoreButton, false, "button2");
 
 		this.keyEntry = new JComboBox<>(keyEntries);
 		this.keyEntry.addActionListener(this);
@@ -139,19 +139,19 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
         this.keyStoreOpen.setSelected(false);
         this.keyStoreOpen.setEnabled(false);
         this.keyStoreOpen.addActionListener(this);
-		this.addUIElement(null, this.keyStoreOpen, "checkbox1");
+		this.addUIElement(null, this.keyStoreOpen, "noupdate-checkbox1");
 		
 		this.certAvailable = new JCheckBox("Certificate available");
         this.certAvailable.setSelected(false);
         this.certAvailable.setEnabled(false);
 		this.certAvailable.addActionListener(this);
-		this.addUIElement(null, this.certAvailable, "checkbox2");
+		this.addUIElement(null, this.certAvailable, "noupdate-checkbox2");
 		
 		this.keyAvailable = new JCheckBox("PrivKey available");
         this.keyAvailable.setSelected(false);
         this.keyAvailable.setEnabled(false);
 		this.keyAvailable.addActionListener(this);
-		this.addUIElement(null, this.keyAvailable, "checkbox3");
+		this.addUIElement(null, this.keyAvailable, "noupdate-checkbox3");
 
 	}
 
