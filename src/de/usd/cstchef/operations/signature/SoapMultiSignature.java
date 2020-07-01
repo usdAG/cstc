@@ -47,7 +47,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.FormatTextField;
 
-@OperationInfos(name = "Soap Multi Signature", category = OperationCategory.ENCRYPTION, description = "Create a Soap signature.")
+@OperationInfos(name = "Soap Multi Signature", category = OperationCategory.SIGNATURE, description = "Create a Soap signature.")
 public class SoapMultiSignature extends KeystoreOperation {
 
     public SoapMultiSignature() {
@@ -180,22 +180,22 @@ public class SoapMultiSignature extends KeystoreOperation {
         this.certificate = new JCheckBox("Include Certificate");
         this.certificate.setSelected(false);
 		this.certificate.addActionListener(this);
-		this.addUIElement(null, this.certificate);
+		this.addUIElement(null, this.certificate, "checkbox1");
 
         this.subject = new JCheckBox("Include Subject");
         this.subject.setSelected(false);
 		this.subject.addActionListener(this);
-		this.addUIElement(null, this.subject);
+		this.addUIElement(null, this.subject, "checkbox2");
 
         this.issuer = new JCheckBox("Include Issuer");
         this.issuer.setSelected(false);
 		this.issuer.addActionListener(this);
-		this.addUIElement(null, this.issuer);
+		this.addUIElement(null, this.issuer, "checkbox3");
 
         this.serialIssuer = new JCheckBox("Include Issuer");
         this.serialIssuer.setSelected(false);
 		this.serialIssuer.addActionListener(this);
-		this.addUIElement(null, this.serialIssuer);
+		this.addUIElement(null, this.serialIssuer, "checkbox4");
     
 		this.digestMethod = new JComboBox<String>(this.availDigestMethods);
 		this.digestMethod.addActionListener(this);
@@ -210,7 +210,7 @@ public class SoapMultiSignature extends KeystoreOperation {
 
 		addReferenceButton = new JButton("Add Reference");
 		addReferenceButton.addActionListener(this);
-		this.addUIElement(null, addReferenceButton);
+		this.addUIElement(null, addReferenceButton, "button1");
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
