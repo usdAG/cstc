@@ -275,10 +275,18 @@ public abstract class Operation extends JPanel {
 	}
 
 	protected void addUIElement(String caption, Component comp) {
-		this.addUIElement(caption, comp, true);
+		this.addUIElement(caption, comp, true, null);
 	}
 
 	protected void addUIElement(String caption, Component comp, boolean notifyChange) {
+		this.addUIElement(caption, comp, notifyChange, null);
+	}
+
+	protected void addUIElement(String caption, Component comp, String identifier) {
+		this.addUIElement(caption, comp, true, identifier);
+	}
+
+	protected void addUIElement(String caption, Component comp, boolean notifyChange,  String identifier) {
 		comp.setCursor(Cursor.getDefaultCursor());
 
 		Box box = Box.createHorizontalBox();
@@ -292,7 +300,9 @@ public abstract class Operation extends JPanel {
 		box.add(comp);
 		this.contentBox.add(box);
 		this.contentBox.add(Box.createVerticalStrut(10));
-		this.uiElements.put(caption, comp);
+		if( identifier == null )
+			identifier = caption;
+		this.uiElements.put(identifier, comp);
 
 		if (notifyChange) {
 			if (notifyChangeListener == null) {
