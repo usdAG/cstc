@@ -210,7 +210,7 @@ public class SoapMultiSignature extends KeystoreOperation {
 
 		addReferenceButton = new JButton("Add Reference");
 		addReferenceButton.addActionListener(this);
-		this.addUIElement(null, addReferenceButton, "button1");
+		this.addUIElement(null, addReferenceButton, false, "button1");
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

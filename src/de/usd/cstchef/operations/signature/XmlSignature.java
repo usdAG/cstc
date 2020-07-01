@@ -158,7 +158,7 @@ public abstract class XmlSignature extends KeystoreOperation {
 
 		addReferenceButton = new JButton("Add Reference");
 		addReferenceButton.addActionListener(this);
-		this.addUIElement(null, addReferenceButton, "button1");
+		this.addUIElement(null, addReferenceButton, false, "button1");
     }
 
 
