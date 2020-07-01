@@ -178,7 +178,10 @@ public abstract class Operation extends JPanel {
 	public Map<String, Object> getState() {
 		Map<String, Object> properties = new HashMap<>();
 		for (String key : this.uiElements.keySet()) {
-			properties.put(key, getUiValues(this.uiElements.get(key)));
+			if( key.startsWith("noupdate") )
+				properties.put(key, null);
+			else
+				properties.put(key, getUiValues(this.uiElements.get(key)));
 		}
 
 		return properties;
@@ -219,7 +222,7 @@ public abstract class Operation extends JPanel {
 	}
 
 	private void setUiValue(Component comp, Object value) {
-		if (comp == null) {
+		if (comp == null || value == null) {
 			return;
 		}
 
