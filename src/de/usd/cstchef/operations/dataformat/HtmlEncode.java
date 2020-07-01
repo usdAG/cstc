@@ -49,6 +49,6 @@ public class HtmlEncode extends Operation {
 	public void createUI() {
 		this.checkbox = new JCheckBox("Encode all");
 	    this.checkbox.setSelected(false);
-		this.addUIElement(null, this.checkbox);
+		this.addUIElement(null, this.checkbox, "checkbox1");
 	}
 }
