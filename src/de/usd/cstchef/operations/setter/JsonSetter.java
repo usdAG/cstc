@@ -54,7 +54,7 @@ public class JsonSetter extends SetterOperation implements ActionListener {
 		this.addIfNotPresent = new JCheckBox("Add if not present");
 	    this.addIfNotPresent.setSelected(true);
 	    this.addIfNotPresent.addActionListener(this);
-		this.addUIElement(null, this.addIfNotPresent);
+		this.addUIElement(null, this.addIfNotPresent, "checkbox1");
 		
 		this.path = new VariableTextField();
 		this.path.setText("Insert-Path");
@@ -62,7 +62,7 @@ public class JsonSetter extends SetterOperation implements ActionListener {
 		this.path.addFocusListener(new FocusListener() {
 			@Override
 			public void focusGained(FocusEvent e) {
-			    if (path.getText().equals("Insert-Path")) {
+			    if (path.getText().equals("Insertion Path")) {
 			    	path.setText("");
 			    	path.setForeground(null);
 			    }
@@ -71,13 +71,13 @@ public class JsonSetter extends SetterOperation implements ActionListener {
 			public void focusLost(FocusEvent e) {
 			    if (path.getText().isEmpty()) {
 			    	path.setForeground(Color.GRAY);
-			    	path.setText("Insert-Path");
+                    path.setText("Insertion Path");
 			    }
 			}
 		});
-        this.addUIElement(null, this.path);
+        this.addUIElement(null, this.path, "textbox1");
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
         if( arg0.getSource() == this.addIfNotPresent ) {

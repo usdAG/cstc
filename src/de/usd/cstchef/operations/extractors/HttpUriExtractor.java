@@ -20,7 +20,7 @@ public class HttpUriExtractor extends Operation {
 	public void createUI() {
 		this.checkbox = new JCheckBox("With parameters");
 	    this.checkbox.setSelected(true);
-		this.addUIElement(null, this.checkbox);
+		this.addUIElement(null, this.checkbox, "checkbox1");
 	}
 	
 	@Override
