@@ -16,18 +16,19 @@ import javax.swing.JFileChooser;
 import javax.swing.JPasswordField;
 
 import de.usd.cstchef.operations.Operation;
+import de.usd.cstchef.view.ui.VariableTextField;
 
 public abstract class KeystoreOperation extends Operation implements ActionListener {
 
     protected String[] keyEntries = new String[] {};
     protected String[] keyStoreTypes = new String[] {"JKS", "PKCS12"};
 
+    protected VariableTextField fileNameTxt;
+	protected JPasswordField keyStorePass;
+
     protected Certificate cert = null;
     protected KeyStore keyStore = null;
     protected PrivateKeyEntry selectedEntry = null;
-
-	protected File keyStoreFile = null;
-	protected JPasswordField keyStorePass;
 
     protected JCheckBox keyStoreOpen;
     protected JCheckBox certAvailable;
@@ -45,7 +46,8 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
 
 	private void openKeyStore() {
 		try {
-			
+			String path = fileNameTxt.getText();
+			File keyStoreFile = new File(path);
 			String storeType = (String)keyStoreType.getSelectedItem();
 			char[] password = keyStorePass.getPassword();
 			KeyStore ks = KeyStore.getInstance(storeType);
@@ -115,6 +117,9 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
 		this.keyStoreType.addActionListener(this);
 		this.addUIElement("KeyStoreType", this.keyStoreType);
 
+		this.fileNameTxt = new VariableTextField();
+		this.addUIElement("Filename", this.fileNameTxt);
+
 		chooseFileButton = new JButton("Select file");
 		chooseFileButton.addActionListener(this);
 		this.addUIElement(null, this.chooseFileButton, "button1");
@@ -167,7 +172,8 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
             this.resetKeyStore();
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                keyStoreFile = fileChooser.getSelectedFile();
+                File tmp = fileChooser.getSelectedFile();
+                this.fileNameTxt.setText(tmp.getAbsolutePath());
             }
 
         } else if( arg0.getSource() == keyEntry ) {
