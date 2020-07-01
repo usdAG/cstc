@@ -41,6 +41,6 @@ public class SetIfEmpty extends Operation {
 		
 		this.checkbox = new JCheckBox("Space is empty");
 	    this.checkbox.setSelected(false);
-		this.addUIElement(null, this.checkbox);
+		this.addUIElement(null, this.checkbox, "checkbox1");
 	}
 }
