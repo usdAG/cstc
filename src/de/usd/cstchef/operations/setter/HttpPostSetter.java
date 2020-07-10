@@ -57,15 +57,15 @@ public class HttpPostSetter extends SetterOperation {
 
 		this.urlEncode = new JCheckBox("URL encode");
 	    this.urlEncode.setSelected(false);
-		this.addUIElement(null, this.urlEncode);
+		this.addUIElement(null, this.urlEncode, "checkbox1");
 		
 		this.urlEncodeAll = new JCheckBox("URL encode all");
 	    this.urlEncodeAll.setSelected(false);
-		this.addUIElement(null, this.urlEncodeAll);
+		this.addUIElement(null, this.urlEncodeAll, "checkbox2");
 		
 		this.addIfNotPresent = new JCheckBox("Add if not present");
 	    this.addIfNotPresent.setSelected(true);
-		this.addUIElement(null, this.addIfNotPresent);
+		this.addUIElement(null, this.addIfNotPresent, "checkbox3");
 	}
 	
 }

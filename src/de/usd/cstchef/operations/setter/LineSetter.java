@@ -82,7 +82,8 @@ public class LineSetter extends SetterOperation {
 		super.createUI();
 		this.append = new JCheckBox("Insert below");
 	    this.append.setSelected(false);
-		this.addUIElement(null, this.append);
+		this.addUIElement(null, this.append, "checkbox1");
+
 		this.formatBox = new JComboBox<>(new String[] {"\\r\\n", "\\r", "\\n"});
 		this.formatBox.setSelectedItem("\\r\\n");
 		this.addUIElement("Lineseperator", this.formatBox);

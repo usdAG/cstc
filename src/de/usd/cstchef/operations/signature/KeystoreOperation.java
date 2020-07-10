@@ -16,18 +16,19 @@ import javax.swing.JFileChooser;
 import javax.swing.JPasswordField;
 
 import de.usd.cstchef.operations.Operation;
+import de.usd.cstchef.view.ui.VariableTextField;
 
 public abstract class KeystoreOperation extends Operation implements ActionListener {
 
     protected String[] keyEntries = new String[] {};
     protected String[] keyStoreTypes = new String[] {"JKS", "PKCS12"};
 
+    protected VariableTextField fileNameTxt;
+	protected JPasswordField keyStorePass;
+
     protected Certificate cert = null;
     protected KeyStore keyStore = null;
     protected PrivateKeyEntry selectedEntry = null;
-
-	protected File keyStoreFile = null;
-	protected JPasswordField keyStorePass;
 
     protected JCheckBox keyStoreOpen;
     protected JCheckBox certAvailable;
@@ -45,7 +46,8 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
 
 	private void openKeyStore() {
 		try {
-			
+			String path = fileNameTxt.getText();
+			File keyStoreFile = new File(path);
 			String storeType = (String)keyStoreType.getSelectedItem();
 			char[] password = keyStorePass.getPassword();
 			KeyStore ks = KeyStore.getInstance(storeType);
@@ -115,16 +117,19 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
 		this.keyStoreType.addActionListener(this);
 		this.addUIElement("KeyStoreType", this.keyStoreType);
 
+		this.fileNameTxt = new VariableTextField();
+		this.addUIElement("Filename", this.fileNameTxt);
+
 		chooseFileButton = new JButton("Select file");
 		chooseFileButton.addActionListener(this);
-		this.addUIElement(null, this.chooseFileButton);
+		this.addUIElement(null, this.chooseFileButton, false, "button1");
 
 		this.keyStorePass = new JPasswordField();
 		this.addUIElement("PrivKeyPassword", this.keyStorePass);
 
 		openKeyStoreButton = new JButton("Open keystore");
 		openKeyStoreButton.addActionListener(this);
-		this.addUIElement(null, this.openKeyStoreButton);
+		this.addUIElement(null, this.openKeyStoreButton, false, "button2");
 
 		this.keyEntry = new JComboBox<>(keyEntries);
 		this.keyEntry.addActionListener(this);
@@ -134,19 +139,19 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
         this.keyStoreOpen.setSelected(false);
         this.keyStoreOpen.setEnabled(false);
         this.keyStoreOpen.addActionListener(this);
-		this.addUIElement(null, this.keyStoreOpen);
+		this.addUIElement(null, this.keyStoreOpen, "noupdate-checkbox1");
 		
 		this.certAvailable = new JCheckBox("Certificate available");
         this.certAvailable.setSelected(false);
         this.certAvailable.setEnabled(false);
 		this.certAvailable.addActionListener(this);
-		this.addUIElement(null, this.certAvailable);
+		this.addUIElement(null, this.certAvailable, "noupdate-checkbox2");
 		
 		this.keyAvailable = new JCheckBox("PrivKey available");
         this.keyAvailable.setSelected(false);
         this.keyAvailable.setEnabled(false);
 		this.keyAvailable.addActionListener(this);
-		this.addUIElement(null, this.keyAvailable);
+		this.addUIElement(null, this.keyAvailable, "noupdate-checkbox3");
 
 	}
 
@@ -167,7 +172,8 @@ public abstract class KeystoreOperation extends Operation implements ActionListe
             this.resetKeyStore();
             int returnVal = fileChooser.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
-                keyStoreFile = fileChooser.getSelectedFile();
+                File tmp = fileChooser.getSelectedFile();
+                this.fileNameTxt.setText(tmp.getAbsolutePath());
             }
 
         } else if( arg0.getSource() == keyEntry ) {

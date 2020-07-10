@@ -95,6 +95,7 @@ import de.usd.cstchef.operations.setter.HttpXmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
 import de.usd.cstchef.operations.signature.RsaSignature;
+import de.usd.cstchef.operations.signature.SoapMultiSignature;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
 import de.usd.cstchef.operations.string.Length;
@@ -237,7 +238,7 @@ public class Utils {
             Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
             ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
             Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-            Xor.class
+            Xor.class, SoapMultiSignature.class
 		};
 	}
 

@@ -25,7 +25,7 @@ public class HttpSetUri extends Operation {
 		
 		this.checkbox = new JCheckBox("Keep parameters");
 	    this.checkbox.setSelected(false);
-		this.addUIElement(null, this.checkbox);
+		this.addUIElement(null, this.checkbox, "checkbox1");
 	}
 
 	

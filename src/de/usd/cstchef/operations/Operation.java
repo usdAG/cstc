@@ -1,30 +1,5 @@
 package de.usd.cstchef.operations;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.border.Border;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import burp.Logger;
-import de.usd.cstchef.view.ui.FormatTextField;
-import de.usd.cstchef.view.ui.VariableTextArea;
-import de.usd.cstchef.view.ui.VariableTextField;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -41,6 +16,33 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JSpinner;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import burp.Logger;
+import de.usd.cstchef.view.ui.FormatTextField;
+import de.usd.cstchef.view.ui.VariableTextArea;
+import de.usd.cstchef.view.ui.VariableTextField;
 
 public abstract class Operation extends JPanel {
 
@@ -176,7 +178,10 @@ public abstract class Operation extends JPanel {
 	public Map<String, Object> getState() {
 		Map<String, Object> properties = new HashMap<>();
 		for (String key : this.uiElements.keySet()) {
-			properties.put(key, getUiValues(this.uiElements.get(key)));
+			if( key.startsWith("noupdate") )
+				properties.put(key, null);
+			else
+				properties.put(key, getUiValues(this.uiElements.get(key)));
 		}
 
 		return properties;
@@ -184,7 +189,9 @@ public abstract class Operation extends JPanel {
 
 	private Object getUiValues(Component comp) {
 		Object result = null;
-		if (comp instanceof VariableTextArea) {
+		if (comp instanceof JPasswordField) {
+			result = "";
+		} else if (comp instanceof VariableTextArea) {
 			result = ((VariableTextArea) comp).getRawText();
 		} else if (comp instanceof VariableTextField) {
 			result = ((VariableTextField) comp).getRawText();
@@ -200,6 +207,8 @@ public abstract class Operation extends JPanel {
 			result = ((JCheckBox) comp).isSelected();
 		} else if (comp instanceof FormatTextField) {
 			result = ((FormatTextField) comp).getValues();
+		} else if (comp instanceof JFileChooser) {
+			result = ((JFileChooser) comp).getName();
 		}
 
 		return result;
@@ -213,7 +222,7 @@ public abstract class Operation extends JPanel {
 	}
 
 	private void setUiValue(Component comp, Object value) {
-		if (comp == null) {
+		if (comp == null || value == null) {
 			return;
 		}
 
@@ -229,6 +238,8 @@ public abstract class Operation extends JPanel {
 			((JCheckBox) comp).setSelected((boolean) value);
 		} else if (comp instanceof FormatTextField) {
 			((FormatTextField) comp).setValues((Map<String, String>) value);
+		} else if (comp instanceof JFileChooser) {
+			((JFileChooser) comp).setName((String)value);
 		}
 	}
 
@@ -275,10 +286,18 @@ public abstract class Operation extends JPanel {
 	}
 
 	protected void addUIElement(String caption, Component comp) {
-		this.addUIElement(caption, comp, true);
+		this.addUIElement(caption, comp, true, null);
 	}
 
 	protected void addUIElement(String caption, Component comp, boolean notifyChange) {
+		this.addUIElement(caption, comp, notifyChange, null);
+	}
+
+	protected void addUIElement(String caption, Component comp, String identifier) {
+		this.addUIElement(caption, comp, true, identifier);
+	}
+
+	protected void addUIElement(String caption, Component comp, boolean notifyChange,  String identifier) {
 		comp.setCursor(Cursor.getDefaultCursor());
 
 		Box box = Box.createHorizontalBox();
@@ -292,7 +311,9 @@ public abstract class Operation extends JPanel {
 		box.add(comp);
 		this.contentBox.add(box);
 		this.contentBox.add(Box.createVerticalStrut(10));
-		this.uiElements.put(caption, comp);
+		if( identifier == null )
+			identifier = caption;
+		this.uiElements.put(identifier, comp);
 
 		if (notifyChange) {
 			if (notifyChangeListener == null) {

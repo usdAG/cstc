@@ -55,7 +55,7 @@ public class Replace extends Operation {
 
 		this.checkbox = new JCheckBox("Regex");
 	    this.checkbox.setSelected(false);
-		this.addUIElement(null, this.checkbox);
+		this.addUIElement(null, this.checkbox, "checkbox1");
 		
 		this.replacementTxt = new VariableTextArea();
 		this.addUIElement("Value", this.replacementTxt);

@@ -60,7 +60,7 @@ public class HttpHeaderSetter extends SetterOperation {
 		super.createUI();
 		this.addIfNotPresent = new JCheckBox("Add if not present");
 	    this.addIfNotPresent.setSelected(true);
-		this.addUIElement(null, this.addIfNotPresent);
+		this.addUIElement(null, this.addIfNotPresent, "checkbox1");
 	}
 	
 }

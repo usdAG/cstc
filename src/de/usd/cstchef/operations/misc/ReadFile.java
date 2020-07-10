@@ -37,7 +37,7 @@ public class ReadFile extends Operation implements ActionListener {
 
 		JButton chooseFileButton = new JButton("Select file");
 		chooseFileButton.addActionListener(this);
-		this.addUIElement(null, chooseFileButton);
+		this.addUIElement(null, chooseFileButton, false, "button1");
 	}
 
 	@Override
