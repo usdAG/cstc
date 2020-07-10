@@ -48,9 +48,13 @@ public class OperationsTree extends JTree {
 		
 		TreePath curPath = getPathForLocation(evt.getX(), evt.getY());
 		Object node = curPath.getLastPathComponent();
+
 		if (node.getClass().equals(OperationTreeNode.class)) {
 			return ((OperationTreeNode) node).getToolTipText();
+		} else if (node.getClass().equals(DefaultMutableTreeNode.class)) {
+			return null;
 		}
+
 		return "";
 	}
 	
