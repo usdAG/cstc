@@ -21,6 +21,7 @@ public class RequestFilterDialog extends JPanel {
 		this.filterSettings.put(new Filter("Spider", IBurpExtenderCallbacks.TOOL_SPIDER), false);
 		this.filterSettings.put(new Filter("Scanner", IBurpExtenderCallbacks.TOOL_SCANNER), false);
 		this.filterSettings.put(new Filter("Intruder", IBurpExtenderCallbacks.TOOL_INTRUDER), false);
+		this.filterSettings.put(new Filter("Extender", IBurpExtenderCallbacks.TOOL_EXTENDER), false);
 		
 		this.setLayout(new GridLayout(0, 2));
 
