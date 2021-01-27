@@ -108,6 +108,7 @@ import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.utils.GetVariable;
 import de.usd.cstchef.operations.utils.NoOperation;
 import de.usd.cstchef.operations.utils.RandomNumber;
+import de.usd.cstchef.operations.utils.RandomUUID;
 import de.usd.cstchef.operations.utils.SetIfEmpty;
 import de.usd.cstchef.operations.utils.StoreVariable;
 import de.usd.cstchef.view.View;
@@ -231,8 +232,8 @@ public class Utils {
             JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class,
             LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
             Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
-            RandomNumber.class, ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class,
-            RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
+            RandomNumber.class, RandomUUID.class ,ReadFile.class, RegexExtractor.class, Replace.class, 
+            RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
             SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
             StaticString.class, StoreVariable.class, Sub.class, Substring.class, Subtraction.class,
             Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
