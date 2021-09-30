@@ -329,7 +329,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		if (!stepNodes.isArray()) {
 			throw new IOException("wrong data format");
 		}
-		
 		for (int step = 0; step < stepNodes.size(); step++) {
 			JsonNode operationNodes = stepNodes.get(step);
 			if (!operationNodes.isArray()) {
@@ -344,6 +343,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 			    // check if it is an operation
 			    Operation op = cls.newInstance();
 			    op.load(parameters);
+				op.setDisabled(!operationNode.get("is_enabled").asBoolean());
 			    RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
 				panel.addComponent(op, i);
 	    	}
@@ -364,6 +364,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		        operationNode.put("operation", op.getClass().getName());
 				operationsNode.add(operationNode);
 				operationNode.putPOJO("parameters", op.getState());
+				operationNode.putPOJO("is_enabled", !op.isDisabled());
 			}
 			stepsNode.add(operationsNode);
 		}
