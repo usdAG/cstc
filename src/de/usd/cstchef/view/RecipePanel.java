@@ -193,7 +193,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 				}
 			}
 		});
-		
+                
 		JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
 		bakeCheckBox.setSelected(this.autoBake);
 		activeOperationsPanel.addActionComponent(bakeCheckBox);
@@ -213,6 +213,15 @@ public class RecipePanel extends JPanel implements ChangeListener {
 				VariablesWindow vw = VariablesWindow.getInstance();
 				vw.refresh(VariableStore.getInstance().getVariables());
 				vw.setVisible(true);
+			}
+		});
+
+		JButton clearButton = new JButton("Clear");
+		activeOperationsPanel.addActionComponent(clearButton);
+		clearButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				clear();
 			}
 		});
 
@@ -324,6 +333,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
 	private void restoreState(String jsonState) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		// TODO do we want to remove all existing operations before loading here?
+		this.clear(); // Yes!
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode stepNodes = mapper.readTree(jsonState);
 		if (!stepNodes.isArray()) {
@@ -531,6 +541,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
 		} finally {
 			store.unlock();
 		}
+	}
+
+	private void clear() {
+		for (int step = 0; step < this.operationSteps; step++) {
+		RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
+			stepPanel.clearOperations();
+		} 
 	}
 
 	@Override
