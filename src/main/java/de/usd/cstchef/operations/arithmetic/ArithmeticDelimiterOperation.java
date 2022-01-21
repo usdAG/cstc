@@ -1,7 +1,5 @@
 package de.usd.cstchef.operations.arithmetic;
 
-import java.io.IOException;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
@@ -14,13 +12,13 @@ public abstract class ArithmeticDelimiterOperation extends Operation
     private JComboBox<String> delimiterBox;
     private JCheckBox floatCheckBox;
 
-    protected Delimiter getDelimiter() throws IOException
+    protected Delimiter getDelimiter() throws IllegalArgumentException
     {
         String delimString = (String)this.delimiterBox.getSelectedItem();
         Delimiter delim = Delimiter.getByName(delimString);
 
         if( delim == null )
-            throw new IOException("Invalid delimiter.");
+            throw new IllegalArgumentException("Invalid delimiter.");
 
         return delim;
     }

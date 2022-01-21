@@ -5,10 +5,10 @@ import org.junit.Test;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.operations.arithmetic.Sum;
+import de.usd.cstchef.operations.arithmetic.Median;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
-public class SumTest extends Sum
+public class MedianTest extends Median
 {
     private String delimiter;
     private boolean isFloat;
@@ -29,50 +29,26 @@ public class SumTest extends Sum
     }
 
     @Test
-    public void CommaSumTest() throws Exception
+    public void CommaMedianTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = false;
 
-        String testValue = "1,2,3,4,5,6";
+        String testValue = "1,2,3,4,5";
         byte[] result = perform(testValue.getBytes());
 
-        assert new String(result).equals("21");
+        assert new String(result).equals("3");
     }
 
     @Test
-    public void CommaSumFloatTest() throws Exception
+    public void CommaMedianFloatTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = true;
 
-        String testValue = "1,2,3,4,5,6";
+        String testValue = "1,2,3.5,4,5";
         byte[] result = perform(testValue.getBytes());
 
-        assert new String(result).equals("21.0");
-    }
-
-    @Test
-    public void SpacesumTest() throws Exception
-    {
-        delimiter = "Space";
-        isFloat = false;
-
-        String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
-        byte[] result = perform(testValue.getBytes());
-
-        assert new String(result).equals("23");
-    }
-
-    @Test
-    public void SpacesumFloatTest() throws Exception
-    {
-        delimiter = "Space";
-        isFloat = true;
-
-        String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
-        byte[] result = perform(testValue.getBytes());
-
-        assert new String(result).equals("22.5");
+        assert new String(result).equals("3.5");
     }
 }
