@@ -15,38 +15,38 @@ import de.usd.cstchef.view.ui.VariableTextField;
 @OperationInfos(name = "Read File", category = OperationCategory.MISC, description = "Reads data from a file.")
 public class ReadFile extends Operation implements ActionListener {
 
-	private final JFileChooser fileChooser = new JFileChooser();
-	private VariableTextField fileNameTxt;
+    private final JFileChooser fileChooser = new JFileChooser();
+    private VariableTextField fileNameTxt;
 
-	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		String path = fileNameTxt.getText();
-		
-		File file = new File(path);
-		FileInputStream fis = new FileInputStream(file);
-		byte[] data = new byte[(int) file.length()];
-		fis.read(data);
-		fis.close();
-		
-		return data;
-	}
+    @Override
+    protected byte[] perform(byte[] input) throws Exception {
+        String path = fileNameTxt.getText();
 
-	public void createUI() {
-		this.fileNameTxt = new VariableTextField();
-		this.addUIElement("Filename", this.fileNameTxt);
+        File file = new File(path);
+        FileInputStream fis = new FileInputStream(file);
+        byte[] data = new byte[(int) file.length()];
+        fis.read(data);
+        fis.close();
 
-		JButton chooseFileButton = new JButton("Select file");
-		chooseFileButton.addActionListener(this);
-		this.addUIElement(null, chooseFileButton, false, "button1");
-	}
+        return data;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		int returnVal = fileChooser.showOpenDialog(this);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			this.fileNameTxt.setText(file.getAbsolutePath());
-		}
-	}
+    public void createUI() {
+        this.fileNameTxt = new VariableTextField();
+        this.addUIElement("Filename", this.fileNameTxt);
+
+        JButton chooseFileButton = new JButton("Select file");
+        chooseFileButton.addActionListener(this);
+        this.addUIElement(null, chooseFileButton, false, "button1");
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            this.fileNameTxt.setText(file.getAbsolutePath());
+        }
+    }
 
 }

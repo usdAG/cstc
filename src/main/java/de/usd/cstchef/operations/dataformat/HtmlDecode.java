@@ -11,12 +11,12 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HTML Decode", category = OperationCategory.DATAFORMAT, description = "HTML Decode")
 public class HtmlDecode extends Operation {
 
-	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		
-		String tmp = new String(input, StandardCharsets.ISO_8859_1);
-		tmp = StringEscapeUtils.unescapeHtml4(tmp);
-		return tmp.getBytes(StandardCharsets.ISO_8859_1);
-	}
+    @Override
+    protected byte[] perform(byte[] input) throws Exception {
+
+        String tmp = new String(input, StandardCharsets.ISO_8859_1);
+        tmp = StringEscapeUtils.unescapeHtml4(tmp);
+        return tmp.getBytes(StandardCharsets.ISO_8859_1);
+    }
 
 }

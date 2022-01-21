@@ -24,91 +24,91 @@ import de.usd.cstchef.operations.*;
 
 public class RecipeStepPanel extends JPanel {
 
-	private JPanel operationsLine;
-	private GridBagConstraints addContraints;
-	private ChangeListener changeListener;
+    private JPanel operationsLine;
+    private GridBagConstraints addContraints;
+    private ChangeListener changeListener;
 
-	public RecipeStepPanel(String title, ChangeListener changelistener) {
-		this.changeListener = changelistener;
-		this.setLayout(new BorderLayout());
-		this.setPreferredSize(new Dimension(300, 0));
+    public RecipeStepPanel(String title, ChangeListener changelistener) {
+        this.changeListener = changelistener;
+        this.setLayout(new BorderLayout());
+        this.setPreferredSize(new Dimension(300, 0));
 
-		// header
-		Box headerBox = Box.createHorizontalBox();
-		// add borders
-		Border margin = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-		MatteBorder lineBorder = new MatteBorder(0, 0, 2, 0, Color.DARK_GRAY);
-		CompoundBorder border = new CompoundBorder(lineBorder, margin);
-		headerBox.setBorder(border);
+        // header
+        Box headerBox = Box.createHorizontalBox();
+        // add borders
+        Border margin = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+        MatteBorder lineBorder = new MatteBorder(0, 0, 2, 0, Color.DARK_GRAY);
+        CompoundBorder border = new CompoundBorder(lineBorder, margin);
+        headerBox.setBorder(border);
 
-		JTextField contentTextField = new JTextField();
-		contentTextField.setBorder(null);
-		contentTextField.setBackground(new Color(0, 0, 0, 0));
-		contentTextField.setText(title);
-		headerBox.add(contentTextField);
+        JTextField contentTextField = new JTextField();
+        contentTextField.setBorder(null);
+        contentTextField.setBackground(new Color(0, 0, 0, 0));
+        contentTextField.setText(title);
+        headerBox.add(contentTextField);
 
-		this.add(headerBox, BorderLayout.NORTH);
+        this.add(headerBox, BorderLayout.NORTH);
 
-		// body
-		operationsLine = new JPanel(new GridBagLayout());
+        // body
+        operationsLine = new JPanel(new GridBagLayout());
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridwidth = GridBagConstraints.REMAINDER;
-		gbc.gridheight = GridBagConstraints.REMAINDER;
-		gbc.weightx = 1;
-		gbc.weighty = 1;
-		gbc.fill = GridBagConstraints.BOTH;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        gbc.fill = GridBagConstraints.BOTH;
 
-		JPanel dummyPanel = new JPanel();
-		operationsLine.add(dummyPanel, gbc);
+        JPanel dummyPanel = new JPanel();
+        operationsLine.add(dummyPanel, gbc);
 
-		this.addContraints = new GridBagConstraints();
-		this.addContraints.gridwidth = GridBagConstraints.REMAINDER;
-		this.addContraints.weightx = 1;
-		this.addContraints.fill = GridBagConstraints.HORIZONTAL;
+        this.addContraints = new GridBagConstraints();
+        this.addContraints.gridwidth = GridBagConstraints.REMAINDER;
+        this.addContraints.weightx = 1;
+        this.addContraints.fill = GridBagConstraints.HORIZONTAL;
 
-		JScrollPane scrollPane = new JScrollPane(operationsLine);
-		scrollPane.setBorder(new MatteBorder(0, 2, 0, 0, Color.DARK_GRAY));
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        JScrollPane scrollPane = new JScrollPane(operationsLine);
+        scrollPane.setBorder(new MatteBorder(0, 2, 0, 0, Color.DARK_GRAY));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-		this.add(scrollPane, BorderLayout.CENTER);
-	}
+        this.add(scrollPane, BorderLayout.CENTER);
+    }
 
-	public void addComponent(Component comp, int index) {
-		operationsLine.add(comp, addContraints, index);
-		operationsLine.revalidate();
-		operationsLine.repaint();
-		if (comp instanceof Operation) {			
-			((Operation) comp).setChangeListener(this.changeListener);
-			this.changeListener.stateChanged(new ChangeEvent(this));
-		}
-	}
+    public void addComponent(Component comp, int index) {
+        operationsLine.add(comp, addContraints, index);
+        operationsLine.revalidate();
+        operationsLine.repaint();
+        if (comp instanceof Operation) {
+            ((Operation) comp).setChangeListener(this.changeListener);
+            this.changeListener.stateChanged(new ChangeEvent(this));
+        }
+    }
 
-	public void removeComponent(Component comp) {
-		operationsLine.remove(comp);
-		operationsLine.revalidate();
-		operationsLine.repaint();
-		this.changeListener.stateChanged(new ChangeEvent(this));
-	}
-	
-	public JPanel getOperationsPanel() {
-		return this.operationsLine;
-	}
+    public void removeComponent(Component comp) {
+        operationsLine.remove(comp);
+        operationsLine.revalidate();
+        operationsLine.repaint();
+        this.changeListener.stateChanged(new ChangeEvent(this));
+    }
 
-	public List<Operation> getOperations() {
-		List<Operation> result = new ArrayList<>();
+    public JPanel getOperationsPanel() {
+        return this.operationsLine;
+    }
 
-		for (int i = 0; i < this.operationsLine.getComponentCount(); i++) {
-			Component op = this.operationsLine.getComponent(i);
-			if (!(op instanceof Operation)) {
-				continue;
-			}
+    public List<Operation> getOperations() {
+        List<Operation> result = new ArrayList<>();
 
-			result.add((Operation) op);
-		}
-		return result;
-	}
+        for (int i = 0; i < this.operationsLine.getComponentCount(); i++) {
+            Component op = this.operationsLine.getComponent(i);
+            if (!(op instanceof Operation)) {
+                continue;
+            }
+
+            result.add((Operation) op);
+        }
+        return result;
+    }
 
 }

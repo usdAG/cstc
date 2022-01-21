@@ -16,15 +16,15 @@ public class Inflate extends Operation {
         Inflater inflater = new Inflater();
         inflater.setInput(input);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(input.length);   
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(input.length);
 
-        byte[] buffer = new byte[1024];   
-        while( !inflater.finished() ) {  
+        byte[] buffer = new byte[1024];
+        while( !inflater.finished() ) {
             int count = inflater.inflate(buffer);
-            outputStream.write(buffer, 0, count);   
+            outputStream.write(buffer, 0, count);
         }
 
         outputStream.close();
         return outputStream.toByteArray();
-    }  
+    }
 }

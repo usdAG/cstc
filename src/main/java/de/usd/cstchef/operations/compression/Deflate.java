@@ -16,16 +16,16 @@ public class Deflate extends Operation {
         Deflater deflater = new Deflater();
         deflater.setInput(input);
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(input.length);   
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(input.length);
         deflater.finish();
 
-        byte[] buffer = new byte[1024];   
-        while( !deflater.finished() ) {  
+        byte[] buffer = new byte[1024];
+        while( !deflater.finished() ) {
             int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);   
+            outputStream.write(buffer, 0, count);
         }
 
         outputStream.close();
         return outputStream.toByteArray();
-    }  
+    }
 }

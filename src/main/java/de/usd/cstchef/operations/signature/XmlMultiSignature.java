@@ -22,7 +22,7 @@ public class XmlMultiSignature extends XmlSignature {
       this.addIdSelectors();
     }
 
-	protected byte[] perform(byte[] input) throws Exception {
+    protected byte[] perform(byte[] input) throws Exception {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
       Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input));
@@ -36,6 +36,6 @@ public class XmlMultiSignature extends XmlSignature {
       Transformer transformer = transformerFactory.newTransformer();
       transformer.transform(source, result);
       return bos.toByteArray();
-	}
+    }
 
 }

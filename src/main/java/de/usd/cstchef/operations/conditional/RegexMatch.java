@@ -11,41 +11,41 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "Regex Match", category = OperationCategory.CONDITIONALS, description = "Skip if regex matches")
 public class RegexMatch extends ConditionalOperation {
 
-	private JCheckBox invert;
-	private JCheckBox find;
+    private JCheckBox invert;
+    private JCheckBox find;
 
-	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		
-		Pattern p = Pattern.compile(this.expr.getText());
-		Matcher m = p.matcher(new String(input));
+    @Override
+    protected byte[] perform(byte[] input) throws Exception {
 
-		boolean condition = false;
-		if( find.isSelected() ) {
-			condition = m.find();
-		} else {
-			condition = m.matches();
-		}
-		
-		if( condition ^ invert.isSelected() ) {
-			this.setOperationSkip();
-			this.setLaneSkip();
-		} else {
-			this.resetSkips();
-		}
-		
-		return input;
-	}
-	
-	@Override
-	public void createUI() {
-		super.createUI();
-		
-		this.invert = new JCheckBox();
-		this.addUIElement("Invert Match", this.invert);
-		
-		this.find = new JCheckBox();
-		this.addUIElement("Find anywhere", this.find);
-	}
-	
+        Pattern p = Pattern.compile(this.expr.getText());
+        Matcher m = p.matcher(new String(input));
+
+        boolean condition = false;
+        if( find.isSelected() ) {
+            condition = m.find();
+        } else {
+            condition = m.matches();
+        }
+
+        if( condition ^ invert.isSelected() ) {
+            this.setOperationSkip();
+            this.setLaneSkip();
+        } else {
+            this.resetSkips();
+        }
+
+        return input;
+    }
+
+    @Override
+    public void createUI() {
+        super.createUI();
+
+        this.invert = new JCheckBox();
+        this.addUIElement("Invert Match", this.invert);
+
+        this.find = new JCheckBox();
+        this.addUIElement("Find anywhere", this.find);
+    }
+
 }

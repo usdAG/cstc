@@ -5,10 +5,10 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 
 @OperationInfos(name = "MD5", category = OperationCategory.HASHING, description = "The MD5 (Message-Digest 5) algorithm")
 public class MD5 extends HashOperation {
-	
-	public MD5() {
-		super("MD5");
-	}
-	
+
+    public MD5() {
+        super("MD5");
+    }
+
 
 }

@@ -42,36 +42,36 @@ public abstract class XmlSignature extends KeystoreOperation {
     private boolean multiSignature = false;
     private XMLSignatureFactory signatureFac;
     private HashMap<String, String> digestMethods = new HashMap<String,String>();
-    private HashMap<String, String> signatureMethods = new HashMap<String,String>();    
+    private HashMap<String, String> signatureMethods = new HashMap<String,String>();
     //"rsa-sha256", SignatureMethod.RSA_SHA256,
     //"rsa-sha512", SignatureMethod.RSA_SHA512
     private String[] availDigestMethods = new String[] {"sha1", "sha256", "sha512"};
     private String[] availSignatureMethods = new String[] {"rsa-sha1"};//, "rsa-sha256", "rsa-sha512"};
 
-	protected JComboBox<String> signatureMethod;
-	protected JComboBox<String> digestMethod;
+    protected JComboBox<String> signatureMethod;
+    protected JComboBox<String> digestMethod;
 
-	protected JButton addReferenceButton;
-	protected JButton removeReferenceButton;
-	protected ArrayList<FormatTextField> referenceFields = new ArrayList<FormatTextField>();
-    
-	protected JComboBox<String> includeKeyInfo;
+    protected JButton addReferenceButton;
+    protected JButton removeReferenceButton;
+    protected ArrayList<FormatTextField> referenceFields = new ArrayList<FormatTextField>();
+
+    protected JComboBox<String> includeKeyInfo;
     protected JCheckBox certificate;
     protected JCheckBox subject;
     protected JCheckBox issuer;
     protected JCheckBox serialIssuer;
 
-	protected FormatTextField idIdentifier;
+    protected FormatTextField idIdentifier;
 
-	public XmlSignature() {
-		super();
-		this.digestMethods.put("sha1", DigestMethod.SHA1);
-		this.digestMethods.put("sha256", DigestMethod.SHA256);
-		this.digestMethods.put("sha512", DigestMethod.SHA512);
-		this.signatureMethods.put("rsa-sha1", SignatureMethod.RSA_SHA1);
+    public XmlSignature() {
+        super();
+        this.digestMethods.put("sha1", DigestMethod.SHA1);
+        this.digestMethods.put("sha256", DigestMethod.SHA256);
+        this.digestMethods.put("sha512", DigestMethod.SHA512);
+        this.signatureMethods.put("rsa-sha1", SignatureMethod.RSA_SHA1);
         this.signatureFac = XMLSignatureFactory.getInstance("DOM");
         this.createMyUI();
-	}
+    }
 
     protected ArrayList<Reference> getReferences() throws Exception {
       String digMethod = (String) digestMethod.getSelectedItem();
@@ -117,7 +117,7 @@ public abstract class XmlSignature extends KeystoreOperation {
         List<Object> x509Content = new ArrayList<Object>();
         if( this.subject.isSelected() ) {
           x509Content.add(cert.getSubjectX500Principal().getName());
-        } 
+        }
         if( this.serialIssuer.isSelected() ) {
           x509Content.add(keyInfoFac.newX509IssuerSerial(cert.getIssuerX500Principal().getName(),cert.getSerialNumber()));
         }
@@ -132,7 +132,7 @@ public abstract class XmlSignature extends KeystoreOperation {
       }
       return (KeyInfo)null;
     }
-    
+
 
     protected void createSignature(Document document) throws Exception {
       String signMethod = (String)signatureMethod.getSelectedItem();
@@ -145,7 +145,7 @@ public abstract class XmlSignature extends KeystoreOperation {
       KeyInfo keyInfo = this.getKeyInfo();
       XMLSignature signature = signatureFac.newXMLSignature(signatureInfo, keyInfo);
 
-      DOMSignContext dsc = new DOMSignContext (keyEntry.getPrivateKey(), document.getDocumentElement()); 
+      DOMSignContext dsc = new DOMSignContext (keyEntry.getPrivateKey(), document.getDocumentElement());
       signature.sign(dsc);
     }
 
@@ -153,52 +153,52 @@ public abstract class XmlSignature extends KeystoreOperation {
     protected void addIdSelectors() {
         this.multiSignature = true;
 
-		this.idIdentifier = new FormatTextField();
-		this.addUIElement("Identifier", this.idIdentifier);
+        this.idIdentifier = new FormatTextField();
+        this.addUIElement("Identifier", this.idIdentifier);
 
-		addReferenceButton = new JButton("Add Reference");
-		addReferenceButton.addActionListener(this);
-		this.addUIElement(null, addReferenceButton, false, "button1");
+        addReferenceButton = new JButton("Add Reference");
+        addReferenceButton.addActionListener(this);
+        this.addUIElement(null, addReferenceButton, false, "button1");
     }
 
 
-	public void createMyUI() {
+    public void createMyUI() {
         super.createMyUI();
 
-		this.includeKeyInfo = new JComboBox<>(new String[]{ "true", "false" });
-		this.includeKeyInfo.addActionListener(this);
-		this.addUIElement("IncludeKeyInfo", this.includeKeyInfo);
-        
+        this.includeKeyInfo = new JComboBox<>(new String[]{ "true", "false" });
+        this.includeKeyInfo.addActionListener(this);
+        this.addUIElement("IncludeKeyInfo", this.includeKeyInfo);
+
         this.certificate = new JCheckBox("Include Certificate");
         this.certificate.setSelected(false);
-		this.certificate.addActionListener(this);
-		this.addUIElement(null, this.certificate, "checkbox1");
+        this.certificate.addActionListener(this);
+        this.addUIElement(null, this.certificate, "checkbox1");
 
         this.subject = new JCheckBox("Include Subject");
         this.subject.setSelected(false);
-		this.subject.addActionListener(this);
-		this.addUIElement(null, this.subject, "checkbox2");
+        this.subject.addActionListener(this);
+        this.addUIElement(null, this.subject, "checkbox2");
 
         this.issuer = new JCheckBox("Include Issuer");
         this.issuer.setSelected(false);
-		this.issuer.addActionListener(this);
-		this.addUIElement(null, this.issuer, "checkbox3");
+        this.issuer.addActionListener(this);
+        this.addUIElement(null, this.issuer, "checkbox3");
 
         this.serialIssuer = new JCheckBox("Include Issuer");
         this.serialIssuer.setSelected(false);
-		this.serialIssuer.addActionListener(this);
-		this.addUIElement(null, this.serialIssuer, "checkbox4");
-    
-		this.digestMethod = new JComboBox<String>(this.availDigestMethods);
-		this.digestMethod.addActionListener(this);
-		this.addUIElement("DigestMethod", this.digestMethod);
+        this.serialIssuer.addActionListener(this);
+        this.addUIElement(null, this.serialIssuer, "checkbox4");
 
-		this.signatureMethod = new JComboBox<String>(this.availSignatureMethods);
-		this.signatureMethod.addActionListener(this);
-		this.addUIElement("SignatureMethod", this.signatureMethod);
-	}
+        this.digestMethod = new JComboBox<String>(this.availDigestMethods);
+        this.digestMethod.addActionListener(this);
+        this.addUIElement("DigestMethod", this.digestMethod);
 
-	public void actionPerformed(ActionEvent arg0) {
+        this.signatureMethod = new JComboBox<String>(this.availSignatureMethods);
+        this.signatureMethod.addActionListener(this);
+        this.addUIElement("SignatureMethod", this.signatureMethod);
+    }
+
+    public void actionPerformed(ActionEvent arg0) {
         if( arg0.getSource() == addReferenceButton ) {
           FormatTextField tmpRef = new FormatTextField();
           this.addUIElement("Reference", tmpRef);
@@ -218,5 +218,5 @@ public abstract class XmlSignature extends KeystoreOperation {
           }
         }
         super.actionPerformed(arg0);
-	}
+    }
 }

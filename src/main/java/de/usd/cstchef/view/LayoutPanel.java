@@ -13,36 +13,36 @@ import javax.swing.UIManager;
 
 public class LayoutPanel extends JPanel {
 
-	private Box headerBox;
+    private Box headerBox;
 
-	public LayoutPanel() {
-		this("No tile");
-	}
+    public LayoutPanel() {
+        this("No tile");
+    }
 
-	public LayoutPanel(String title) {
-		super();
-		this.setLayout(new BorderLayout(0, 0));
+    public LayoutPanel(String title) {
+        super();
+        this.setLayout(new BorderLayout(0, 0));
 
-		this.headerBox = Box.createHorizontalBox();
-		this.headerBox.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		this.headerBox.setOpaque(true);
-		this.headerBox.setBackground(UIManager.getColor("Panel.background"));
+        this.headerBox = Box.createHorizontalBox();
+        this.headerBox.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        this.headerBox.setOpaque(true);
+        this.headerBox.setBackground(UIManager.getColor("Panel.background"));
 
-		JLabel titleLbl = new JLabel(title);
-		titleLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JLabel titleLbl = new JLabel(title);
+        titleLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-		Font f = titleLbl.getFont();
-		titleLbl.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        Font f = titleLbl.getFont();
+        titleLbl.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
 
-		this.headerBox.add(titleLbl);
-		this.headerBox.add(Box.createHorizontalGlue());
+        this.headerBox.add(titleLbl);
+        this.headerBox.add(Box.createHorizontalGlue());
 
-		this.add(headerBox, BorderLayout.PAGE_START);
-	}
+        this.add(headerBox, BorderLayout.PAGE_START);
+    }
 
-	public void addActionComponent(JComponent comp) {
-		comp.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		this.headerBox.add(comp);
-		this.headerBox.add(Box.createHorizontalStrut(10));
-	}
+    public void addActionComponent(JComponent comp) {
+        comp.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        this.headerBox.add(comp);
+        this.headerBox.add(Box.createHorizontalStrut(10));
+    }
 }

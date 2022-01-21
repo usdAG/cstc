@@ -13,20 +13,20 @@ public class GUnzip extends Operation {
 
     @Override
     protected byte[] perform(byte[] input) throws Exception {
-    	ByteArrayInputStream in = new ByteArrayInputStream(input);
-    	ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayInputStream in = new ByteArrayInputStream(input);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         GZIPInputStream gis = new GZIPInputStream(in);
-        
-        byte[] buffer = new byte[1024];   
+
+        byte[] buffer = new byte[1024];
         int len;
-		while((len = gis.read(buffer)) != -1){
-			out.write(buffer, 0, len);
+        while((len = gis.read(buffer)) != -1){
+            out.write(buffer, 0, len);
         }
 
-		gis.close();
+        gis.close();
         out.close();
         in.close();
         return out.toByteArray();
-    }  
+    }
 
 }

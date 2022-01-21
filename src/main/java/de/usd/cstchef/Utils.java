@@ -115,110 +115,110 @@ import de.usd.cstchef.view.View;
 
 public class Utils {
 
-	// TODO find a better way to do this
-	
+    // TODO find a better way to do this
 
-	public static HashMap<String, String> delimiters = new HashMap<String, String>() {
-		{
-			put("Comma", ",");
-			put("Space", " ");
-			put("Line feed", "\n");
-			put("Colon", ":");
-			put("CLRF", "\r\n");
-			put("Semi-colon", ";");
-		}
-	};
 
-	public static double parseNumber(String in) {
-		// TODO hex values??
-		return Double.valueOf(in);
-	}
+    public static HashMap<String, String> delimiters = new HashMap<String, String>() {
+        {
+            put("Comma", ",");
+            put("Space", " ");
+            put("Line feed", "\n");
+            put("Colon", ":");
+            put("CLRF", "\r\n");
+            put("Semi-colon", ";");
+        }
+    };
 
-	public static String replaceVariables(String text) {
-		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
-		for (Entry<String, byte[]> entry : variables.entrySet()) {
-			// TODO this is easy, but very bad, how to do this right?
-			text = text.replace("$" + entry.getKey(), new String(entry.getValue()));
-		}
+    public static double parseNumber(String in) {
+        // TODO hex values??
+        return Double.valueOf(in);
+    }
 
-		return text;
-	}
+    public static String replaceVariables(String text) {
+        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+        for (Entry<String, byte[]> entry : variables.entrySet()) {
+            // TODO this is easy, but very bad, how to do this right?
+            text = text.replace("$" + entry.getKey(), new String(entry.getValue()));
+        }
 
-	public static byte[] replaceVariablesByte(byte[] bytes) {
-		HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+        return text;
+    }
+
+    public static byte[] replaceVariablesByte(byte[] bytes) {
+        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
 
         IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-		IExtensionHelpers helpers = callbacks.getHelpers();
+        IExtensionHelpers helpers = callbacks.getHelpers();
 
-		byte[] currentKey;
-		for (Entry<String, byte[]> entry : variables.entrySet()) {
+        byte[] currentKey;
+        for (Entry<String, byte[]> entry : variables.entrySet()) {
 
             int offset = 0;
-			currentKey = ("$" + entry.getKey()).getBytes();
+            currentKey = ("$" + entry.getKey()).getBytes();
 
             while( offset >= 0 ) {
                 offset = helpers.indexOf(bytes, currentKey, true, offset, bytes.length);
                 if( offset >= 0 )
                     bytes = insertAtOffset(bytes, offset, offset + currentKey.length, entry.getValue());
             }
-		}
-		return bytes;
-	}
+        }
+        return bytes;
+    }
 
     public static byte[] insertAtOffset(byte[] input, int start, int end, byte[] newValue) {
-		byte[] prefix = Arrays.copyOfRange(input, 0, start);
-		byte[] rest = Arrays.copyOfRange(input, end, input.length);
+        byte[] prefix = Arrays.copyOfRange(input, 0, start);
+        byte[] rest = Arrays.copyOfRange(input, end, input.length);
 
-		byte[] output = new byte[prefix.length + newValue.length + rest.length];
-		System.arraycopy(prefix, 0, output, 0, prefix.length);
-		System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
-		System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
+        byte[] output = new byte[prefix.length + newValue.length + rest.length];
+        System.arraycopy(prefix, 0, output, 0, prefix.length);
+        System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
+        System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
 
-		return output;
-	}
+        return output;
+    }
 
-	public static Class<? extends Operation>[] getOperationsBurp() {
-		ZipInputStream zip = null;
-		List<Class<? extends Operation>> operations = new ArrayList<Class<? extends Operation>>();
+    public static Class<? extends Operation>[] getOperationsBurp() {
+        ZipInputStream zip = null;
+        List<Class<? extends Operation>> operations = new ArrayList<Class<? extends Operation>>();
 
-		try {
-			File f = new File(View.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-			zip = new ZipInputStream(new FileInputStream(f.getAbsolutePath()));
-			for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-				if (entry.isDirectory() || !entry.getName().endsWith(".class")) {
-					continue;
-				}
+        try {
+            File f = new File(View.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            zip = new ZipInputStream(new FileInputStream(f.getAbsolutePath()));
+            for (ZipEntry entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                if (entry.isDirectory() || !entry.getName().endsWith(".class")) {
+                    continue;
+                }
 
-				String className = entry.getName().replace('/', '.');
-				className = className.substring(0, className.length() - ".class".length());
-				if (!className.contains("de.usd.operations")) {
-					continue;
-				}
+                String className = entry.getName().replace('/', '.');
+                className = className.substring(0, className.length() - ".class".length());
+                if (!className.contains("de.usd.operations")) {
+                    continue;
+                }
 
-				Class cls = Class.forName(className);
-				if (Operation.class.isAssignableFrom(cls)) {
-					Logger.getInstance().log(cls.toString());
-					operations.add(cls);
-				}
-			}
-		} catch (URISyntaxException e) {
-		} catch (ClassNotFoundException e) {
-		} catch (FileNotFoundException e) {
-		} catch (IOException e) {
-		} finally {
-			try {
-				zip.close();
-			} catch (IOException e) {
-			}
-		}
-		
-		return operations.toArray(new Class[operations.size()]);
-	}
+                Class cls = Class.forName(className);
+                if (Operation.class.isAssignableFrom(cls)) {
+                    Logger.getInstance().log(cls.toString());
+                    operations.add(cls);
+                }
+            }
+        } catch (URISyntaxException e) {
+        } catch (ClassNotFoundException e) {
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        } finally {
+            try {
+                zip.close();
+            } catch (IOException e) {
+            }
+        }
 
-	// TODO reflection does not work in Burp Suite
-	@SuppressWarnings("unchecked")
-	public static Class<? extends Operation>[] getOperationsDev() {
-		return new Class[] { 
+        return operations.toArray(new Class[operations.size()]);
+    }
+
+    // TODO reflection does not work in Burp Suite
+    @SuppressWarnings("unchecked")
+    public static Class<? extends Operation>[] getOperationsDev() {
+        return new Class[] {
             Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
             Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
             Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
@@ -232,7 +232,7 @@ public class Utils {
             JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class,
             LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
             Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
-            RandomNumber.class, RandomUUID.class ,ReadFile.class, RegexExtractor.class, Replace.class, 
+            RandomNumber.class, RandomUUID.class ,ReadFile.class, RegexExtractor.class, Replace.class,
             RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
             SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
             StaticString.class, StoreVariable.class, Sub.class, Substring.class, Subtraction.class,
@@ -240,11 +240,11 @@ public class Utils {
             ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
             Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
             Xor.class, SoapMultiSignature.class
-		};
-	}
+        };
+    }
 
-	public static Class<? extends Operation>[] getOperations() {
-		return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
-	}
+    public static Class<? extends Operation>[] getOperations() {
+        return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+    }
 
 }

@@ -6,8 +6,8 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 @OperationInfos(name = "Whirlpool", category = OperationCategory.HASHING, description = "The Whirlpool algorithm")
 public class Whirlpool extends HashOperation {
 
-	public Whirlpool() {
-		super("WHIRLPOOL");
-	}
+    public Whirlpool() {
+        super("WHIRLPOOL");
+    }
 
 }

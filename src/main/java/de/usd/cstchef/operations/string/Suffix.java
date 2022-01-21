@@ -10,21 +10,21 @@ import de.usd.cstchef.view.ui.FormatTextField;
 @OperationInfos(name = "Suffix", category = OperationCategory.STRING, description = "Adds a suffix.")
 public class Suffix extends Operation {
 
-	private FormatTextField  suffixTxt;
+    private FormatTextField  suffixTxt;
 
-	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		out.write(input);
-		out.write(suffixTxt.getText());
-		
-		return out.toByteArray();
-	}
+    @Override
+    protected byte[] perform(byte[] input) throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write(input);
+        out.write(suffixTxt.getText());
 
-	@Override
-	public void createUI() {
-		this.suffixTxt = new FormatTextField ();
-		this.addUIElement("Suffix", this.suffixTxt);
-	}
+        return out.toByteArray();
+    }
+
+    @Override
+    public void createUI() {
+        this.suffixTxt = new FormatTextField ();
+        this.addUIElement("Suffix", this.suffixTxt);
+    }
 
 }

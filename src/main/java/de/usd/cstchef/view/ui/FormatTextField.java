@@ -17,74 +17,74 @@ import org.bouncycastle.util.encoders.Hex;
 
 public class FormatTextField extends JPanel implements ActionListener {
 
-	public VariableTextField txtField;
-	private JComboBox<String> formatBox;
-	private DocumentListener docListener;
+    public VariableTextField txtField;
+    private JComboBox<String> formatBox;
+    private DocumentListener docListener;
 
-	public FormatTextField() {
-		this.setLayout(new BorderLayout());
-		this.setBackground(new Color(0, 0, 0, 0));
-		this.txtField = new VariableTextField();
-		this.formatBox = new JComboBox<>(new String[] {"Raw", "UTF-8", "Hex", "Latin1", "Base64"});
-		this.formatBox.addActionListener(this);
+    public FormatTextField() {
+        this.setLayout(new BorderLayout());
+        this.setBackground(new Color(0, 0, 0, 0));
+        this.txtField = new VariableTextField();
+        this.formatBox = new JComboBox<>(new String[] {"Raw", "UTF-8", "Hex", "Latin1", "Base64"});
+        this.formatBox.addActionListener(this);
 
-		Box box = Box.createHorizontalBox();
-		box.add(formatBox);
-		box.add(Box.createHorizontalStrut(10));
-		box.add(txtField);
+        Box box = Box.createHorizontalBox();
+        box.add(formatBox);
+        box.add(Box.createHorizontalStrut(10));
+        box.add(txtField);
 
-		this.add(box);
-	}
+        this.add(box);
+    }
 
-	public Map<String, String> getValues() {
-		Map<String, String> values = new HashMap<>();
-		values.put("text", this.txtField.getText());
-		values.put("encoding", this.formatBox.getSelectedItem().toString());
-		return values;
-	}
+    public Map<String, String> getValues() {
+        Map<String, String> values = new HashMap<>();
+        values.put("text", this.txtField.getText());
+        values.put("encoding", this.formatBox.getSelectedItem().toString());
+        return values;
+    }
 
-	public void setValues(Map<String, String> values) {
-		String text = values.get("text");
-		this.txtField.setText(text);
-		Object encoding = values.get("encoding");
-		this.formatBox.setSelectedItem(encoding);
-	}
+    public void setValues(Map<String, String> values) {
+        String text = values.get("text");
+        this.txtField.setText(text);
+        Object encoding = values.get("encoding");
+        this.formatBox.setSelectedItem(encoding);
+    }
 
-	public byte[] getText() throws UnsupportedEncodingException {
-		
-		byte[] raw = this.txtField.getBytes();
-		byte[] result = null;
+    public byte[] getText() throws UnsupportedEncodingException {
 
-		switch ((String) this.formatBox.getSelectedItem()) {
-		case "Raw":
-			result = raw;
-			break;
-		case "Hex":
-			result = Hex.decode(raw);
-			break;
-		case "Base64":
-			result = Base64.getDecoder().decode(raw);
-			break;
-		case "Latin1":
-			result = this.txtField.getText().getBytes("ISO-8859-1");
-			break;
-		case "UTF-8":
-			result = this.txtField.getText().getBytes("UTF-8");
-			break;
-		}
-		return result;
-	}
+        byte[] raw = this.txtField.getBytes();
+        byte[] result = null;
 
-	public void addDocumentListener(DocumentListener listener) {
-		this.docListener = listener;
-		this.txtField.getDocument().addDocumentListener(listener);
-	}
+        switch ((String) this.formatBox.getSelectedItem()) {
+        case "Raw":
+            result = raw;
+            break;
+        case "Hex":
+            result = Hex.decode(raw);
+            break;
+        case "Base64":
+            result = Base64.getDecoder().decode(raw);
+            break;
+        case "Latin1":
+            result = this.txtField.getText().getBytes("ISO-8859-1");
+            break;
+        case "UTF-8":
+            result = this.txtField.getText().getBytes("UTF-8");
+            break;
+        }
+        return result;
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (this.docListener != null) {
-			this.docListener.changedUpdate(null);
-		}
-	}
+    public void addDocumentListener(DocumentListener listener) {
+        this.docListener = listener;
+        this.txtField.getDocument().addDocumentListener(listener);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (this.docListener != null) {
+            this.docListener.changedUpdate(null);
+        }
+    }
 
 }

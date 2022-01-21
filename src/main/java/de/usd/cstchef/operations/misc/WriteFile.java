@@ -17,62 +17,62 @@ import de.usd.cstchef.view.ui.VariableTextField;
 @OperationInfos(name = "Write File", category = OperationCategory.MISC, description = "Appends data to the end of a file.")
 public class WriteFile extends Operation implements ActionListener {
 
-	private final JFileChooser fileChooser = new JFileChooser();
-	private VariableTextField fileNameTxt;
-	private String lastPath = "";
-	private FileOutputStream out;
+    private final JFileChooser fileChooser = new JFileChooser();
+    private VariableTextField fileNameTxt;
+    private String lastPath = "";
+    private FileOutputStream out;
 
-	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		String path = fileNameTxt.getText();
-		
-		if (!lastPath.equals(path)) {
-			if (out != null) {
-				out.close();
-				out = null;
-			}
-			if (!path.isEmpty()) {
-				out = new FileOutputStream(path);
-			}
-			lastPath = path;
-		}
+    @Override
+    protected byte[] perform(byte[] input) throws Exception {
+        String path = fileNameTxt.getText();
 
-		if (out != null) {
-			out.write(input);
-			out.write('\n');
-		}
+        if (!lastPath.equals(path)) {
+            if (out != null) {
+                out.close();
+                out = null;
+            }
+            if (!path.isEmpty()) {
+                out = new FileOutputStream(path);
+            }
+            lastPath = path;
+        }
 
-		return input;
-	}
+        if (out != null) {
+            out.write(input);
+            out.write('\n');
+        }
 
-	public void createUI() {
-		this.fileNameTxt = new VariableTextField();
-		this.fileNameTxt.setEditable(false);
-		this.addUIElement("Filename", this.fileNameTxt);
+        return input;
+    }
 
-		JButton chooseFileButton = new JButton("Select file");
-		chooseFileButton.addActionListener(this);
-		this.addUIElement(null, chooseFileButton, false, "button1");
-	}
+    public void createUI() {
+        this.fileNameTxt = new VariableTextField();
+        this.fileNameTxt.setEditable(false);
+        this.addUIElement("Filename", this.fileNameTxt);
+
+        JButton chooseFileButton = new JButton("Select file");
+        chooseFileButton.addActionListener(this);
+        this.addUIElement(null, chooseFileButton, false, "button1");
+    }
 
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		int returnVal = fileChooser.showOpenDialog(this);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fileChooser.getSelectedFile();
-			this.fileNameTxt.setText(file.getAbsolutePath());
-		}
-	}
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            this.fileNameTxt.setText(file.getAbsolutePath());
+        }
+    }
 
-	@Override
-	public void onRemove() {
-		if (out != null) {
-			try {
-				out.close();
-			} catch (IOException e) {
-			}
-		}
-	}
+    @Override
+    public void onRemove() {
+        if (out != null) {
+            try {
+                out.close();
+            } catch (IOException e) {
+            }
+        }
+    }
 
 }

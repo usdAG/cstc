@@ -8,63 +8,63 @@ import burp.ITextEditor;
 import burp.Logger;
 
 public class FormatTab implements IMessageEditorTab {
-	private ITextEditor txtInput;
-	private boolean editable;
-	private RecipePanel responseFormatRecipePanel;
-	private RecipePanel requestFormatRecipePanel;
-	private byte[] currentMessage;
+    private ITextEditor txtInput;
+    private boolean editable;
+    private RecipePanel responseFormatRecipePanel;
+    private RecipePanel requestFormatRecipePanel;
+    private byte[] currentMessage;
 
-	public FormatTab(RecipePanel requestFormatRecipePanel, RecipePanel responseFormatRecipePanel, boolean editable) {
-		this.editable = editable;
-		this.responseFormatRecipePanel = responseFormatRecipePanel;
-		this.requestFormatRecipePanel = requestFormatRecipePanel;
-		txtInput = BurpUtils.getInstance().getCallbacks().createTextEditor();
-		txtInput.setEditable(editable);
-	}
+    public FormatTab(RecipePanel requestFormatRecipePanel, RecipePanel responseFormatRecipePanel, boolean editable) {
+        this.editable = editable;
+        this.responseFormatRecipePanel = responseFormatRecipePanel;
+        this.requestFormatRecipePanel = requestFormatRecipePanel;
+        txtInput = BurpUtils.getInstance().getCallbacks().createTextEditor();
+        txtInput.setEditable(editable);
+    }
 
-	@Override
-	public String getTabCaption() {
-		return "CSTC";
-	}
+    @Override
+    public String getTabCaption() {
+        return "CSTC";
+    }
 
-	@Override
-	public Component getUiComponent() {
+    @Override
+    public Component getUiComponent() {
         return txtInput.getComponent();
-	}
+    }
 
-	@Override
-	public boolean isEnabled(byte[] content, boolean isRequest) {
-		return true;
-	}
+    @Override
+    public boolean isEnabled(byte[] content, boolean isRequest) {
+        return true;
+    }
 
-	@Override
-	public void setMessage(byte[] content, boolean isRequest) {
-		currentMessage = content;
-		
-		if (content == null) {
+    @Override
+    public void setMessage(byte[] content, boolean isRequest) {
+        currentMessage = content;
+
+        if (content == null) {
             txtInput.setText("Nothing here".getBytes());
             txtInput.setEditable(false);
             return;
         }
-		RecipePanel recipe = isRequest ? this.requestFormatRecipePanel : this.responseFormatRecipePanel;
-		Logger.getInstance().log("baking new stuff");
-		byte[] result = recipe.bake(content);
-		this.txtInput.setText(result);
-	}
+        RecipePanel recipe = isRequest ? this.requestFormatRecipePanel : this.responseFormatRecipePanel;
+        Logger.getInstance().log("baking new stuff");
+        byte[] result = recipe.bake(content);
+        this.txtInput.setText(result);
+    }
 
-	@Override
-	public byte[] getMessage() {
-		return currentMessage;
-	}
+    @Override
+    public byte[] getMessage() {
+        return currentMessage;
+    }
 
-	@Override
-	public boolean isModified() {
+    @Override
+    public boolean isModified() {
         return txtInput.isTextModified();
-	}
+    }
 
-	@Override
-	public byte[] getSelectedData() {
+    @Override
+    public byte[] getSelectedData() {
         return txtInput.getSelectedText();
-	}
+    }
 
 }

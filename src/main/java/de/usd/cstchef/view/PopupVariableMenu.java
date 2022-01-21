@@ -14,52 +14,52 @@ import javax.swing.text.JTextComponent;
 
 public class PopupVariableMenu extends JPopupMenu implements ActionListener, PopupMenuListener {
 
-	private JTextComponent parent;
-	private static SortedMap<String, byte[]> variableMap;
+    private JTextComponent parent;
+    private static SortedMap<String, byte[]> variableMap;
 
-	public PopupVariableMenu(JTextComponent parent) {
-		super();
-		this.parent = parent;
-		this.addPopupMenuListener(this);
+    public PopupVariableMenu(JTextComponent parent) {
+        super();
+        this.parent = parent;
+        this.addPopupMenuListener(this);
 
-	}
+    }
 
-	public void refreshMenu() {
-		this.removeAll();
+    public void refreshMenu() {
+        this.removeAll();
 
-		for (String key : variableMap.keySet()) {
-			JMenuItem item = new JMenuItem(key);
-			item.addActionListener(this);
-			this.add(item);
-		}
-	}
+        for (String key : variableMap.keySet()) {
+            JMenuItem item = new JMenuItem(key);
+            item.addActionListener(this);
+            this.add(item);
+        }
+    }
 
-	public static void refresh(HashMap<String, byte[]> variables) {
-		if (variables == null) {
-			variableMap = new TreeMap<String, byte[]>();
-		} else {
-			variableMap = new TreeMap<String, byte[]>(variables);
-		}
-	}
+    public static void refresh(HashMap<String, byte[]> variables) {
+        if (variables == null) {
+            variableMap = new TreeMap<String, byte[]>();
+        } else {
+            variableMap = new TreeMap<String, byte[]>(variables);
+        }
+    }
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		parent.setText(parent.getText() + "$" + arg0.getActionCommand());
-	}
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+        parent.setText(parent.getText() + "$" + arg0.getActionCommand());
+    }
 
-	@Override
-	public void popupMenuCanceled(PopupMenuEvent arg0) {
-		// not needed
-	}
+    @Override
+    public void popupMenuCanceled(PopupMenuEvent arg0) {
+        // not needed
+    }
 
-	@Override
-	public void popupMenuWillBecomeInvisible(PopupMenuEvent arg0) {
-		// not needed
-	}
+    @Override
+    public void popupMenuWillBecomeInvisible(PopupMenuEvent arg0) {
+        // not needed
+    }
 
-	@Override
-	public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
-		this.refreshMenu();
-	}
+    @Override
+    public void popupMenuWillBecomeVisible(PopupMenuEvent arg0) {
+        this.refreshMenu();
+    }
 
 }

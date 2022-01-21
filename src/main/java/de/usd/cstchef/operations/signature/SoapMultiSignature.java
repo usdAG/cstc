@@ -53,26 +53,26 @@ public class SoapMultiSignature extends KeystoreOperation {
     public SoapMultiSignature() {
       super();
       this.digestMethods.put("sha1", DigestMethod.SHA1);
-	  this.digestMethods.put("sha256", DigestMethod.SHA256);
-	  this.digestMethods.put("sha512", DigestMethod.SHA512);
-	  this.signatureMethods.put("rsa-sha1", SignatureMethod.RSA_SHA1);
+      this.digestMethods.put("sha256", DigestMethod.SHA256);
+      this.digestMethods.put("sha512", DigestMethod.SHA512);
+      this.signatureMethods.put("rsa-sha1", SignatureMethod.RSA_SHA1);
       this.createMyUI();
     }
 
     protected HashMap<String, String> digestMethods = new HashMap<String,String>();
-    protected HashMap<String, String> signatureMethods = new HashMap<String,String>();    
+    protected HashMap<String, String> signatureMethods = new HashMap<String,String>();
     //"rsa-sha256", SignatureMethod.RSA_SHA256,
     //"rsa-sha512", SignatureMethod.RSA_SHA512
 
     protected String[] availDigestMethods = new String[] {"sha1", "sha256", "sha512"};
     protected String[] availSignatureMethods = new String[] {"rsa-sha1"};//, "rsa-sha256", "rsa-sha512"};
-	protected String[] includeKeyInfos = new String[] { "true", "false" };
-	protected JComboBox<String> includeKeyInfo;
-	protected JComboBox<String> signatureMethod;
-	protected JComboBox<String> digestMethod;
-	protected JButton addReferenceButton;
-	protected FormatTextField idIdentifier;
-	protected ArrayList<FormatTextField> referenceFields = new ArrayList<FormatTextField>();
+    protected String[] includeKeyInfos = new String[] { "true", "false" };
+    protected JComboBox<String> includeKeyInfo;
+    protected JComboBox<String> signatureMethod;
+    protected JComboBox<String> digestMethod;
+    protected JButton addReferenceButton;
+    protected FormatTextField idIdentifier;
+    protected ArrayList<FormatTextField> referenceFields = new ArrayList<FormatTextField>();
     protected JCheckBox certificate;
     protected JCheckBox subject;
     protected JCheckBox issuer;
@@ -121,7 +121,7 @@ public class SoapMultiSignature extends KeystoreOperation {
         List<Object> x509Content = new ArrayList<Object>();
         if( this.subject.isSelected() ) {
           x509Content.add(cert.getSubjectX500Principal().getName());
-        } 
+        }
         if( this.serialIssuer.isSelected() ) {
           x509Content.add(keyInfoFac.newX509IssuerSerial(cert.getIssuerX500Principal().getName(),cert.getSerialNumber()));
         }
@@ -139,7 +139,7 @@ public class SoapMultiSignature extends KeystoreOperation {
     }
 
 
-	protected byte[] perform(byte[] input) throws Exception {
+    protected byte[] perform(byte[] input) throws Exception {
 
       String signMethod = (String)signatureMethod.getSelectedItem();
       PrivateKeyEntry keyEntry = this.selectedEntry;
@@ -158,7 +158,7 @@ public class SoapMultiSignature extends KeystoreOperation {
       } catch( Exception e ) {
         throw new IllegalArgumentException("Provided Id identifier seems to be invalid.");
       }
-      DOMSignContext dsc = new DOMSignContext (keyEntry.getPrivateKey(), doc.getDocumentElement()); 
+      DOMSignContext dsc = new DOMSignContext (keyEntry.getPrivateKey(), doc.getDocumentElement());
       signature.sign(dsc);
 
       DOMSource source = new DOMSource(doc);
@@ -168,52 +168,52 @@ public class SoapMultiSignature extends KeystoreOperation {
       Transformer transformer = transformerFactory.newTransformer();
       transformer.transform(source, result);
       return bos.toByteArray();
-	}
+    }
 
-	public void createMyUI() {
+    public void createMyUI() {
         super.createMyUI();
 
-		this.includeKeyInfo = new JComboBox<>(this.includeKeyInfos);
-		this.includeKeyInfo.addActionListener(this);
-		this.addUIElement("IncludeKeyInfo", this.includeKeyInfo);
-        
+        this.includeKeyInfo = new JComboBox<>(this.includeKeyInfos);
+        this.includeKeyInfo.addActionListener(this);
+        this.addUIElement("IncludeKeyInfo", this.includeKeyInfo);
+
         this.certificate = new JCheckBox("Include Certificate");
         this.certificate.setSelected(false);
-		this.certificate.addActionListener(this);
-		this.addUIElement(null, this.certificate, "checkbox1");
+        this.certificate.addActionListener(this);
+        this.addUIElement(null, this.certificate, "checkbox1");
 
         this.subject = new JCheckBox("Include Subject");
         this.subject.setSelected(false);
-		this.subject.addActionListener(this);
-		this.addUIElement(null, this.subject, "checkbox2");
+        this.subject.addActionListener(this);
+        this.addUIElement(null, this.subject, "checkbox2");
 
         this.issuer = new JCheckBox("Include Issuer");
         this.issuer.setSelected(false);
-		this.issuer.addActionListener(this);
-		this.addUIElement(null, this.issuer, "checkbox3");
+        this.issuer.addActionListener(this);
+        this.addUIElement(null, this.issuer, "checkbox3");
 
         this.serialIssuer = new JCheckBox("Include Issuer");
         this.serialIssuer.setSelected(false);
-		this.serialIssuer.addActionListener(this);
-		this.addUIElement(null, this.serialIssuer, "checkbox4");
-    
-		this.digestMethod = new JComboBox<String>(this.availDigestMethods);
-		this.digestMethod.addActionListener(this);
-		this.addUIElement("DigestMethod", this.digestMethod);
+        this.serialIssuer.addActionListener(this);
+        this.addUIElement(null, this.serialIssuer, "checkbox4");
 
-		this.signatureMethod = new JComboBox<String>(this.availSignatureMethods);
-		this.signatureMethod.addActionListener(this);
-		this.addUIElement("SignatureMethod", this.signatureMethod);
+        this.digestMethod = new JComboBox<String>(this.availDigestMethods);
+        this.digestMethod.addActionListener(this);
+        this.addUIElement("DigestMethod", this.digestMethod);
 
-		this.idIdentifier = new FormatTextField();
-		this.addUIElement("Identifier", this.idIdentifier);
+        this.signatureMethod = new JComboBox<String>(this.availSignatureMethods);
+        this.signatureMethod.addActionListener(this);
+        this.addUIElement("SignatureMethod", this.signatureMethod);
 
-		addReferenceButton = new JButton("Add Reference");
-		addReferenceButton.addActionListener(this);
-		this.addUIElement(null, addReferenceButton, false, "button1");
-	}
+        this.idIdentifier = new FormatTextField();
+        this.addUIElement("Identifier", this.idIdentifier);
 
-	public void actionPerformed(ActionEvent arg0) {
+        addReferenceButton = new JButton("Add Reference");
+        addReferenceButton.addActionListener(this);
+        this.addUIElement(null, addReferenceButton, false, "button1");
+    }
+
+    public void actionPerformed(ActionEvent arg0) {
         if( arg0.getSource() == addReferenceButton ) {
           FormatTextField tmpRef = new FormatTextField();
           this.addUIElement("Reference", tmpRef);
@@ -233,5 +233,5 @@ public class SoapMultiSignature extends KeystoreOperation {
           }
         }
         super.actionPerformed(arg0);
-	}
+    }
 }

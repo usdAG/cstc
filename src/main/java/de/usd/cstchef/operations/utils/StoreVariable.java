@@ -10,34 +10,34 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 @OperationInfos(name = "Store Variable", category = OperationCategory.UTILS, description = "Stores variables to be retrieved later.")
 public class StoreVariable extends Operation {
 
-	private JTextField varNameTxt;
-	private String oldVarName;
+    private JTextField varNameTxt;
+    private String oldVarName;
 
-	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		String newVarName = this.varNameTxt.getText().trim();
-		VariableStore store = VariableStore.getInstance();
-		// remove old variable from hashmap
-		if (!newVarName.equals(oldVarName)) {
-			store.removeVariable(this.oldVarName);
-			this.oldVarName = newVarName;
-		}
+    @Override
+    protected byte[] perform(byte[] input) throws Exception {
+        String newVarName = this.varNameTxt.getText().trim();
+        VariableStore store = VariableStore.getInstance();
+        // remove old variable from hashmap
+        if (!newVarName.equals(oldVarName)) {
+            store.removeVariable(this.oldVarName);
+            this.oldVarName = newVarName;
+        }
 
-		if (!newVarName.isEmpty()) {
-			store.setVariable(newVarName, input);
-		}
+        if (!newVarName.isEmpty()) {
+            store.setVariable(newVarName, input);
+        }
 
-		return input;
-	}
+        return input;
+    }
 
-	public void createUI() {
-		this.varNameTxt = new JTextField();
-		this.addUIElement("Variable name", this.varNameTxt);
-	}
+    public void createUI() {
+        this.varNameTxt = new JTextField();
+        this.addUIElement("Variable name", this.varNameTxt);
+    }
 
-	@Override
-	public void onRemove() {
-		VariableStore.getInstance().removeVariable(this.oldVarName);
-	}
+    @Override
+    public void onRemove() {
+        VariableStore.getInstance().removeVariable(this.oldVarName);
+    }
 
 }
