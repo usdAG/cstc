@@ -115,20 +115,6 @@ import de.usd.cstchef.view.View;
 
 public class Utils {
 
-    // TODO find a better way to do this
-
-
-    public static HashMap<String, String> delimiters = new HashMap<String, String>() {
-        {
-            put("Comma", ",");
-            put("Space", " ");
-            put("Line feed", "\n");
-            put("Colon", ":");
-            put("CLRF", "\r\n");
-            put("Semi-colon", ";");
-        }
-    };
-
     public static double parseNumber(String in) {
         // TODO hex values??
         return Double.valueOf(in);

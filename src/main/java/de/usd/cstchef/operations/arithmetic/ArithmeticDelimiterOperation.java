@@ -1,61 +1,72 @@
 package de.usd.cstchef.operations.arithmetic;
 
-import java.util.Set;
+import java.io.IOException;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.Utils;
 import de.usd.cstchef.operations.Operation;
 
-public abstract class ArithmeticDelimiterOperation extends Operation {
-
+public abstract class ArithmeticDelimiterOperation extends Operation
+{
     private JComboBox<String> delimiterBox;
     private JCheckBox floatCheckBox;
 
+    protected Delimiter getDelimiter() throws IOException
+    {
+        String delimString = (String)this.delimiterBox.getSelectedItem();
+        Delimiter delim = Delimiter.getByName(delimString);
+
+        if( delim == null )
+            throw new IOException("Invalid delimiter.");
+
+        return delim;
+    }
+
+    protected boolean isFloat()
+    {
+        return floatCheckBox.isSelected();
+    }
+
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        String delimiterKey = (String) this.delimiterBox.getSelectedItem();
-        String delimiter = Utils.delimiters.get(delimiterKey);
+    protected byte[] perform(byte[] input) throws Exception
+    {
+        String delimiter = getDelimiter().getValue();
         String[] lines = new String(input).split(delimiter);
-        if (lines.length < 2) {
+
+        if (lines.length < 2)
             return input;
-        }
 
         double[] numbers = new double[lines.length];
-
         double result = Utils.parseNumber(lines[0].trim());
-        numbers[0] = result;
-        double val;
-        for (int i = 1; i < lines.length; i++) {
-            val = Utils.parseNumber(lines[i].trim());
-            numbers[i] = val;
-            result = this.calculate(result, val);
+
+        for(int i = 1; i < lines.length; i++)
+        {
+            numbers[i] = Utils.parseNumber(lines[i].trim());
+            result = this.calculate(result, numbers[i]);
         }
 
         result = onFinish(result, numbers);
-        String str = "";
-        if (floatCheckBox.isSelected()) {
-            str = String.valueOf(result);
-        }
-        else {
-            str = String.valueOf(Math.round(result));
-        }
-        return str.getBytes();
+
+        if( !isFloat() )
+            return String.valueOf(Math.round(result)).getBytes();
+
+        return String.valueOf(result).getBytes();
     }
 
-    protected double onFinish(double result, double[] lines) {
+    protected double onFinish(double result, double[] lines)
+    {
         return result;
     }
 
     protected abstract double calculate(double a, double b);
 
     @Override
-    public void createUI() {
-        Set<String> delimSet = Utils.delimiters.keySet();
-        String[] delimiters = delimSet.toArray(new String[delimSet.size()]);
-
-        this.delimiterBox = new JComboBox<String>(delimiters);
+    public void createUI()
+    {
+        this.delimiterBox = new JComboBox<String>(Delimiter.getNames());
         this.addUIElement("Delimiter", this.delimiterBox);
 
         this.floatCheckBox = new JCheckBox();
