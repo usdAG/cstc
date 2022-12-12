@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Window.Type;
 import java.util.Objects;
 
 import javax.swing.BorderFactory;
@@ -55,6 +56,7 @@ public abstract class OperationMouseAdapter extends MouseAdapter {
 		window.setLocationRelativeTo(null);
 		window.setBackground(new Color(0, true));
 		window.setVisible(false);
+		window.setType(Type.POPUP);
 
 		Container windowPreview = createPreview("My Preview");
 		windowPreviewLbl = (JLabel) windowPreview.getComponent(0);
