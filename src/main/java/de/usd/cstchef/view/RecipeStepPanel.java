@@ -111,4 +111,17 @@ public class RecipeStepPanel extends JPanel {
         return result;
     }
 
+	public void clearOperations() {
+		Component[] operations = this.operationsLine.getComponents();
+		for (int i = 0; i < operations.length; i++) {
+			Component op = operations[i];
+			if (!(op instanceof Operation)) {
+				continue;
+			}
+			operationsLine.remove(op);
+		}
+		operationsLine.revalidate();
+		operationsLine.repaint();
+		this.changeListener.stateChanged(new ChangeEvent(this));
+	}
 }
