@@ -407,6 +407,10 @@ public abstract class Operation extends JPanel {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+		refreshColors();
+		validate();
+		repaint();
+		notifyChange();
     }
 
     public boolean isError() {
