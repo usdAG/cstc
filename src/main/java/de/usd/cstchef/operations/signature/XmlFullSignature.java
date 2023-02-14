@@ -3,6 +3,7 @@ package de.usd.cstchef.operations.signature;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -24,7 +25,8 @@ public class XmlFullSignature extends XmlSignature {
     protected byte[] perform(byte[] input) throws Exception {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
-      dbf.setExpandEntityReferences(false);
+      dbf.setXIncludeAware(false);
+      dbf.setExpandEntityReferences(false);      
       Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input));
 
       this.createSignature(doc);

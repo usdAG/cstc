@@ -25,6 +25,7 @@ public class XmlMultiSignature extends XmlSignature {
     protected byte[] perform(byte[] input) throws Exception {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
+      dbf.setXIncludeAware(false);
       dbf.setExpandEntityReferences(false);
       Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input));
 
