@@ -105,6 +105,8 @@ import de.usd.cstchef.operations.string.SplitAndSelect;
 import de.usd.cstchef.operations.string.StaticString;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
+import de.usd.cstchef.operations.string.Uppercase;
+import de.usd.cstchef.operations.string.Lowercase
 import de.usd.cstchef.operations.utils.GetVariable;
 import de.usd.cstchef.operations.utils.NoOperation;
 import de.usd.cstchef.operations.utils.RandomNumber;
@@ -234,7 +236,7 @@ public class Utils {
             RandomNumber.class, ReadFile.class, RegexExtractor.class, Replace.class, RIPEMD.class,
             RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
             SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
-            StaticString.class, StoreVariable.class, Sub.class, Substring.class, Subtraction.class,
+            StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class, Subtraction.class,
             Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
             ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
             Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
