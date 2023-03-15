@@ -13,8 +13,14 @@ public class Lowercase extends Operation {
 	@Override
 	protected byte[] perform(byte[] input) throws Exception {
 		try {
-			String inputStr = new String(input);
-			return inputStr.toLowerCase().getBytes(); 
+			if(input != null) {
+				String inputStr = new String(input);
+				return inputStr.toLowerCase().getBytes();	
+			}
+			else {
+				return "".getBytes();
+			}
+			 
 		} catch (Exception e) {
 			return input;
 		}
