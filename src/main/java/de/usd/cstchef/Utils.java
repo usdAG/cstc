@@ -94,6 +94,8 @@ import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.HttpXmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
+import de.usd.cstchef.operations.signature.JWTDecode;
+import de.usd.cstchef.operations.signature.JWTSign;
 import de.usd.cstchef.operations.signature.RsaSignature;
 import de.usd.cstchef.operations.signature.SoapMultiSignature;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
@@ -218,7 +220,7 @@ public class Utils {
             HttpPostExtractor.class, HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class,
             HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
             HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
-            JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class,
+            JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class, LineExtractor.class,
             LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
             Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
             RandomNumber.class, RandomUUID.class ,ReadFile.class, RegexExtractor.class, Reverse.class, Replace.class,
