@@ -48,6 +48,8 @@ import de.usd.cstchef.operations.dataformat.ToHex;
 import de.usd.cstchef.operations.dataformat.UrlDecode;
 import de.usd.cstchef.operations.dataformat.UrlEncode;
 import de.usd.cstchef.operations.datetime.DateTime;
+import de.usd.cstchef.operations.datetime.TimestampOffset;
+import de.usd.cstchef.operations.datetime.TimestampToDateTime;
 import de.usd.cstchef.operations.datetime.UnixTimestamp;
 import de.usd.cstchef.operations.encryption.AesDecryption;
 import de.usd.cstchef.operations.encryption.AesEncryption;
@@ -228,7 +230,7 @@ public class Utils {
             SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
             StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class, Subtraction.class,
             Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
-            ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
+            TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
             Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
             Xor.class, SoapMultiSignature.class
         };
