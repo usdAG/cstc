@@ -5,7 +5,7 @@ public class FilterState {
     private int outgoingFilterMask;
     private int formatFilterMask;
 
-    FilterState(int incomingFilterMask, int outgoingFilterMask, int formatFilterMask){
+    public FilterState(int incomingFilterMask, int outgoingFilterMask, int formatFilterMask){
         this.incomingFilterMask = incomingFilterMask;
         this.outgoingFilterMask = outgoingFilterMask;
         this.formatFilterMask = formatFilterMask;

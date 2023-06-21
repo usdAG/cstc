@@ -26,6 +26,8 @@ public class View extends JPanel {
         this.setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
 
+        filterState = new FilterState(0, 0, 0);
+
         incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, false, filterState);
         outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, true, filterState);
         formatRecipePanel = new RecipePanel(BurpOperation.FORMAT, true, filterState);
