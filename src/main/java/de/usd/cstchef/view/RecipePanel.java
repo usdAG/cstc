@@ -3,6 +3,7 @@ package de.usd.cstchef.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -30,6 +31,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -48,7 +50,9 @@ import burp.IHttpRequestResponse;
 import burp.IParameter;
 import burp.IRequestInfo;
 import burp.Logger;
+import de.usd.cstchef.FilterState;
 import de.usd.cstchef.VariableStore;
+import de.usd.cstchef.FilterState.BurpOperation;
 import de.usd.cstchef.operations.Operation;
 
 public class RecipePanel extends JPanel implements ChangeListener {
@@ -60,6 +64,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private boolean isRequest = true;
     private int bakeThreshold = 400;
     private String recipeName;
+    private BurpOperation operation;
     private int filterMask;
 
     private BurpEditorWrapper inputText;
@@ -73,10 +78,14 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private Timer bakeTimer;
 
-    public RecipePanel(String recipeName, boolean isRequest) {
+    private FilterState filterState;
 
-        this.recipeName = recipeName;
+    public RecipePanel(BurpOperation operation, boolean isRequest, FilterState filterState) {
+
+        this.operation = operation;
         this.isRequest = isRequest;
+        this.filterState = filterState;
+        this.recipeName = FilterState.translateBurpOperation(operation);
 
         ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
         tooltipManager.setInitialDelay(0);
@@ -141,9 +150,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
         filters.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                UIManager.put("OptionPane.minimumSize", new Dimension(300,200)); 
                 int result = JOptionPane.showConfirmDialog(null, requestFilterDialog, "Request Filter", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    filterMask = requestFilterDialog.getFilterMask();
+                    filterState.setFilterMask(requestFilterDialog.getFilterMask(BurpOperation.INCOMING), requestFilterDialog.getFilterMask(BurpOperation.OUTGOING), requestFilterDialog.getFilterMask(BurpOperation.FORMAT));
                 }
             }
         });
