@@ -1,10 +1,8 @@
 package de.usd.cstchef.view;
 
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,25 +10,31 @@ import java.util.Map;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-
-import org.objectweb.asm.Label;
 
 import burp.IBurpExtenderCallbacks;
 import de.usd.cstchef.FilterState;
 import de.usd.cstchef.FilterState.BurpOperation;
 
 public class RequestFilterDialog extends JPanel {
-    private LinkedHashMap<Filter, Boolean> incomingFilterSettings;
-    private LinkedHashMap<Filter, Boolean> outgoingFilterSettings;
-    private LinkedHashMap<Filter, Boolean> formatFilterSettings;
+    FilterState filterState;
 
-    public RequestFilterDialog(FilterState filterState) {
+    private static RequestFilterDialog instance = null;
+
+    public static RequestFilterDialog getInstance() {
+        if (RequestFilterDialog.instance == null) {
+            RequestFilterDialog.instance = new RequestFilterDialog();
+        }
+        return RequestFilterDialog.instance;
+    }
+
+    private RequestFilterDialog() {
+        this(new FilterState());
+    }
+
+    private RequestFilterDialog(FilterState filterState) {
         this.setLayout(new GridLayout(0, 4));
 
-        incomingFilterSettings = filterState.getFilterMask(BurpOperation.INCOMING);
-        outgoingFilterSettings = filterState.getFilterMask(BurpOperation.OUTGOING);
-        formatFilterSettings = filterState.getFilterMask(BurpOperation.FORMAT);
+        this.setFilterState(filterState);
 
         JPanel incomingPanel = createPanel(BurpOperation.INCOMING);
         JPanel outgoingPanel = createPanel(BurpOperation.OUTGOING);
@@ -51,36 +55,30 @@ public class RequestFilterDialog extends JPanel {
 
     }
 
+    public void setFilterState(FilterState filterState) {
+        this.filterState = filterState;
+    }
+
+    public FilterState getFilterState() {
+        return filterState;
+    }
+
     private JPanel createPanel(BurpOperation operation) {
-        LinkedHashMap<Filter, Boolean> filterSettings;
-
-        switch (operation) {
-            case INCOMING:
-                filterSettings = incomingFilterSettings;
-                break;
-            case OUTGOING:
-                filterSettings = outgoingFilterSettings;
-                break;
-            case FORMAT:
-                filterSettings = formatFilterSettings;
-                break;
-            default:
-                filterSettings = new LinkedHashMap<Filter, Boolean>();
-                break;
-        }
-
-        if (filterSettings.isEmpty()) {
-            filterSettings.put(new Filter("Proxy", IBurpExtenderCallbacks.TOOL_PROXY), false);
-            filterSettings.put(new Filter("Repeater", IBurpExtenderCallbacks.TOOL_REPEATER), false);
-            filterSettings.put(new Filter("Spider", IBurpExtenderCallbacks.TOOL_SPIDER), false);
-            filterSettings.put(new Filter("Scanner", IBurpExtenderCallbacks.TOOL_SCANNER), false);
-            filterSettings.put(new Filter("Intruder", IBurpExtenderCallbacks.TOOL_INTRUDER), false);
-            filterSettings.put(new Filter("Extender", IBurpExtenderCallbacks.TOOL_EXTENDER), false);
+        if (filterState.getFilterMask(operation).isEmpty()) {
+            filterState.getFilterMask(operation).put(new Filter("Proxy", IBurpExtenderCallbacks.TOOL_PROXY), false);
+            filterState.getFilterMask(operation).put(new Filter("Repeater", IBurpExtenderCallbacks.TOOL_REPEATER),
+                    false);
+            filterState.getFilterMask(operation).put(new Filter("Spider", IBurpExtenderCallbacks.TOOL_SPIDER), false);
+            filterState.getFilterMask(operation).put(new Filter("Scanner", IBurpExtenderCallbacks.TOOL_SCANNER), false);
+            filterState.getFilterMask(operation).put(new Filter("Intruder", IBurpExtenderCallbacks.TOOL_INTRUDER),
+                    false);
+            filterState.getFilterMask(operation).put(new Filter("Extender", IBurpExtenderCallbacks.TOOL_EXTENDER),
+                    false);
         }
 
         JPanel panel = new JPanel();
         panel.add(new JLabel(FilterState.translateBurpOperation(operation)));
-        for (Map.Entry<Filter, Boolean> entry : filterSettings.entrySet()) {
+        for (Map.Entry<Filter, Boolean> entry : filterState.getFilterMask(operation).entrySet()) {
             Filter filter = entry.getKey();
             boolean selected = entry.getValue();
 
@@ -89,22 +87,7 @@ public class RequestFilterDialog extends JPanel {
             box.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    LinkedHashMap<Filter, Boolean> filterSettings;
-
-                    switch (operation) {
-                        case INCOMING:
-                            filterSettings = incomingFilterSettings;
-                            break;
-                        case OUTGOING:
-                            filterSettings = outgoingFilterSettings;
-                            break;
-                        case FORMAT:
-                            filterSettings = formatFilterSettings;
-                            break;
-                        default:
-                            filterSettings = new LinkedHashMap<Filter, Boolean>();
-                    }
-                    filterSettings.put(filter, box.isSelected());
+                    filterState.getFilterMask(operation).put(filter, box.isSelected());
                 }
             });
             panel.add(box);
@@ -115,16 +98,7 @@ public class RequestFilterDialog extends JPanel {
     }
 
     public LinkedHashMap<Filter, Boolean> getFilterMask(BurpOperation operation) {
-        switch (operation) {
-            case INCOMING:
-                return incomingFilterSettings;
-            case OUTGOING:
-                return outgoingFilterSettings;
-            case FORMAT:
-                return formatFilterSettings;
-            default:
-                return new LinkedHashMap<>();
-        }
+        return filterState.getFilterMask(operation);
     }
 
     public class Filter {

@@ -3,7 +3,6 @@ package de.usd.cstchef;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.usd.cstchef.view.RequestFilterDialog;
 import de.usd.cstchef.view.RequestFilterDialog.Filter;
 
 public class FilterState {
@@ -11,35 +10,32 @@ public class FilterState {
     private LinkedHashMap<Filter, Boolean> outgoingFilterSettings;
     private LinkedHashMap<Filter, Boolean> formatFilterSettings;
 
-    private static RequestFilterDialog requestFilterDialog;
-
     public FilterState(LinkedHashMap<Filter, Boolean> incomingFilterSettings,
             LinkedHashMap<Filter, Boolean> outgoingFilterSettings,
             LinkedHashMap<Filter, Boolean> formatFilterSettings) {
         this.incomingFilterSettings = incomingFilterSettings;
         this.outgoingFilterSettings = outgoingFilterSettings;
         this.formatFilterSettings = formatFilterSettings;
-
-        requestFilterDialog = new RequestFilterDialog(this);
     }
 
     public FilterState() {
-        this.incomingFilterSettings = new LinkedHashMap<Filter, Boolean>();
-        this.outgoingFilterSettings = new LinkedHashMap<Filter, Boolean>();
-        this.formatFilterSettings = new LinkedHashMap<Filter, Boolean>();
-
-        requestFilterDialog = new RequestFilterDialog(this);
+        this(new LinkedHashMap<Filter, Boolean>(), new LinkedHashMap<Filter, Boolean>(),
+                new LinkedHashMap<Filter, Boolean>());
     }
 
     public void setFilterMask(LinkedHashMap<Filter, Boolean> filterMask, BurpOperation operation) {
-        switch(operation){
-            case INCOMING: incomingFilterSettings = filterMask;
+        switch (operation) {
+            case INCOMING:
+                incomingFilterSettings = filterMask;
                 break;
-            case OUTGOING: outgoingFilterSettings = filterMask;
+            case OUTGOING:
+                outgoingFilterSettings = filterMask;
                 break;
-            case FORMAT: formatFilterSettings = filterMask;
+            case FORMAT:
+                formatFilterSettings = filterMask;
                 break;
-            default: break;
+            default:
+                break;
         }
     }
 
@@ -102,10 +98,6 @@ public class FilterState {
             }
         }
         return (filterMask & tool) != 0;
-    }
-
-    public static RequestFilterDialog getRequestFilterDialog() {
-        return requestFilterDialog;
     }
 
     public enum BurpOperation {

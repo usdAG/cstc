@@ -3,7 +3,6 @@ package de.usd.cstchef.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -31,7 +30,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -65,7 +63,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private int bakeThreshold = 400;
     private String recipeName;
     private BurpOperation operation;
-    private int filterMask;
 
     private BurpEditorWrapper inputText;
     private BurpEditorWrapper outputText;
@@ -145,7 +142,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // add action items
         JButton filters = new JButton("Filter");
-        this.requestFilterDialog = filterState.getRequestFilterDialog();
+        this.requestFilterDialog = RequestFilterDialog.getInstance();
         activeOperationsPanel.addActionComponent(filters);
         filters.addActionListener(new ActionListener() {
             @Override

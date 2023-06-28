@@ -2,7 +2,6 @@ package de.usd.cstchef.view;
 
 import java.awt.BorderLayout;
 import java.security.Security;
-import java.util.LinkedHashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,6 +19,7 @@ public class View extends JPanel {
     private RecipePanel outgoingRecipePanel;
     private RecipePanel formatRecipePanel;
     private FilterState filterState;
+    private RequestFilterDialog requestFilterDialog;
 
     public View() {
         Security.addProvider(new BouncyCastleProvider());
@@ -28,6 +28,8 @@ public class View extends JPanel {
         JTabbedPane tabbedPane = new JTabbedPane();
 
         filterState = new FilterState();
+
+        requestFilterDialog = RequestFilterDialog.getInstance();
 
         incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, false, filterState);
         outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, true, filterState);
