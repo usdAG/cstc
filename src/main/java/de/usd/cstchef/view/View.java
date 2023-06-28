@@ -2,6 +2,7 @@ package de.usd.cstchef.view;
 
 import java.awt.BorderLayout;
 import java.security.Security;
+import java.util.LinkedHashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -26,7 +27,7 @@ public class View extends JPanel {
         this.setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        filterState = new FilterState(0, 0, 0);
+        filterState = new FilterState();
 
         incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, false, filterState);
         outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, true, filterState);
@@ -48,6 +49,10 @@ public class View extends JPanel {
 
     public RecipePanel getFormatRecipePanel() {
         return this.formatRecipePanel;
+    }
+
+    public FilterState getFilterState(){
+        return filterState;
     }
 
     public static void main(String[] args) {

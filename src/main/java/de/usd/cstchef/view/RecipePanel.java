@@ -145,15 +145,17 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // add action items
         JButton filters = new JButton("Filter");
-        this.requestFilterDialog = new RequestFilterDialog();
+        this.requestFilterDialog = filterState.getRequestFilterDialog();
         activeOperationsPanel.addActionComponent(filters);
         filters.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UIManager.put("OptionPane.minimumSize", new Dimension(300,200)); 
-                int result = JOptionPane.showConfirmDialog(null, requestFilterDialog, "Request Filter", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                int result = JOptionPane.showConfirmDialog(null, requestFilterDialog, "Request Filter",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    filterState.setFilterMask(requestFilterDialog.getFilterMask(BurpOperation.INCOMING), requestFilterDialog.getFilterMask(BurpOperation.OUTGOING), requestFilterDialog.getFilterMask(BurpOperation.FORMAT));
+                    filterState.setFilterMask(requestFilterDialog.getFilterMask(BurpOperation.INCOMING),
+                            requestFilterDialog.getFilterMask(BurpOperation.OUTGOING),
+                            requestFilterDialog.getFilterMask(BurpOperation.FORMAT));
                 }
             }
         });
@@ -226,14 +228,14 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-		JButton clearButton = new JButton("Clear");
-		activeOperationsPanel.addActionComponent(clearButton);
-		clearButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				clear();
-			}
-		});
+        JButton clearButton = new JButton("Clear");
+        activeOperationsPanel.addActionComponent(clearButton);
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                clear();
+            }
+        });
 
         operationLines = new JPanel();
         operationLines.setLayout(new GridBagLayout());
@@ -286,6 +288,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         loadRecipeFromBurp();
         startAutoBakeTimer();
+    }
+
+    public FilterState getFilterState() {
+        return filterState;
     }
 
     private void loadRecipeFromBurp() {
@@ -343,7 +349,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private void restoreState(String jsonState) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         // TODO do we want to remove all existing operations before loading here?
-		this.clear(); // Yes!
+        this.clear(); // Yes!
         ObjectMapper mapper = new ObjectMapper();
         JsonNode stepNodes = mapper.readTree(jsonState);
         if (!stepNodes.isArray()) {
@@ -364,7 +370,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 // check if it is an operation
                 Operation op = cls.newInstance();
                 op.load(parameters);
-				op.setDisabled(!operationNode.get("is_enabled").asBoolean());
+                op.setDisabled(!operationNode.get("is_enabled").asBoolean());
                 RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
                 panel.addComponent(op, i);
             }
@@ -385,7 +391,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 operationNode.put("operation", op.getClass().getName());
                 operationsNode.add(operationNode);
                 operationNode.putPOJO("parameters", op.getState());
-				operationNode.putPOJO("is_enabled", !op.isDisabled());
+                operationNode.putPOJO("is_enabled", !op.isDisabled());
             }
             stepsNode.add(operationsNode);
         }
@@ -553,13 +559,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
         } finally {
             store.unlock();
         }
-	}
+    }
 
-	private void clear() {
-		for (int step = 0; step < this.operationSteps; step++) {
-		RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
-			stepPanel.clearOperations();
-		} 
+    private void clear() {
+        for (int step = 0; step < this.operationSteps; step++) {
+            RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
+            stepPanel.clearOperations();
+        }
     }
 
     @Override
@@ -567,7 +573,4 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.autoBake();
     }
 
-    public boolean shouldProcess(int tool) {
-        return (this.filterMask & tool) != 0;
-    }
 }

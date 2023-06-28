@@ -25,8 +25,12 @@ public class RequestFilterDialog extends JPanel {
     private LinkedHashMap<Filter, Boolean> outgoingFilterSettings;
     private LinkedHashMap<Filter, Boolean> formatFilterSettings;
 
-    public RequestFilterDialog() {
+    public RequestFilterDialog(FilterState filterState) {
         this.setLayout(new GridLayout(0, 4));
+
+        incomingFilterSettings = filterState.getFilterMask(BurpOperation.INCOMING);
+        outgoingFilterSettings = filterState.getFilterMask(BurpOperation.OUTGOING);
+        formatFilterSettings = filterState.getFilterMask(BurpOperation.FORMAT);
 
         JPanel incomingPanel = createPanel(BurpOperation.INCOMING);
         JPanel outgoingPanel = createPanel(BurpOperation.OUTGOING);
@@ -35,8 +39,8 @@ public class RequestFilterDialog extends JPanel {
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new GridLayout(7, 0));
         labelPanel.add(new JLabel(""));
-        List<String> labels = Arrays.asList("Proxy","Repeater","Spider","Scanner","Intruder","Extender");
-        for(String label : labels){
+        List<String> labels = Arrays.asList("Proxy", "Repeater", "Spider", "Scanner", "Intruder", "Extender");
+        for (String label : labels) {
             labelPanel.add(new JLabel(label));
         }
 
@@ -49,14 +53,30 @@ public class RequestFilterDialog extends JPanel {
 
     private JPanel createPanel(BurpOperation operation) {
         LinkedHashMap<Filter, Boolean> filterSettings;
-        
-        filterSettings = new LinkedHashMap<>();
-        filterSettings.put(new Filter("Proxy", IBurpExtenderCallbacks.TOOL_PROXY), false);
-        filterSettings.put(new Filter("Repeater", IBurpExtenderCallbacks.TOOL_REPEATER), false);
-        filterSettings.put(new Filter("Spider", IBurpExtenderCallbacks.TOOL_SPIDER), false);
-        filterSettings.put(new Filter("Scanner", IBurpExtenderCallbacks.TOOL_SCANNER), false);
-        filterSettings.put(new Filter("Intruder", IBurpExtenderCallbacks.TOOL_INTRUDER), false);
-        filterSettings.put(new Filter("Extender", IBurpExtenderCallbacks.TOOL_EXTENDER), false);
+
+        switch (operation) {
+            case INCOMING:
+                filterSettings = incomingFilterSettings;
+                break;
+            case OUTGOING:
+                filterSettings = outgoingFilterSettings;
+                break;
+            case FORMAT:
+                filterSettings = formatFilterSettings;
+                break;
+            default:
+                filterSettings = new LinkedHashMap<Filter, Boolean>();
+                break;
+        }
+
+        if (filterSettings.isEmpty()) {
+            filterSettings.put(new Filter("Proxy", IBurpExtenderCallbacks.TOOL_PROXY), false);
+            filterSettings.put(new Filter("Repeater", IBurpExtenderCallbacks.TOOL_REPEATER), false);
+            filterSettings.put(new Filter("Spider", IBurpExtenderCallbacks.TOOL_SPIDER), false);
+            filterSettings.put(new Filter("Scanner", IBurpExtenderCallbacks.TOOL_SCANNER), false);
+            filterSettings.put(new Filter("Intruder", IBurpExtenderCallbacks.TOOL_INTRUDER), false);
+            filterSettings.put(new Filter("Extender", IBurpExtenderCallbacks.TOOL_EXTENDER), false);
+        }
 
         JPanel panel = new JPanel();
         panel.add(new JLabel(FilterState.translateBurpOperation(operation)));
@@ -69,45 +89,44 @@ public class RequestFilterDialog extends JPanel {
             box.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    filterSettings.put(filter, box.isSelected());
+                    LinkedHashMap<Filter, Boolean> filterSettings;
 
+                    switch (operation) {
+                        case INCOMING:
+                            filterSettings = incomingFilterSettings;
+                            break;
+                        case OUTGOING:
+                            filterSettings = outgoingFilterSettings;
+                            break;
+                        case FORMAT:
+                            filterSettings = formatFilterSettings;
+                            break;
+                        default:
+                            filterSettings = new LinkedHashMap<Filter, Boolean>();
+                    }
+                    filterSettings.put(filter, box.isSelected());
                 }
             });
             panel.add(box);
         }
 
-        switch (operation) {
-            case INCOMING:
-                incomingFilterSettings = filterSettings;
-            case OUTGOING:
-                outgoingFilterSettings = filterSettings;
-            case FORMAT:
-                formatFilterSettings = filterSettings;
-        }
         panel.setLayout(new GridLayout(7, 0));
         return panel;
     }
 
-    public int getFilterMask(BurpOperation operation) {
-        int filterMask = 0;
-        LinkedHashMap<Filter, Boolean> filterSettings;
-        switch (operation){
-            case INCOMING: filterSettings = incomingFilterSettings;
-            case OUTGOING: filterSettings = outgoingFilterSettings;
-            case FORMAT: filterSettings = formatFilterSettings;
-            default: filterSettings = new LinkedHashMap<>();
+    public LinkedHashMap<Filter, Boolean> getFilterMask(BurpOperation operation) {
+        if (operation == BurpOperation.INCOMING) {
+            return incomingFilterSettings;
+        } else if (operation == BurpOperation.OUTGOING) {
+            return outgoingFilterSettings;
+        } else if (operation == BurpOperation.FORMAT) {
+            return formatFilterSettings;
+        } else {
+            return new LinkedHashMap<>();
         }
-        for (Map.Entry<Filter, Boolean> entry : filterSettings.entrySet()) {
-            Filter filter = entry.getKey();
-            boolean selected = entry.getValue();
-            if (selected) {
-                filterMask |= filter.getValue();
-            }
-        }
-        return filterMask;
     }
 
-    class Filter {
+    public class Filter {
         private String name;
         private int value;
 

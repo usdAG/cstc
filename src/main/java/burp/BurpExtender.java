@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.JMenuItem;
 
+import de.usd.cstchef.FilterState;
 import de.usd.cstchef.view.FormatTab;
 import de.usd.cstchef.view.RecipePanel;
 import de.usd.cstchef.view.View;
@@ -45,12 +46,12 @@ public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFacto
 
     @Override
     public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
-        if (messageIsRequest && view.getOutgoingRecipePanel().shouldProcess(toolFlag)) {
+        if (messageIsRequest && view.getFilterState().shouldProcess(toolFlag, FilterState.BurpOperation.OUTGOING)) {
             byte[] request = messageInfo.getRequest();
             byte[] modifiedRequest = view.getOutgoingRecipePanel().bake(request);
             Logger.getInstance().log("modified request: \n" + new String(modifiedRequest));
             messageInfo.setRequest(modifiedRequest);
-        } else if (view.getIncomingRecipePanel().shouldProcess(toolFlag)) {
+        } else if (view.getFilterState().shouldProcess(toolFlag, FilterState.BurpOperation.INCOMING)) {
             byte[] response = messageInfo.getResponse();
             byte[] modifiedResponse = view.getIncomingRecipePanel().bake(response);
             messageInfo.setResponse(modifiedResponse);
