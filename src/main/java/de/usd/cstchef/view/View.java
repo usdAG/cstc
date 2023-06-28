@@ -10,11 +10,16 @@ import javax.swing.WindowConstants;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import de.usd.cstchef.FilterState;
+import de.usd.cstchef.FilterState.BurpOperation;
+
 public class View extends JPanel {
 
     private RecipePanel incomingRecipePanel;
     private RecipePanel outgoingRecipePanel;
     private RecipePanel formatRecipePanel;
+    private FilterState filterState;
+    private RequestFilterDialog requestFilterDialog;
 
     public View() {
         Security.addProvider(new BouncyCastleProvider());
@@ -22,9 +27,13 @@ public class View extends JPanel {
         this.setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        incomingRecipePanel = new RecipePanel("Incomming", false);
-        outgoingRecipePanel = new RecipePanel("Outgoing", true);
-        formatRecipePanel = new RecipePanel("Formatting", true);
+        filterState = new FilterState();
+
+        requestFilterDialog = RequestFilterDialog.getInstance();
+
+        incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, false, filterState);
+        outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, true, filterState);
+        formatRecipePanel = new RecipePanel(BurpOperation.FORMAT, true, filterState);
 
         tabbedPane.addTab("Outgoing Requests", null, outgoingRecipePanel, "Outgoing requests from the browser, the repeater or another tool.");
         tabbedPane.addTab("Incoming Responses", null, incomingRecipePanel, "Responses from the server.");
@@ -42,6 +51,10 @@ public class View extends JPanel {
 
     public RecipePanel getFormatRecipePanel() {
         return this.formatRecipePanel;
+    }
+
+    public FilterState getFilterState(){
+        return filterState;
     }
 
     public static void main(String[] args) {
