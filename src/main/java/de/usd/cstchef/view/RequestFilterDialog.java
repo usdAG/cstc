@@ -115,14 +115,15 @@ public class RequestFilterDialog extends JPanel {
     }
 
     public LinkedHashMap<Filter, Boolean> getFilterMask(BurpOperation operation) {
-        if (operation == BurpOperation.INCOMING) {
-            return incomingFilterSettings;
-        } else if (operation == BurpOperation.OUTGOING) {
-            return outgoingFilterSettings;
-        } else if (operation == BurpOperation.FORMAT) {
-            return formatFilterSettings;
-        } else {
-            return new LinkedHashMap<>();
+        switch (operation) {
+            case INCOMING:
+                return incomingFilterSettings;
+            case OUTGOING:
+                return outgoingFilterSettings;
+            case FORMAT:
+                return formatFilterSettings;
+            default:
+                return new LinkedHashMap<>();
         }
     }
 
