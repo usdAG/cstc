@@ -30,20 +30,19 @@ public class HttpMultipartExtractor extends Operation {
         IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
         IExtensionHelpers helpers = callbacks.getHelpers();
 
-        //TODO: Remove Header and fix encoding for getBytes and toString operations
+        List<IParameter> parameters = helpers.analyzeRequest(input).getParameters();
+        Iterator iterator = parameters.iterator();
+        while (iterator.hasNext()) {
+            IParameter extractedParam = (IParameter) iterator.next();
+            if (extractedParam.getType() == IParameter.PARAM_BODY &&
+                    extractedParam.getName().equals(parameterName)) {
+                int start = extractedParam.getValueStart();
+                int end = extractedParam.getValueEnd();
 
-        byte[] messageBody = Arrays.copyOfRange(input, helpers.analyzeRequest(input).getBodyOffset(), input.length);
-        byte[] result = new byte[0];
-
-        String bodyString = new String(messageBody);
-        String[] formFields = bodyString.split("------");
-
-        for (String form : formFields) {
-            if(form.contains("name=\"" + parameterName)){
-                return form.getBytes();
+                byte[] result = Arrays.copyOfRange(input, start, end);
+                return result;
             }
         }
-
         throw new IllegalArgumentException("Parameter name not found.");
 
     }

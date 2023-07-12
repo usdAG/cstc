@@ -90,6 +90,7 @@ import de.usd.cstchef.operations.networking.HTTPRequest;
 import de.usd.cstchef.operations.setter.HttpGetSetter;
 import de.usd.cstchef.operations.setter.HttpHeaderSetter;
 import de.usd.cstchef.operations.setter.HttpJsonSetter;
+import de.usd.cstchef.operations.setter.HttpMultipartSetter;
 import de.usd.cstchef.operations.setter.HttpPostSetter;
 import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetCookie;
@@ -219,8 +220,7 @@ public class Utils {
             GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
             HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
             HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
-            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
-            HttpPostExtractor.class, HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class,
+            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class, HttpMultipartSetter.class, HttpPostExtractor.class, HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class,
             HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
             HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
             JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class, LineExtractor.class,
