@@ -11,8 +11,8 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP Request", category = OperationCategory.NETWORKING, description = "Makes an http reqeust and returns the response.")
-public class HTTPRequest extends Operation {
+@OperationInfos(name = "Send Plain Request", category = OperationCategory.NETWORKING, description = "Makes an request and returns the response. You can use this operation in combination with e.g. \"Static String\" to perform more complex requests.")
+public class PlainRequest extends Operation {
 
     private VariableTextField hostTxt;
     private VariableTextField portTxt;
