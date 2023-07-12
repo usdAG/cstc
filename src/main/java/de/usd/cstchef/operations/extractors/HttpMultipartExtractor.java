@@ -13,7 +13,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP Multipart Param", category = OperationCategory.EXTRACTORS, description = "Extracts a parameter of a multipart request.")
+@OperationInfos(name = "HTTP Multipart Param", category = OperationCategory.EXTRACTORS, description = "Extracts a part of a multipart/form-data request.")
 public class HttpMultipartExtractor extends Operation {
 
     protected VariableTextField parameter;
@@ -24,8 +24,6 @@ public class HttpMultipartExtractor extends Operation {
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
             return input;
-
-        String value = "";
 
         IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
         IExtensionHelpers helpers = callbacks.getHelpers();

@@ -1,10 +1,7 @@
 package de.usd.cstchef.operations.setter;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
@@ -12,9 +9,8 @@ import burp.IExtensionHelpers;
 import burp.IParameter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP Multipart Param", category = OperationCategory.SETTER, description = "Sets a parameter of a multipart request to the specified value.")
+@OperationInfos(name = "HTTP Multipart Param", category = OperationCategory.SETTER, description = "Sets a part of a multipart/form-data request to the specified value.")
 public class HttpMultipartSetter extends SetterOperation {
 
     @Override
