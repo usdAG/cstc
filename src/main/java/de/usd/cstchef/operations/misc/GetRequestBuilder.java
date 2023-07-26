@@ -1,11 +1,11 @@
-package de.usd.cstchef.operations.networking;
+package de.usd.cstchef.operations.misc;
 
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "GET Request Builder", category = OperationCategory.NETWORKING, description = "Build a basic GET request.")
+@OperationInfos(name = "GET Request Builder", category = OperationCategory.MISC, description = "Build a basic GET request.")
 public class GetRequestBuilder extends Operation {
 
     private VariableTextField host;
@@ -28,6 +28,7 @@ public class GetRequestBuilder extends Operation {
         this.addUIElement("Host", this.host);    
 
         this.accept = new VariableTextField();
+        this.accept.setText("*/*");
         this.addUIElement("Accept", this.accept);
     }
 
