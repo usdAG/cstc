@@ -83,6 +83,7 @@ import de.usd.cstchef.operations.hashing.SHA3;
 import de.usd.cstchef.operations.hashing.Skein;
 import de.usd.cstchef.operations.hashing.Tiger;
 import de.usd.cstchef.operations.hashing.Whirlpool;
+import de.usd.cstchef.operations.misc.GetRequestBuilder;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.PlainRequest;
@@ -214,7 +215,7 @@ public class Utils {
         return new Class[] {
             Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
             Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
-            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
+            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, GetRequestBuilder.class,
             GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
             HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
             HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
