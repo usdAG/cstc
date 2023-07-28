@@ -336,6 +336,7 @@ public abstract class Operation extends JPanel {
                 Logger.getInstance().err("could not add a default change listener for " + comp.getClass());
             }
         }
+        refreshColors();
     }
 
     @Override

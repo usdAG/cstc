@@ -84,9 +84,10 @@ import de.usd.cstchef.operations.hashing.SHA3;
 import de.usd.cstchef.operations.hashing.Skein;
 import de.usd.cstchef.operations.hashing.Tiger;
 import de.usd.cstchef.operations.hashing.Whirlpool;
+import de.usd.cstchef.operations.misc.GetRequestBuilder;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
-import de.usd.cstchef.operations.networking.HTTPRequest;
+import de.usd.cstchef.operations.networking.PlainRequest;
 import de.usd.cstchef.operations.setter.HttpGetSetter;
 import de.usd.cstchef.operations.setter.HttpHeaderSetter;
 import de.usd.cstchef.operations.setter.HttpJsonSetter;
@@ -216,11 +217,12 @@ public class Utils {
         return new Class[] {
             Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
             Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
-            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
+            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, GetRequestBuilder.class,
             GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
             HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
             HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
-            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class, HttpMultipartSetter.class, HttpPostExtractor.class, HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class,
+            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class, HttpMultipartSetter.class,
+            HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
             HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
             HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
             JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class, LineExtractor.class,
