@@ -1,5 +1,10 @@
 package de.usd.cstchef.operations.networking;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import javax.swing.JCheckBox;
 import burp.BurpUtils;
 import burp.IBurpExtenderCallbacks;
@@ -24,8 +29,12 @@ public class PlainRequest extends Operation {
         IExtensionHelpers helper = callbacks.getHelpers();
         String protocol = sslEnabledBox.isSelected() ? "https" : "http";
         IHttpService service = helper.buildHttpService(hostTxt.getText(), Integer.valueOf(portTxt.getText()), protocol);
-        IHttpRequestResponse response = callbacks.makeHttpRequest(service, input);
-        return response.getResponse();
+
+        Callable<IHttpRequestResponse> runnable = new PlainRequestRunnable(input, service, callbacks);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<IHttpRequestResponse> future = executor.submit(runnable);
+        IHttpRequestResponse result = future.get();
+        return result == null ? null : result.getResponse();
     }
 
     @Override
@@ -38,6 +47,25 @@ public class PlainRequest extends Operation {
 
         this.sslEnabledBox = new JCheckBox();
         this.addUIElement("SSL", this.sslEnabledBox);
+    }
+
+    public class PlainRequestRunnable implements Callable<IHttpRequestResponse>{
+
+        private byte[] data;
+        private IHttpService service;
+        private IBurpExtenderCallbacks callbacks;
+
+        public PlainRequestRunnable(byte[] dataToSent, IHttpService service, IBurpExtenderCallbacks callbacks){
+            this.data = dataToSent;
+            this.callbacks = callbacks;
+            this.service = service;
+        }
+
+        @Override
+        public IHttpRequestResponse call() throws Exception {
+            return callbacks.makeHttpRequest(this.service, this.data);
+        }
+
     }
 
 }
