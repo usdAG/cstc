@@ -32,7 +32,7 @@ public class Counter extends Operation {
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(value + stepSize);
         VariableStore.getInstance().setVariable(varName, buffer.array());
-        return buffer.array();
+        return input;
     }
 
     public void createUI() {
