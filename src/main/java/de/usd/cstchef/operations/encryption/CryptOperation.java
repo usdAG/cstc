@@ -36,6 +36,13 @@ public abstract class CryptOperation extends Operation {
         byte[] key = keyTxt.getText();
         byte[] iv = ivTxt.getText();
 
+        if(ivTxt.getSelection().equals("Empty")){
+            ivTxt.disableText();
+        }
+        else{
+            ivTxt.enableText();
+        }
+
         SecretKeySpec secretKeySpec = new SecretKeySpec(key, algorithm);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);
         Cipher cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
@@ -66,6 +73,8 @@ public abstract class CryptOperation extends Operation {
 
     public void createMyUI() {
         this.ivTxt = new FormatTextField();
+        this.ivTxt.addOption("Empty");
+        this.ivTxt.setDefault("Empty");
         this.addUIElement("IV", this.ivTxt);
 
         this.keyTxt = new FormatTextField();

@@ -25,7 +25,7 @@ public class FormatTextField extends JPanel implements ActionListener {
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(0, 0, 0, 0));
         this.txtField = new VariableTextField();
-        this.formatBox = new JComboBox<>(new String[] {"Raw", "UTF-8", "Hex", "Latin1", "Base64"});
+        this.formatBox = new JComboBox<>(new String[] { "Raw", "UTF-8", "Hex", "Latin1", "Base64" });
         this.formatBox.addActionListener(this);
 
         Box box = Box.createHorizontalBox();
@@ -34,6 +34,32 @@ public class FormatTextField extends JPanel implements ActionListener {
         box.add(txtField);
 
         this.add(box);
+    }
+
+    public void addOption(String option) {
+        this.formatBox.addItem(option);
+    }
+
+    public void setDefault(String option) {
+        for (int i = 0; i < this.formatBox.getItemCount(); i++) {
+            if (this.formatBox.getItemAt(i).equals(option)) {
+                this.formatBox.setSelectedItem(this.formatBox.getItemAt(i));
+            }
+        }
+    }
+
+    public String getSelection() {
+        return (String) this.formatBox.getSelectedItem();
+    }
+
+    public void disableText() {
+        this.txtField.setEnabled(false);
+        this.txtField.setVisible(false);
+    }
+
+    public void enableText() {
+        this.txtField.setEnabled(true);
+        this.txtField.setVisible(true);
     }
 
     public Map<String, String> getValues() {
@@ -56,21 +82,24 @@ public class FormatTextField extends JPanel implements ActionListener {
         byte[] result = null;
 
         switch ((String) this.formatBox.getSelectedItem()) {
-        case "Raw":
-            result = raw;
-            break;
-        case "Hex":
-            result = Hex.decode(raw);
-            break;
-        case "Base64":
-            result = Base64.getDecoder().decode(raw);
-            break;
-        case "Latin1":
-            result = this.txtField.getText().getBytes("ISO-8859-1");
-            break;
-        case "UTF-8":
-            result = this.txtField.getText().getBytes("UTF-8");
-            break;
+            case "Raw":
+                result = raw;
+                break;
+            case "Hex":
+                result = Hex.decode(raw);
+                break;
+            case "Base64":
+                result = Base64.getDecoder().decode(raw);
+                break;
+            case "Latin1":
+                result = this.txtField.getText().getBytes("ISO-8859-1");
+                break;
+            case "UTF-8":
+                result = this.txtField.getText().getBytes("UTF-8");
+                break;
+            case "Empty":
+                result = new byte[16];
+                break;
         }
         return result;
     }
