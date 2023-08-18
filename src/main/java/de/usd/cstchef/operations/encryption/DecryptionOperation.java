@@ -4,8 +4,8 @@ import javax.crypto.Cipher;
 
 public abstract class DecryptionOperation extends CryptOperation {
 
-    public DecryptionOperation(String alogrithm) {
-        super(alogrithm);
+    public DecryptionOperation(String algorithm) {
+        super(algorithm);
     }
 
     @Override

@@ -25,9 +25,9 @@ public abstract class CryptOperation extends Operation {
     protected JComboBox<String> outputMode;
     protected JComboBox<String> paddings;
 
-    public CryptOperation(String alogrithm) {
+    public CryptOperation(String algorithm) {
         super();
-        this.algorithm = alogrithm;
+        this.algorithm = algorithm;
         this.createMyUI();
     }
 
@@ -35,13 +35,6 @@ public abstract class CryptOperation extends Operation {
             throws Exception {
         byte[] key = keyTxt.getText();
         byte[] iv = ivTxt.getText();
-
-        if(ivTxt.getSelection().equals("Empty")){
-            ivTxt.disableText();
-        }
-        else{
-            ivTxt.enableText();
-        }
 
         SecretKeySpec secretKeySpec = new SecretKeySpec(key, algorithm);
         IvParameterSpec ivSpec = new IvParameterSpec(iv);

@@ -48,20 +48,6 @@ public class FormatTextField extends JPanel implements ActionListener {
         }
     }
 
-    public String getSelection() {
-        return (String) this.formatBox.getSelectedItem();
-    }
-
-    public void disableText() {
-        this.txtField.setEnabled(false);
-        this.txtField.setVisible(false);
-    }
-
-    public void enableText() {
-        this.txtField.setEnabled(true);
-        this.txtField.setVisible(true);
-    }
-
     public Map<String, String> getValues() {
         Map<String, String> values = new HashMap<>();
         values.put("text", this.txtField.getText());
@@ -114,6 +100,14 @@ public class FormatTextField extends JPanel implements ActionListener {
         if (this.docListener != null) {
             this.docListener.changedUpdate(null);
         }
+        if (this.formatBox.getSelectedItem().equals("Empty")) {
+            this.txtField.setEnabled(false);
+            this.txtField.setVisible(false);
+        } else {
+            this.txtField.setEnabled(true);
+            this.txtField.setVisible(true);
+        }
+        repaint();
     }
 
 }
