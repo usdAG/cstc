@@ -102,10 +102,9 @@ public class FormatTextField extends JPanel implements ActionListener {
         }
         if (this.formatBox.getSelectedItem().equals("Empty")) {
             this.txtField.setEnabled(false);
-            this.txtField.setVisible(false);
+            this.txtField.setDisabledTextColor(Color.GRAY);
         } else {
             this.txtField.setEnabled(true);
-            this.txtField.setVisible(true);
         }
         repaint();
     }
