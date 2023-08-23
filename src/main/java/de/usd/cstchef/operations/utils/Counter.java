@@ -22,16 +22,20 @@ public class Counter extends Operation {
         String varName = this.varNameTxt.getText().trim();
         long value;
         long stepSize = Long.valueOf(this.stepSizeTxt.getText());
-        long startValue = Long.valueOf(this.startValueTxt.getText()); 
+        long startValue = Long.valueOf(this.startValueTxt.getText());
         if (VariableStore.getInstance().getVariable(varName) == null) {
             value = startValue;
         } else {
             byte[] currentValue = VariableStore.getInstance().getVariable(varName);
-            value = ByteBuffer.wrap(currentValue).getLong();
+            try {
+                value = Long.parseLong(new String(currentValue));
+            } catch (NumberFormatException e) {
+                this.setErrorMessage(e);
+                value = startValue;
+            }
         }
-        ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-        buffer.putLong(value + stepSize);
-        VariableStore.getInstance().setVariable(varName, buffer.array());
+        String storeValue = Long.toString(value + stepSize);
+        VariableStore.getInstance().setVariable(varName, storeValue.getBytes());
         return input;
     }
 
