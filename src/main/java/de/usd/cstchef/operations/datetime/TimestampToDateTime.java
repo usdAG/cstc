@@ -12,7 +12,7 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "Unix Timestamp to DateTime", category = OperationCategory.DATES, description = "Returns a given Unix timestamp formatted with the provided date time pattern.")
+@OperationInfos(name = "Epoch to DateTime", category = OperationCategory.DATES, description = "Returns a given Unix (Epoch) timestamp formatted with the provided date time pattern.")
 public class TimestampToDateTime extends Operation {
 
     private VariableTextField patternTxt;    
