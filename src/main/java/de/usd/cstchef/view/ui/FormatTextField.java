@@ -106,7 +106,6 @@ public class FormatTextField extends JPanel implements ActionListener {
         } else {
             this.txtField.setEnabled(true);
         }
-        repaint();
     }
 
 }
