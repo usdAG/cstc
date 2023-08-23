@@ -115,6 +115,7 @@ import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.string.Uppercase;
 import de.usd.cstchef.operations.string.Lowercase;
+import de.usd.cstchef.operations.utils.Counter;
 import de.usd.cstchef.operations.utils.GetVariable;
 import de.usd.cstchef.operations.utils.NoOperation;
 import de.usd.cstchef.operations.utils.RandomNumber;
@@ -216,7 +217,7 @@ public class Utils {
     public static Class<? extends Operation>[] getOperationsDev() {
         return new Class[] {
             Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
-            Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+            Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
             Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, GetRequestBuilder.class,
             GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
             HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
