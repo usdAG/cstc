@@ -18,11 +18,9 @@ import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
 
 public class CstcHttpHandler implements HttpHandler {
 
-    private MontoyaApi api;
     private View view;
 
-    CstcHttpHandler(MontoyaApi api, View view) {
-        this.api = api;
+    CstcHttpHandler(View view) {
         this.view = view;
     }
 
@@ -30,20 +28,20 @@ public class CstcHttpHandler implements HttpHandler {
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
         RequestFilterDialog.getInstance().getFilterMask(null);
         if (view.getFilterState().shouldProcess(toolFlag, FilterState.BurpOperation.OUTGOING)) {
-            byte[] request = requestToBeSent.toByteArray().getBytes();
-            byte[] modifiedRequest = view.getOutgoingRecipePanel().bake(request);
-            Logger.getInstance().log("modified request: \n" + new String(modifiedRequest));
-            return continueWith(HttpRequest.httpRequest(ByteArray.byteArray(modifiedRequest)));
+            ByteArray request = requestToBeSent.toByteArray();
+            ByteArray modifiedRequest = view.getOutgoingRecipePanel().bake(request);
+            Logger.getInstance().log("modified request: \n" + new String(modifiedRequest.getBytes()));
+            return continueWith(HttpRequest.httpRequest(modifiedRequest));
         }
     }
 
     @Override
     public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
         if (view.getFilterState().shouldProcess(toolFlag, FilterState.BurpOperation.INCOMING)) {
-            byte[] response = responseReceived.toByteArray().getBytes();
-            byte[] modifiedResponse = view.getIncomingRecipePanel().bake(response);
-            Logger.getInstance().log("modified response: \n" + new String(modifiedResponse));
-            return continueWith(HttpResponse.httpResponse(ByteArray.byteArray(modifiedResponse)));
+            ByteArray response = responseReceived.toByteArray();
+            ByteArray modifiedResponse = view.getIncomingRecipePanel().bake(response);
+            Logger.getInstance().log("modified response: \n" + new String(modifiedResponse.getBytes()));
+            return continueWith(HttpResponse.httpResponse(modifiedResponse));
         }
     }
 

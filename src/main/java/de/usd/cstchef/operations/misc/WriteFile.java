@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -23,7 +24,7 @@ public class WriteFile extends Operation implements ActionListener {
     private FileOutputStream out;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String path = fileNameTxt.getText();
 
         if (!lastPath.equals(path)) {
@@ -38,7 +39,7 @@ public class WriteFile extends Operation implements ActionListener {
         }
 
         if (out != null) {
-            out.write(input);
+            out.write(input.getBytes());
             out.write('\n');
         }
 

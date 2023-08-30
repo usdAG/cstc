@@ -1,8 +1,9 @@
 package de.usd.cstchef.operations.dataformat;
 
+import burp.BurpExtender;
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -11,11 +12,10 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class UrlDecode extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = cbs.getHelpers();
+    protected ByteArray perform(ByteArray input) throws Exception {
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        byte[] result = helpers.urlDecode(input);
+        ByteArray result = api.utilities().urlUtils().decode(input);
         return result;
     }
 

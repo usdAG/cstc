@@ -1,37 +1,71 @@
 package burp;
 
-public class CstcMessageEditorController implements IMessageEditorController {
+import java.util.Optional;
 
-    private IHttpService httpService = null;
-    private byte[] request = null;
-    private byte[] response = null;
+import burp.api.montoya.core.Range;
+import burp.api.montoya.http.HttpService;
+import burp.api.montoya.http.message.HttpRequestResponse;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.ui.contextmenu.MessageEditorHttpRequestResponse;
 
-    public void setHttpRequestResponse(IHttpRequestResponse requestResponse) {
-        this.httpService = requestResponse.getHttpService();
-        this.request = requestResponse.getRequest();
-        this.response = requestResponse.getResponse();
+public class CstcMessageEditorController implements MessageEditorHttpRequestResponse{
+
+    private HttpService httpService = null;
+    private HttpRequest request = null;
+    private HttpResponse response = null;
+    private HttpRequestResponse requestResponse = null;
+
+    public void setHttpRequestResponse(HttpRequestResponse requestResponse) {
+        this.httpService = requestResponse.httpService();
+        this.request = requestResponse.request();
+        this.response = requestResponse.response();
     }
 
-    public void setRequest(byte[] request) {
+    public void setRequest(HttpRequest request) {
         this.request = request;
     }
 
-    public void setResponse(byte[] response) {
-        this.request = response;
+    public void setResponse(HttpResponse response) {
+        this.response = response;
+    }
+
+    // @Override
+    // public HttpService getHttpService() {
+    //     return httpService;
+    // }
+
+    // @Override
+    // public HttpRequest getRequest() {
+    //     return request;
+    // }
+
+    // @Override
+    // public HttpResponse getResponse() {
+    //     return response;
+    // }
+
+    @Override
+    public SelectionContext selectionContext() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectionContext'");
     }
 
     @Override
-    public IHttpService getHttpService() {
-        return httpService;
+    public Optional<Range> selectionOffsets() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectionOffsets'");
     }
 
     @Override
-    public byte[] getRequest() {
-        return request;
+    public int caretPosition() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'caretPosition'");
     }
 
     @Override
-    public byte[] getResponse() {
-        return response;
+    public HttpRequestResponse requestResponse() {
+        return HttpRequestResponse.httpRequestResponse(request, response);
     }
+
 }

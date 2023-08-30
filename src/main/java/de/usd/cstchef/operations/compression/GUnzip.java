@@ -1,6 +1,9 @@
 package de.usd.cstchef.operations.compression;
 
 import java.util.zip.GZIPInputStream;
+
+import burp.api.montoya.core.ByteArray;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
@@ -12,8 +15,8 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class GUnzip extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        ByteArrayInputStream in = new ByteArrayInputStream(input);
+    protected ByteArray perform(ByteArray input) throws Exception {
+        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         GZIPInputStream gis = new GZIPInputStream(in);
 
@@ -26,7 +29,7 @@ public class GUnzip extends Operation {
         gis.close();
         out.close();
         in.close();
-        return out.toByteArray();
+        return ByteArray.byteArray(out.toByteArray());
     }
 
 }

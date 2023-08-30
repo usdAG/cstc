@@ -5,8 +5,8 @@ import javax.swing.JComboBox;
 import org.bouncycastle.util.Arrays;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -19,7 +19,7 @@ public class LineExtractor extends Operation {
     private JComboBox<String> formatBox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         int lineNumber = 0;
         try {
@@ -45,15 +45,14 @@ public class LineExtractor extends Operation {
             break;
         }
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-        int length = input.length;
+        MontoyaApi api = BurpUtils.getInstance().getApi();
+        int length = input.length();
 
         int start = 0;
         int offset = 0;
         int counter = 0;
         while( counter < lineNumber - 1 ) {
-            offset = helpers.indexOf(input, lineEndings, false, start, length);
+            offset = api.utilities().byteUtils().indexOf(input.getBytes(), lineEndings, false, start, length);
             if( offset >= 0 ) {
                 start = offset + lineEndings.length;
                 counter++;
@@ -62,11 +61,11 @@ public class LineExtractor extends Operation {
             }
         }
 
-        int end = helpers.indexOf(input, lineEndings, false, start, length);
+        int end = api.utilities().byteUtils().indexOf(input.getBytes(), lineEndings, false, start, length);
         if( end < 0 )
             end = length;
 
-        byte[] result = Arrays.copyOfRange(input, start, end);
+        ByteArray result = input.subArray(start, end);
         return result;
     }
 

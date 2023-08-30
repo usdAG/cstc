@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.swing.JComboBox;
 import org.bouncycastle.util.encoders.Hex;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -32,33 +33,33 @@ public class ToHex extends Operation {
     private JComboBox<String> delimiterBox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String selectedKey = (String) this.delimiterBox.getSelectedItem();
         Delimiter delimiter = ToHex.delimiters.get(selectedKey);
 
         if (delimiter.value.length == 0) { // No delimiter
-            return Hex.encode(input);
+            return ByteArray.byteArray(Hex.encode(input.getBytes()));
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        if (input.length > 0 && delimiter.writeAtStart) {
+        if (input.length() > 0 && delimiter.writeAtStart) {
             out.write(delimiter.value);
         }
 
-        for (int i = 0; i < input.length - 1; i++) {
-            out.write(Hex.encode(new byte[] { input[i] }));
+        for (int i = 0; i < input.length() - 1; i++) {
+            out.write(Hex.encode(new byte[] { input.getByte(i) }));
             out.write(delimiter.value);
         }
 
-        if (input.length > 0) {
-            out.write(Hex.encode(new byte[] { input[input.length - 1] })); // wow
+        if (input.length() > 0) {
+            out.write(Hex.encode(new byte[] { input.getByte(input.length() - 1) })); // wow
             if (delimiter.writeAtEnd) {
                 out.write(delimiter.value);
             }
         }
 
-        return out.toByteArray();
+        return ByteArray.byteArray(out.toByteArray());
     }
 
     @Override

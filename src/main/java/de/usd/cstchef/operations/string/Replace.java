@@ -3,8 +3,8 @@ package de.usd.cstchef.operations.string;
 import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -19,28 +19,27 @@ public class Replace extends Operation {
     private VariableTextArea replacementTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
-        byte[] result = null;
+        ByteArray result = null;
         if( checkbox.isSelected() ) {
-            String inputStr = new String(input);
-            result = inputStr.replaceAll(exptTxt.getText(), replacementTxt.getText()).getBytes();
+            String inputStr = input.toString();
+            result = ByteArray.byteArray(inputStr.replaceAll(exptTxt.getText(), replacementTxt.getText()));
         } else {
-            IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-            IExtensionHelpers helpers = cbs.getHelpers();
 
-            int start = helpers.indexOf(input, exptTxt.getBytes(), true, 0, input.length);
+            MontoyaApi api = BurpUtils.getInstance().getApi();
+            int start = api.utilities().byteUtils().indexOf(input.getBytes(), exptTxt.getBytes().getBytes(), true, 0, input.length());
 
             if(start < 0)
                 return input;
 
-            byte[] replaced = exptTxt.getBytes();
-            byte[] replacement = replacementTxt.getBytes();
+            ByteArray replaced = exptTxt.getBytes();
+            ByteArray replacement = replacementTxt.getBytes();
 
-            byte[] newRequest = new byte[input.length + replacement.length - replaced.length];
+            ByteArray newRequest = ByteArray.byteArray(input.length() + replacement.length() - replaced.length());
             System.arraycopy(input, 0, newRequest, 0, start);
-            System.arraycopy(replacement, 0, newRequest, start, replacement.length);
-            System.arraycopy(input, start + replaced.length, newRequest, start + replacement.length, input.length - replaced.length - start);
+            System.arraycopy(replacement, 0, newRequest, start, replacement.length());
+            System.arraycopy(input, start + replaced.length(), newRequest, start + replacement.length(), input.length() - replaced.length() - start);
 
             result = newRequest;
         }

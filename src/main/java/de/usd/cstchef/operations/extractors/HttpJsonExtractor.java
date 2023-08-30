@@ -5,9 +5,12 @@ import java.util.Arrays;
 import javax.swing.JTextField;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -18,26 +21,25 @@ public class HttpJsonExtractor extends Operation {
     private JTextField fieldTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String keyName = fieldTxt.getText();
         if( keyName.equals("") )
             return input;
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        IParameter param = helpers.getRequestParameter(input, keyName);
+        ParsedHttpParameter param = HttpRequest.httpRequest(input).parameters().stream().filter(p -> p.name().equals(keyName)).findFirst().get();
         if( param == null)
             throw new IllegalArgumentException("Key not found.");
-        if( param.getType() != IParameter.PARAM_JSON )
+        if( param.type() != HttpParameterType.JSON )
             throw new IllegalArgumentException("Parameter type is not JSON");
 
-        int start = param.getValueStart();
-        int end = param.getValueEnd();
+            int start = param.valueOffsets().startIndexInclusive();
+            int end = param.valueOffsets().endIndexExclusive();
 
-        byte[] result = Arrays.copyOfRange(input, start, end);
-        return result;
+            ByteArray result = input.subArray(start, end);
+            return result;
     }
 
     @Override

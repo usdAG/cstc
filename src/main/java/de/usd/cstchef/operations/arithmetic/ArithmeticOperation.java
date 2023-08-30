@@ -3,6 +3,7 @@ package de.usd.cstchef.operations.arithmetic;
 import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 
 public abstract class ArithmeticOperation extends Operation
@@ -21,11 +22,11 @@ public abstract class ArithmeticOperation extends Operation
     }
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception
+    protected ByteArray perform(ByteArray input) throws Exception
     {
         try
         {
-            String i = new String(input);
+            String i = new String(input.getBytes());
 
             if (i.isEmpty())
                 i = "0";
@@ -35,9 +36,9 @@ public abstract class ArithmeticOperation extends Operation
             Double result_number = calculate(input_number, static_number);
 
             if ( isFloat() )
-                return String.valueOf(result_number).getBytes();
+                return ByteArray.byteArray(String.valueOf(result_number));
 
-            return String.valueOf(Math.round(result_number)).getBytes();
+            return ByteArray.byteArray(String.valueOf(Math.round(result_number)));
 
         }
 

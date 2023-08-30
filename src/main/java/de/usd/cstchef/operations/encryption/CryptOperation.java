@@ -6,6 +6,9 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JComboBox;
 
 import org.bouncycastle.util.encoders.Hex;
+
+import burp.api.montoya.core.ByteArray;
+
 import org.bouncycastle.util.encoders.Base64;
 
 import de.usd.cstchef.operations.Operation;
@@ -33,11 +36,11 @@ public abstract class CryptOperation extends Operation {
 
     protected byte[] crypt(byte[] input, int cipherMode, String algorithm, String mode, String padding)
             throws Exception {
-        byte[] key = keyTxt.getText();
-        byte[] iv = ivTxt.getText();
+        ByteArray key = keyTxt.getText();
+        ByteArray iv = ivTxt.getText();
 
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key, algorithm);
-        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
+        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
         Cipher cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
 
         if( mode.equals("ECB") ) {

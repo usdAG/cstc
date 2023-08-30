@@ -3,7 +3,9 @@ package de.usd.cstchef.operations.conditional;
 import javax.swing.JCheckBox;
 
 import burp.BurpExtender;
+import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -14,11 +16,11 @@ public class StringContains extends ConditionalOperation {
     private JCheckBox caseSensitive;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
-        MontoyaApi api = BurpExtender.getApi();
-        int start = api.utilities().byteUtils().indexOf(input, this.expr.getBytes(), caseSensitive.isSelected(), 0, input.length);
-        api.utilities().byteUtils().indexOf(input, this.expr.getBytes(), caseSensitive.isSelected(), 0, input.length);
+        MontoyaApi api = BurpUtils.getInstance().getApi();
+        int start = api.utilities().byteUtils().indexOf(input.getBytes(), this.expr.getBytes().getBytes(), caseSensitive.isSelected(), 0, input.length());
+        api.utilities().byteUtils().indexOf(input.getBytes(), this.expr.getBytes().getBytes(), caseSensitive.isSelected(), 0, input.length());
         if( (start >= 0) ^ invert.isSelected() ) {
             this.setOperationSkip();
             this.setLaneSkip();

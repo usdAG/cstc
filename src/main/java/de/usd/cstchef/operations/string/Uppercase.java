@@ -1,8 +1,7 @@
 package de.usd.cstchef.operations.string;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -11,14 +10,14 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class Uppercase extends Operation {
 
 	@Override
-	protected byte[] perform(byte[] input) throws Exception {
+	protected ByteArray perform(ByteArray input) throws Exception {
 		try {
 			if(input != null) {
-				String inputStr = new String(input);
-				return inputStr.toUpperCase().getBytes();	
+				String inputStr = input.toString();
+				return ByteArray.byteArray(inputStr.toUpperCase());	
 			}
 			else {
-				return "".getBytes();
+				return ByteArray.byteArray("");
 			}			 
 		} catch (Exception e) {
 			return input;

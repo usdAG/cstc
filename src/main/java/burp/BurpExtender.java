@@ -17,11 +17,9 @@ public class BurpExtender implements BurpExtension {
         BurpExtender.api = api;
         api.extension().setName(extensionName);
         api.userInterface().registerContextMenuItemsProvider(new CstcContextMenuItemsProvider(api, view));
-        api.http().registerHttpHandler(new CstcHttpHandler(api, view));
-    }
-
-    public static MontoyaApi getApi(){
-        return api;
+        api.http().registerHttpHandler(new CstcHttpHandler(view));
+        // TODO Register messageeditor
+        BurpUtils.getInstance().init(api);
     }
 
     // @Override

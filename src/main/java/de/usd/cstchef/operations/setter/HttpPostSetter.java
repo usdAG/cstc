@@ -3,9 +3,12 @@ package de.usd.cstchef.operations.setter;
 import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -17,37 +20,35 @@ public class HttpPostSetter extends SetterOperation {
     private JCheckBox urlEncodeAll;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String parameterName = getWhere();
         if( parameterName.equals("") )
             return input;
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        byte[] newValue = getWhatBytes();
+        ByteArray newValue = getWhatBytes();
 
         if( urlEncodeAll.isSelected() || urlEncode.isSelected() )
-            newValue = urlEncode(newValue, urlEncodeAll.isSelected(), helpers);
+            newValue = urlEncode(newValue, urlEncodeAll.isSelected(), api);
 
-        IParameter param = getParameter(input, parameterName, IParameter.PARAM_BODY, helpers);
+        ParsedHttpParameter param = getParameter(input, parameterName, HttpParameterType.BODY, api);
 
         if( param == null ) {
 
             if( !addIfNotPresent.isSelected() )
                 return input;
 
-            param = helpers.buildParameter(parameterName, "dummy", IParameter.PARAM_BODY);
-            input = helpers.addParameter(input, param);
-            param = getParameter(input, parameterName, IParameter.PARAM_BODY, helpers);
+            HttpRequest.httpRequest(input).withAddedParameters(HttpParameter.bodyParameter(parameterName, "dummy"));
+            param = getParameter(input, parameterName, HttpParameterType.BODY, api);
             if( param == null )
                 // This case occurs when the HTTP request is a JSON or XML request. Burp does not
                 // support adding parameters to these and therefore the request should stay unmodified.
                 throw new IllegalArgumentException("Failure while adding the parameter. Operation cannot be used on XML or JSON.");
         }
 
-        byte[] newRequest = replaceParam(input, param, newValue);
+        ByteArray newRequest = replaceParam(input, param, newValue);
         return newRequest;
     }
 

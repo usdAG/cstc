@@ -3,8 +3,8 @@ package de.usd.cstchef.operations.extractors;
 import org.bouncycastle.util.Arrays;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -13,14 +13,13 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpMethodExtractor extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         try {
-            IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-            IExtensionHelpers helpers = callbacks.getHelpers();
-            int length = input.length;
+            MontoyaApi api = BurpUtils.getInstance().getApi();
+            int length = input.length();
 
-            int methodEnd = helpers.indexOf(input, " ".getBytes(), false, 0, length);
-            byte[] result = Arrays.copyOfRange(input, 0, methodEnd);
+            int methodEnd = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, 0, length);
+            ByteArray result = input.subArray(0, methodEnd);
 
             return result;
 

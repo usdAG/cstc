@@ -3,6 +3,7 @@ package de.usd.cstchef.operations.datetime;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -14,10 +15,10 @@ public class DateTime extends Operation {
     private VariableTextField patternTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String pattern = this.patternTxt.getText().trim();
         SimpleDateFormat format = new SimpleDateFormat(pattern);
-        return format.format(new Date()).getBytes();
+        return ByteArray.byteArray(format.format(new Date()));
     }
 
     public void createUI() {

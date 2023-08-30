@@ -2,6 +2,8 @@ package de.usd.cstchef.operations.encryption;
 
 import javax.crypto.Cipher;
 
+import burp.api.montoya.core.ByteArray;
+
 public abstract class DecryptionOperation extends CryptOperation {
 
     public DecryptionOperation(String algorithm) {
@@ -9,9 +11,9 @@ public abstract class DecryptionOperation extends CryptOperation {
     }
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        return this.crypt(input, Cipher.DECRYPT_MODE, this.algorithm, (String) this.cipherMode.getSelectedItem(),
-                (String) this.paddings.getSelectedItem());
+    protected ByteArray perform(ByteArray input) throws Exception {
+        return ByteArray.byteArray(this.crypt(input.getBytes(), Cipher.DECRYPT_MODE, this.algorithm, (String) this.cipherMode.getSelectedItem(),
+                (String) this.paddings.getSelectedItem()));
     }
 
 }

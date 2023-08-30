@@ -7,9 +7,13 @@ import java.util.List;
 
 import org.bouncycastle.util.encoders.Hex;
 
-import burp.IExtensionHelpers;
-import burp.IParameter;
-import burp.IRequestInfo;
+
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.view.ui.VariableTextField;
 
@@ -30,7 +34,7 @@ public abstract class SetterOperation extends Operation {
         return whereToSet.getText();
     }
 
-    protected byte[] getWhereBytes() {
+    protected ByteArray getWhereBytes() {
         return whereToSet.getBytes();
     }
 
@@ -38,22 +42,21 @@ public abstract class SetterOperation extends Operation {
         return whatToSet.getText();
     }
 
-    protected byte[] getWhatBytes() {
+    protected ByteArray getWhatBytes() {
         return whatToSet.getBytes();
     }
 
     // This is required because Burps getRequestParameter returns always the first occurrence of the parameter name.
     // If you have e.g. a cookie with the same name as the POST parameter, you have no chance of getting the POST
     // parameter using getRequestParameter (at least I do not know how).
-    protected IParameter getParameter(byte[] request, String paramName, byte type, IExtensionHelpers helpers) {
+    protected ParsedHttpParameter getParameter(ByteArray request, String paramName, HttpParameterType type, MontoyaApi api) {
 
-        IRequestInfo info = helpers.analyzeRequest(request);
-        List<IParameter> parameters = info.getParameters();
-        IParameter param = null;
+        List<ParsedHttpParameter> parameters = HttpRequest.httpRequest(request).parameters();
+        ParsedHttpParameter param = null;
 
-        for(IParameter p:parameters) {
-            if( p.getName().equals(paramName) )
-                if( p.getType() == type ) {
+        for(ParsedHttpParameter p:parameters) {
+            if( p.name().equals(paramName) )
+                if( p.type().equals(type) ) {
                     param = p;
                     break;
                 }
@@ -61,43 +64,43 @@ public abstract class SetterOperation extends Operation {
         return param;
     }
 
-    protected byte[] urlEncode(byte[] input, boolean all, IExtensionHelpers helpers) throws IOException {
+    protected ByteArray urlEncode(ByteArray input, boolean all, MontoyaApi api) throws IOException {
 
-        byte[] newValue = input;
+        ByteArray newValue = input;
 
         if( all ) {
             byte[] delimiter = "%".getBytes();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(delimiter);
 
-            for (int i = 0; i < newValue.length - 1; i++) {
-                out.write(Hex.encode(new byte[] { newValue[i] }));
+            for (int i = 0; i < newValue.length() - 1; i++) {
+                out.write(Hex.encode(new byte[] { newValue.getByte(i) }));
                 out.write(delimiter);
             }
 
-            out.write(Hex.encode(new byte[] { newValue[newValue.length - 1] }));
-            newValue = out.toByteArray();
+            out.write(Hex.encode(new byte[] { newValue.getByte(newValue.length() - 1) }));
+            newValue = ByteArray.byteArray(out.toByteArray());
 
         } else {
-            newValue = helpers.urlEncode(input);
+            newValue = api.utilities().urlUtils().encode(input);
         }
 
         return newValue;
     }
 
-    protected byte[] replaceParam(byte[] request, IParameter param, byte[] newValue) {
+    protected ByteArray replaceParam(ByteArray request, ParsedHttpParameter param, ByteArray newValue) {
 
-        int length = request.length;
-        int start = param.getValueStart();
-        int end = param.getValueEnd();
+        int length = request.length();
+        int start = param.valueOffsets().startIndexInclusive();
+        int end = param.valueOffsets().endIndexExclusive();
 
-        byte[] prefix = Arrays.copyOfRange(request, 0, start);
-        byte[] rest = Arrays.copyOfRange(request, end, length);
+        ByteArray prefix = request.subArray(0, start);
+        ByteArray rest = request.subArray(end, length);        
 
-        byte[] newRequest = new byte[prefix.length + newValue.length + rest.length];
-        System.arraycopy(prefix, 0, newRequest, 0, prefix.length);
-        System.arraycopy(newValue, 0, newRequest, prefix.length, newValue.length);
-        System.arraycopy(rest, 0, newRequest, prefix.length + newValue.length, rest.length);
+        ByteArray newRequest = ByteArray.byteArray(prefix.length() + newValue.length() + rest.length());
+        System.arraycopy(prefix, 0, newRequest, 0, prefix.length());
+        System.arraycopy(newValue, 0, newRequest, prefix.length(), newValue.length());
+        System.arraycopy(rest, 0, newRequest, prefix.length() + newValue.length(), rest.length());
 
         return newRequest;
     }

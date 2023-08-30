@@ -12,6 +12,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
@@ -22,12 +23,12 @@ public class XmlFullSignature extends XmlSignature {
       super();
     }
 
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
       dbf.setXIncludeAware(false);
       dbf.setExpandEntityReferences(false);      
-      Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input));
+      Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
 
       this.createSignature(doc);
 
@@ -37,7 +38,7 @@ public class XmlFullSignature extends XmlSignature {
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       transformer.transform(source, result);
-      return bos.toByteArray();
+      return ByteArray.byteArray(bos.toByteArray());
     }
 
 }

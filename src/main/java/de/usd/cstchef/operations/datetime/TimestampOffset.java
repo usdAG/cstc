@@ -8,6 +8,7 @@ import javax.swing.JComboBox;
 
 import org.bouncycastle.jcajce.provider.asymmetric.dsa.DSASigner.stdDSA;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -22,7 +23,7 @@ public class TimestampOffset extends Operation {
     private JCheckBox milliseconds;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {        
+    protected ByteArray perform(ByteArray input) throws Exception {        
         
         String interval = (String)this.interval.getSelectedItem();
         TimeOffsets intervalEnum = TimeOffsets.getEnumObj(interval);
@@ -47,7 +48,7 @@ public class TimestampOffset extends Operation {
         	shiftedTimestamp = timestamp + calculatedOffset;
         }
         
-        return String.valueOf(shiftedTimestamp).getBytes();
+        return ByteArray.byteArray(String.valueOf(shiftedTimestamp));
     }
     
     private long getOffset(TimeOffsets interval, int offset, boolean milliseconds) {

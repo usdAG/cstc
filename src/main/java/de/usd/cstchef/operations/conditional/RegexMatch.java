@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -15,10 +16,10 @@ public class RegexMatch extends ConditionalOperation {
     private JCheckBox find;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         Pattern p = Pattern.compile(this.expr.getText());
-        Matcher m = p.matcher(new String(input));
+        Matcher m = p.matcher(input.toString());
 
         boolean condition = false;
         if( find.isSelected() ) {

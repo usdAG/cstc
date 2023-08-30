@@ -2,9 +2,8 @@ package de.usd.cstchef.operations.extractors;
 
 import java.util.Arrays;
 
-import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IRequestInfo;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -13,14 +12,12 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class HttpBodyExtractor extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         try {
-            IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-            IRequestInfo requestInfo = cbs.getHelpers().analyzeRequest(input);
-            int bodyOffset = requestInfo.getBodyOffset();
-
-            byte[] body = Arrays.copyOfRange(input, bodyOffset, input.length);
-            return body;
+            // TODO: differentiate between Response and Request
+            int bodyOffset = HttpResponse.httpResponse(input).bodyOffset();
+            //TODO: Check for range errors
+            return input.subArray(bodyOffset, input.length());
         } catch (Exception e) {
             throw new IllegalArgumentException("Provided input is not a valid http request.");
         }

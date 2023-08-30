@@ -11,6 +11,7 @@ import javax.swing.event.DocumentListener;
 import burp.BurpUtils;
 import burp.IMessageEditor;
 import burp.IMessageEditorController;
+import burp.api.montoya.core.ByteArray;
 
 public class BurpEditorWrapper implements IMessageEditor, DocumentListener {
 
@@ -18,7 +19,7 @@ public class BurpEditorWrapper implements IMessageEditor, DocumentListener {
     private IMessageEditor burpEditor;
     public boolean fallbackMode;
     boolean isModified;
-    byte[] lastContent;
+    ByteArray lastContent;
 
     public BurpEditorWrapper(IMessageEditorController controller, boolean editable) {
         if (BurpUtils.inBurp()) {
@@ -41,10 +42,10 @@ public class BurpEditorWrapper implements IMessageEditor, DocumentListener {
     }
 
     @Override
-    public byte[] getMessage() {
-        byte[] result;
+    public ByteArray getMessage() {
+        ByteArray result;
         result = fallbackMode ? fallbackArea.getText().getBytes() : burpEditor.getMessage();
-        return result == null ? new byte[0] : result;
+        return result == null ? ByteArray.byteArrayOfLength(0) : result;
     }
 
     @Override
@@ -73,9 +74,9 @@ public class BurpEditorWrapper implements IMessageEditor, DocumentListener {
     }
 
     @Override
-    public void setMessage(byte[] arg0, boolean arg1) {
+    public void setMessage(ByteArray arg0, boolean arg1) {
         if (fallbackMode) {
-            fallbackArea.setText(new String(arg0));
+            fallbackArea.setText(new String(arg0.getBytes()));
         } else {
             this.lastContent = arg0;
             burpEditor.setMessage(arg0, arg1); //TODO fix second parameter

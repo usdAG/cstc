@@ -2,6 +2,7 @@ package de.usd.cstchef.operations.string;
 
 import org.bouncycastle.util.Arrays;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -10,8 +11,8 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class Reverse extends Operation {
 
 	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		return Arrays.reverse(input);
+	protected ByteArray perform(ByteArray input) throws Exception {
+		return ByteArray.byteArray(Arrays.reverse(input.getBytes()));
 	}
 
 }

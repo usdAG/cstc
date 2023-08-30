@@ -42,12 +42,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import burp.BurpUtils;
 import burp.CstcMessageEditorController;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IHttpRequestResponse;
-import burp.IParameter;
-import burp.IRequestInfo;
 import burp.Logger;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.HttpRequestResponse;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.FilterState;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.FilterState.BurpOperation;
@@ -328,13 +331,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
         }
     }
 
-    public void setInput(IHttpRequestResponse requestResponse) {
+    public void setInput(HttpRequestResponse requestResponse) {
         if( isRequest )
-            this.inputText.setMessage(requestResponse.getRequest(), true);
+            this.inputText.setMessage(requestResponse.request().toByteArray(), true);
         else {
-            byte[] responseBytes = requestResponse.getResponse();
+            ByteArray responseBytes = requestResponse.response().toByteArray();
             if( responseBytes == null )
-                responseBytes = "Your request has no server response yet :(".getBytes();
+                responseBytes = ByteArray.byteArray("Your request has no server response yet :(");
             this.inputText.setMessage(responseBytes, false);
         }
 
@@ -401,12 +404,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private byte[] doBake(byte[] input) {
-        if (input == null || input.length == 0) {
-            return new byte[0];
+    private ByteArray doBake(ByteArray input) {
+        if (input == null || input.length() == 0) {
+            return ByteArray.byteArrayOfLength(0);
         }
-        byte[] result = input.clone();
-        byte[] intermediateResult = input;
+        ByteArray result = input.copy();
+        ByteArray intermediateResult = input;
         boolean outputChanged;
         VariableStore store = VariableStore.getInstance();
         out: for (int j = 0; j < this.operationLines.getComponentCount(); j++) {
@@ -450,32 +453,30 @@ public class RecipePanel extends JPanel implements ChangeListener {
         }
 
         if (BurpUtils.inBurp()) {
-            IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-            IExtensionHelpers helpers = callbacks.getHelpers();
-
-            IRequestInfo info;
+            MontoyaApi api = BurpUtils.getInstance().getApi();
+            HttpRequest req;
             try {
-                info = helpers.analyzeRequest(result);
+                req = HttpRequest.httpRequest(result);
+
             } catch( IllegalArgumentException e ) {
                 // In this case there is no valid HTTP request and no Content-Length update is requried.
                 return result;
             }
 
-            List<java.lang.String> headers = info.getHeaders();
-            int offset = info.getBodyOffset();
+            List<HttpHeader> headers = req.headers();
+            int offset = req.bodyOffset();
 
-            if( result.length == offset ) {
+            if( result.length() == offset ) {
                 // In this case there is no body and we do not need to update the content length header.
                 return result;
             }
 
-            for(String header : headers) {
-                if(header.startsWith("Content-Length:")) {
-                    // To update the content-length header, we just add a dummy parameter and remove it right away.
-                    // Burps extension helpers will care about updating the length without any string transformations.
-                    IParameter dummy = helpers.buildParameter("dummy", "dummy", IParameter.PARAM_BODY);
-                    result = helpers.addParameter(result, dummy);
-                    result = helpers.removeParameter(result, dummy);
+            
+
+            for(HttpHeader header : headers) {
+                if(header.toString().startsWith("Content-Length:")) {
+                    HttpParameter dummy = HttpParameter.bodyParameter("dummy", "dummy");
+                    result = HttpRequest.httpRequest(result).withAddedParameters(dummy).withRemovedParameters(dummy).toByteArray();
                     break;
                 }
             }
@@ -494,17 +495,17 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                byte[] result = doBake(inputText.getMessage());
-                HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+                ByteArray result = doBake(inputText.getMessage());
+                HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
                         if( isRequest) {
                             outputText.setMessage(result, true);
-                            controllerMod.setRequest(result);
+                            controllerMod.setRequest(HttpRequest.httpRequest(result));
                         } else {
                             outputText.setMessage(result, false);
-                            controllerMod.setResponse(result);
+                            controllerMod.setResponse(HttpResponse.httpResponse(result));
                         }
                         VariablesWindow vw = VariablesWindow.getInstance();
                         if (vw.isVisible()) {
@@ -520,7 +521,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.bakeTimer.schedule(tt, threshold);
     }
 
-    public byte[] bake(byte[] input) {
+    public ByteArray bake(ByteArray input) {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();

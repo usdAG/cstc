@@ -11,7 +11,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import burp.IBurpExtenderCallbacks;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ToolType;
 import de.usd.cstchef.FilterState;
 import de.usd.cstchef.FilterState.BurpOperation;
 
@@ -65,14 +66,13 @@ public class RequestFilterDialog extends JPanel {
 
     private JPanel createPanel(BurpOperation operation) {
         if (filterState.getFilterMask(operation).isEmpty()) {
-            filterState.getFilterMask(operation).put(new Filter("Proxy", IBurpExtenderCallbacks.TOOL_PROXY), false);
-            filterState.getFilterMask(operation).put(new Filter("Repeater", IBurpExtenderCallbacks.TOOL_REPEATER),
+            filterState.getFilterMask(operation).put(new Filter("Proxy", ToolType.PROXY.ordinal()), false);
+            filterState.getFilterMask(operation).put(new Filter("Repeater", ToolType.REPEATER.ordinal()),
                     false);
-            filterState.getFilterMask(operation).put(new Filter("Spider", IBurpExtenderCallbacks.TOOL_SPIDER), false);
-            filterState.getFilterMask(operation).put(new Filter("Scanner", IBurpExtenderCallbacks.TOOL_SCANNER), false);
-            filterState.getFilterMask(operation).put(new Filter("Intruder", IBurpExtenderCallbacks.TOOL_INTRUDER),
+            filterState.getFilterMask(operation).put(new Filter("Scanner", ToolType.SCANNER.ordinal()), false);
+            filterState.getFilterMask(operation).put(new Filter("Intruder", ToolType.INTRUDER.ordinal()),
                     false);
-            filterState.getFilterMask(operation).put(new Filter("Extender", IBurpExtenderCallbacks.TOOL_EXTENDER),
+            filterState.getFilterMask(operation).put(new Filter("Extender", ToolType.EXTENSIONS.ordinal()),
                     false);
         }
 

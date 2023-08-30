@@ -6,6 +6,7 @@ import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.spi.json.JsonProvider;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -26,12 +27,12 @@ public class JsonExtractor extends Operation {
     }
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         if( fieldTxt.getText().equals("") )
             return input;
 
-        Object document = provider.parse(new String(input));
+        Object document = provider.parse(input.toString());
         Object result = JsonPath.read(document, fieldTxt.getText());
 
         if( result == null )
@@ -40,11 +41,11 @@ public class JsonExtractor extends Operation {
         Class<? extends Object> resultClass = result.getClass();
 
         if( resultClass == String.class ) {
-            return ((String)result).getBytes();
+            return ByteArray.byteArray((String)result);
         } else if( resultClass == Integer.class || resultClass == Float.class || resultClass == Double.class ) {
-            return String.valueOf(result).getBytes();
+            return  ByteArray.byteArray((String)result);
         } else if( resultClass == Boolean.class ) {
-            return String.valueOf(result).getBytes();
+            return  ByteArray.byteArray((String)result);
         }
 
         throw new IllegalArgumentException("JSON data of unknown type.");

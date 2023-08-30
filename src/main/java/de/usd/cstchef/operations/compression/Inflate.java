@@ -1,6 +1,9 @@
 package de.usd.cstchef.operations.compression;
 
 import java.util.zip.Inflater;
+
+import burp.api.montoya.core.ByteArray;
+
 import java.io.ByteArrayOutputStream;
 
 import de.usd.cstchef.operations.Operation;
@@ -12,11 +15,11 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class Inflate extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         Inflater inflater = new Inflater();
-        inflater.setInput(input);
+        inflater.setInput(input.getBytes());
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(input.length);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(input.length());
 
         byte[] buffer = new byte[1024];
         while( !inflater.finished() ) {
@@ -25,6 +28,6 @@ public class Inflate extends Operation {
         }
 
         outputStream.close();
-        return outputStream.toByteArray();
+        return ByteArray.byteArray(outputStream.toByteArray());
     }
 }

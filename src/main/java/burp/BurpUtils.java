@@ -1,9 +1,11 @@
 package burp;
 
+import burp.api.montoya.MontoyaApi;
+
 public class BurpUtils {
 
     private static BurpUtils instance;
-    private IBurpExtenderCallbacks callbacks;
+    private MontoyaApi api;
 
     public static BurpUtils getInstance() {
         if (BurpUtils.instance == null) {
@@ -15,20 +17,20 @@ public class BurpUtils {
     private BurpUtils() {
     }
 
-    public void init(IBurpExtenderCallbacks callbacks) {
-        this.callbacks = callbacks;
+    public void init(MontoyaApi api) {
+        this.api = api;
     }
 
-    public IBurpExtenderCallbacks getCallbacks() throws IllegalAccessError {
-        if (this.callbacks == null) {
+    public MontoyaApi getApi() throws IllegalAccessError {
+        if (this.api == null) {
             throw new IllegalAccessError("Only works within burpsuite");
         }
-        return callbacks;
+        return api;
     }
 
     public static boolean inBurp() {
         try {
-            BurpUtils.getInstance().getCallbacks();
+            BurpUtils.getInstance().getApi();
             return true;
         } catch (IllegalAccessError e) {
             return false;

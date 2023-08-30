@@ -14,9 +14,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
 import burp.Logger;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
 import de.usd.cstchef.operations.arithmetic.Divide;
@@ -132,44 +132,42 @@ public class Utils {
     }
 
     public static String replaceVariables(String text) {
-        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
-        for (Entry<String, byte[]> entry : variables.entrySet()) {
+        HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
+        for (Entry<String, ByteArray> entry : variables.entrySet()) {
             // TODO this is easy, but very bad, how to do this right?
-            text = text.replace("$" + entry.getKey(), new String(entry.getValue()));
+            text = text.replace("$" + entry.getKey(), entry.getValue().toString());
         }
 
         return text;
     }
 
-    public static byte[] replaceVariablesByte(byte[] bytes) {
-        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+    public static ByteArray replaceVariablesByte(ByteArray bytes) {
+        HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-
-        byte[] currentKey;
-        for (Entry<String, byte[]> entry : variables.entrySet()) {
+        ByteArray currentKey;
+        for (Entry<String, ByteArray> entry : variables.entrySet()) {
 
             int offset = 0;
-            currentKey = ("$" + entry.getKey()).getBytes();
+            currentKey = ByteArray.byteArray("$" + entry.getKey());
 
             while( offset >= 0 ) {
-                offset = helpers.indexOf(bytes, currentKey, true, offset, bytes.length);
+                offset = api.utilities().byteUtils().indexOf(bytes.getBytes(), currentKey.getBytes(), true, offset, bytes.length());
                 if( offset >= 0 )
-                    bytes = insertAtOffset(bytes, offset, offset + currentKey.length, entry.getValue());
+                    bytes = insertAtOffset(bytes, offset, offset + currentKey.length(), entry.getValue());
             }
         }
         return bytes;
     }
 
-    public static byte[] insertAtOffset(byte[] input, int start, int end, byte[] newValue) {
-        byte[] prefix = Arrays.copyOfRange(input, 0, start);
-        byte[] rest = Arrays.copyOfRange(input, end, input.length);
+    public static ByteArray insertAtOffset(ByteArray input, int start, int end, ByteArray newValue) {
+        ByteArray prefix = input.subArray(0, start);
+        ByteArray rest = input.subArray(end, input.length());
 
-        byte[] output = new byte[prefix.length + newValue.length + rest.length];
-        System.arraycopy(prefix, 0, output, 0, prefix.length);
-        System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
-        System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
+        ByteArray output = ByteArray.byteArray(prefix.length() + newValue.length() + rest.length());
+        System.arraycopy(prefix, 0, output, 0, prefix.length());
+        System.arraycopy(newValue, 0, output, prefix.length(), newValue.length());
+        System.arraycopy(rest, 0, output, prefix.length() + newValue.length(), rest.length());
 
         return output;
     }
