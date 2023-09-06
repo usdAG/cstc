@@ -2,6 +2,7 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -35,9 +36,9 @@ public class MedianTest extends Median
         isFloat = false;
 
         String testValue = "1,2,3,4,5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("3");
+        assert result.toString().equals("3");
     }
 
     @Test
@@ -47,8 +48,8 @@ public class MedianTest extends Median
         isFloat = true;
 
         String testValue = "1,2,3.5,4,5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("3.5");
+        assert result.toString().equals("3.5");
     }
 }

@@ -46,6 +46,7 @@ import burp.Logger;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.HttpMessage;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
@@ -54,6 +55,7 @@ import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.FilterState;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.FilterState.BurpOperation;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 
 public class RecipePanel extends JPanel implements ChangeListener {
@@ -62,7 +64,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private int operationSteps = 10;
     private boolean autoBake = true;
-    private boolean isRequest = true;
+    private MessageType messageType;
     private int bakeThreshold = 400;
     private String recipeName;
     private BurpOperation operation;
@@ -80,10 +82,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private FilterState filterState;
 
-    public RecipePanel(BurpOperation operation, boolean isRequest, FilterState filterState) {
+    public RecipePanel(BurpOperation operation, MessageType messageType, FilterState filterState) {
 
         this.operation = operation;
-        this.isRequest = isRequest;
+        this.messageType = messageType;
         this.filterState = filterState;
         this.recipeName = FilterState.translateBurpOperation(operation);
 
@@ -98,13 +100,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create input panel
         JPanel inputPanel = new LayoutPanel("Input");
-        inputText = new BurpEditorWrapper(controllerOrig, true);
-        inputPanel.add(inputText.getComponent());
+        inputText = new BurpEditorWrapper(controllerOrig, messageType);
+        inputPanel.add(inputText.uiComponent());
 
         // create output panel
         JPanel outputPanel = new LayoutPanel("Output");
-        outputText = new BurpEditorWrapper(controllerMod, false);
-        outputPanel.add(outputText.getComponent());
+        outputText = new BurpEditorWrapper(controllerMod, messageType);
+        outputPanel.add(outputText.uiComponent());
 
         JPanel searchTreePanel = new JPanel();
         searchTreePanel.setLayout(new BorderLayout());
@@ -299,15 +301,15 @@ public class RecipePanel extends JPanel implements ChangeListener {
         boolean inBurp = BurpUtils.inBurp();
         //Check if we run inside a burp
         if (inBurp) {
-            IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-            String jsonState = callbacks.loadExtensionSetting("cstc_" + this.recipeName);
+            MontoyaApi api = BurpUtils.getInstance().getApi();
+            String jsonState = api.persistence().extensionData().getString("cstc_" + this.recipeName);
             if (jsonState != null && jsonState != "") {
                 try {
                     logger.log("[" + this.recipeName + "] Restoring state.");
                     //We remove the setting and set it again to be safe in an error case
-                    callbacks.saveExtensionSetting("cstc_" + this.recipeName, "");
+                    api.persistence().extensionData().setString("cstc_" + this.recipeName, "");
                     restoreState(jsonState);
-                    callbacks.saveExtensionSetting("cstc_" + this.recipeName, jsonState);
+                    api.persistence().extensionData().setString("cstc_" + this.recipeName, jsonState);
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
                     Logger.getInstance().err("There was an error restoring the state of RecipePanel " + this.recipeName);
                 }
@@ -322,9 +324,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
         boolean inBurp = BurpUtils.inBurp();
         //Check if we run inside a burp
         if (inBurp) {
+            MontoyaApi api = BurpUtils.getInstance().getApi();
             try {
                 String jsonState = getStateAsJSON();
-                BurpUtils.getInstance().getCallbacks().saveExtensionSetting("cstc_" + this.recipeName, jsonState);
+                api.persistence().extensionData().setString("cstc_" + this.recipeName, jsonState);
             } catch (IOException e) {
                 Logger.getInstance().err("There was an error persisting the current state of the recipe panel.");
             }
@@ -332,13 +335,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void setInput(HttpRequestResponse requestResponse) {
-        if( isRequest )
-            this.inputText.setMessage(requestResponse.request().toByteArray(), true);
+        if( messageType == MessageType.REQUEST )
+            this.inputText.setRequest(requestResponse.request());
         else {
-            ByteArray responseBytes = requestResponse.response().toByteArray();
-            if( responseBytes == null )
-                responseBytes = ByteArray.byteArray("Your request has no server response yet :(");
-            this.inputText.setMessage(responseBytes, false);
+            HttpResponse response = requestResponse.response();
+            if( response.toByteArray() == null )
+                response = HttpResponse.httpResponse(ByteArray.byteArray("Your request has no server response yet :("));
+            this.inputText.setResponse(response);
         }
 
         this.controllerOrig.setHttpRequestResponse(requestResponse);
@@ -495,17 +498,22 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                ByteArray result = doBake(inputText.getMessage());
+                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray());
                 HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if( isRequest) {
-                            outputText.setMessage(result, true);
-                            controllerMod.setRequest(HttpRequest.httpRequest(result));
-                        } else {
-                            outputText.setMessage(result, false);
+                        if( messageType == MessageType.REQUEST) {
+                            outputText.setRequest(HttpRequest.httpRequest(result));
+                            controllerMod.setRequest((HttpRequest)result);
+                        } else if (messageType == MessageType.RESPONSE){
+                            outputText.setResponse(HttpResponse.httpResponse(result));
                             controllerMod.setResponse(HttpResponse.httpResponse(result));
+                        }
+                        else{
+                            outputText.setContents(result);
+                            // TODO: MessageEditorController?
+
                         }
                         VariablesWindow vw = VariablesWindow.getInstance();
                         if (vw.isVisible()) {
@@ -534,7 +542,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private void startAutoBakeTimer() {
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
-                if (inputText.isMessageModified()) {
+                if (inputText.isModified()) {
                     logger.log("autobaking");
                     autoBake();
                 }

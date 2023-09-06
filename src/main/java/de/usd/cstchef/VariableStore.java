@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
 
 public class VariableStore {
@@ -48,8 +49,7 @@ public class VariableStore {
 
         for (Map.Entry<String, ByteArray> entry : this.variables.entrySet()) {
             ByteArray orig = entry.getValue();
-            ByteArray newContent = ByteArray.byteArray(orig.length());
-            System.arraycopy(orig, 0, newContent, 0, orig.length());
+            ByteArray newContent = orig.subArray( 0, orig.length());
             variablesCopy.put(entry.getKey(), newContent);
         }
         return variablesCopy;

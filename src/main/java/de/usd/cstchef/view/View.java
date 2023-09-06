@@ -12,6 +12,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.usd.cstchef.FilterState;
 import de.usd.cstchef.FilterState.BurpOperation;
+import de.usd.cstchef.Utils.MessageType;
 
 public class View extends JPanel {
 
@@ -31,9 +32,9 @@ public class View extends JPanel {
 
         requestFilterDialog = RequestFilterDialog.getInstance();
 
-        incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, false, filterState);
-        outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, true, filterState);
-        formatRecipePanel = new RecipePanel(BurpOperation.FORMAT, true, filterState);
+        incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, MessageType.RESPONSE, filterState);
+        outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, MessageType.REQUEST, filterState);
+        formatRecipePanel = new RecipePanel(BurpOperation.FORMAT, MessageType.RAW, filterState);
 
         tabbedPane.addTab("Outgoing Requests", null, outgoingRecipePanel, "Outgoing requests from the browser, the repeater or another tool.");
         tabbedPane.addTab("Incoming Responses", null, incomingRecipePanel, "Responses from the server.");

@@ -1,70 +1,72 @@
-package de.usd.cstchef.view;
+//TODO: reimplement format tab
 
-import java.awt.Component;
+// package de.usd.cstchef.view;
 
-import burp.BurpUtils;
-import burp.IMessageEditorTab;
-import burp.ITextEditor;
-import burp.Logger;
+// import java.awt.Component;
 
-public class FormatTab implements IMessageEditorTab {
-    private ITextEditor txtInput;
-    private boolean editable;
-    private RecipePanel responseFormatRecipePanel;
-    private RecipePanel requestFormatRecipePanel;
-    private byte[] currentMessage;
+// import burp.BurpUtils;
+// import burp.IMessageEditorTab;
+// import burp.ITextEditor;
+// import burp.Logger;
 
-    public FormatTab(RecipePanel requestFormatRecipePanel, RecipePanel responseFormatRecipePanel, boolean editable) {
-        this.editable = editable;
-        this.responseFormatRecipePanel = responseFormatRecipePanel;
-        this.requestFormatRecipePanel = requestFormatRecipePanel;
-        txtInput = BurpUtils.getInstance().getCallbacks().createTextEditor();
-        txtInput.setEditable(editable);
-    }
+// public class FormatTab implements IMessageEditorTab {
+//     private ITextEditor txtInput;
+//     private boolean editable;
+//     private RecipePanel responseFormatRecipePanel;
+//     private RecipePanel requestFormatRecipePanel;
+//     private byte[] currentMessage;
 
-    @Override
-    public String getTabCaption() {
-        return "CSTC";
-    }
+//     public FormatTab(RecipePanel requestFormatRecipePanel, RecipePanel responseFormatRecipePanel, boolean editable) {
+//         this.editable = editable;
+//         this.responseFormatRecipePanel = responseFormatRecipePanel;
+//         this.requestFormatRecipePanel = requestFormatRecipePanel;
+//         txtInput = BurpUtils.getInstance().getCallbacks().createTextEditor();
+//         txtInput.setEditable(editable);
+//     }
 
-    @Override
-    public Component getUiComponent() {
-        return txtInput.getComponent();
-    }
+//     @Override
+//     public String getTabCaption() {
+//         return "CSTC";
+//     }
 
-    @Override
-    public boolean isEnabled(byte[] content, boolean isRequest) {
-        return true;
-    }
+//     @Override
+//     public Component getUiComponent() {
+//         return txtInput.getComponent();
+//     }
 
-    @Override
-    public void setMessage(byte[] content, boolean isRequest) {
-        currentMessage = content;
+//     @Override
+//     public boolean isEnabled(byte[] content, boolean isRequest) {
+//         return true;
+//     }
 
-        if (content == null) {
-            txtInput.setText("Nothing here".getBytes());
-            txtInput.setEditable(false);
-            return;
-        }
-        RecipePanel recipe = isRequest ? this.requestFormatRecipePanel : this.responseFormatRecipePanel;
-        Logger.getInstance().log("baking new stuff");
-        byte[] result = recipe.bake(content);
-        this.txtInput.setText(result);
-    }
+//     @Override
+//     public void setMessage(byte[] content, boolean isRequest) {
+//         currentMessage = content;
 
-    @Override
-    public byte[] getMessage() {
-        return currentMessage;
-    }
+//         if (content == null) {
+//             txtInput.setText("Nothing here".getBytes());
+//             txtInput.setEditable(false);
+//             return;
+//         }
+//         RecipePanel recipe = isRequest ? this.requestFormatRecipePanel : this.responseFormatRecipePanel;
+//         Logger.getInstance().log("baking new stuff");
+//         byte[] result = recipe.bake(content);
+//         this.txtInput.setText(result);
+//     }
 
-    @Override
-    public boolean isModified() {
-        return txtInput.isTextModified();
-    }
+//     @Override
+//     public byte[] getMessage() {
+//         return currentMessage;
+//     }
 
-    @Override
-    public byte[] getSelectedData() {
-        return txtInput.getSelectedText();
-    }
+//     @Override
+//     public boolean isModified() {
+//         return txtInput.isTextModified();
+//     }
 
-}
+//     @Override
+//     public byte[] getSelectedData() {
+//         return txtInput.getSelectedText();
+//     }
+
+// }

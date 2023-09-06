@@ -72,7 +72,7 @@ public class FilterState {
         }
     }
 
-    public boolean shouldProcess(int tool, BurpOperation operation) {
+    public boolean shouldProcess(BurpOperation operation) {
         LinkedHashMap<Filter, Boolean> filterSettings;
         int filterMask = 0;
         switch (operation) {
@@ -97,7 +97,7 @@ public class FilterState {
                 filterMask |= filter.getValue();
             }
         }
-        return (filterMask & tool) != 0;
+        return filterMask != 0;
     }
 
     public enum BurpOperation {

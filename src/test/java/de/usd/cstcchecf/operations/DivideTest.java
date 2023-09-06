@@ -2,6 +2,7 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Divide;
@@ -36,9 +37,9 @@ public class DivideTest extends Divide
         isReverse = false;
 
         String testValue = "4";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("2");
+        assert result.toString().equals("2");
     }
 
     @Test
@@ -49,8 +50,8 @@ public class DivideTest extends Divide
         isReverse = true;
 
         String testValue = "4";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("0.5");
+        assert result.toString().equals("0.5");
     }
 }

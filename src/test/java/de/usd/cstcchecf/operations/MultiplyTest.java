@@ -2,6 +2,7 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Multiply;
@@ -29,9 +30,9 @@ public class MultiplyTest extends Multiply
         isFloat = false;
 
         String testValue = "22";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("220");
+        assert result.toString().equals("220");
     }
 
     @Test
@@ -41,9 +42,9 @@ public class MultiplyTest extends Multiply
         isFloat = true;
 
         String testValue = "2.2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).startsWith("4.84");
+        assert result.toString().startsWith("4.84");
     }
 
     @Test
@@ -53,8 +54,8 @@ public class MultiplyTest extends Multiply
         isFloat = false;
 
         String testValue = "2.2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("5");
+        assert result.toString().equals("5");
     }
 }

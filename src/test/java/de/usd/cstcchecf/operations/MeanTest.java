@@ -2,6 +2,7 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -35,9 +36,9 @@ public class MeanTest extends Mean
         isFloat = false;
 
         String testValue = "8,2,5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("5");
+        assert result.toString().equals("5");
     }
 
     @Test
@@ -47,9 +48,9 @@ public class MeanTest extends Mean
         isFloat = true;
 
         String testValue = "0.2,0.3,0.4,0.1";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("0.25");
+        assert result.toString().equals("0.25");
     }
 
     @Test
@@ -59,9 +60,9 @@ public class MeanTest extends Mean
         isFloat = false;
 
         String testValue = "8 2 5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("5");
+        assert result.toString().equals("5");
     }
 
     @Test
@@ -71,8 +72,8 @@ public class MeanTest extends Mean
         isFloat = true;
 
         String testValue = "0.2 0.3 0.4 0.1";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("0.25");
+        assert result.toString().equals("0.25");
     }
 }

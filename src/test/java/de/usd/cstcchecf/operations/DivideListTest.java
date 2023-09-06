@@ -2,6 +2,7 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -35,9 +36,9 @@ public class DivideListTest extends DivideList
         isFloat = false;
 
         String testValue = "8,2,4";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("1");
+        assert result.toString().equals("1");
     }
 
     @Test
@@ -47,9 +48,9 @@ public class DivideListTest extends DivideList
         isFloat = true;
 
         String testValue = "8,2,4,2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("0.5");
+        assert result.toString().equals("0.5");
     }
 
     @Test
@@ -59,9 +60,9 @@ public class DivideListTest extends DivideList
         isFloat = false;
 
         String testValue = "8 2 4 0.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("2");
+        assert result.toString().equals("2");
     }
 
     @Test
@@ -71,8 +72,8 @@ public class DivideListTest extends DivideList
         isFloat = true;
 
         String testValue = "8 2 4 4 0.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("0.5");
+        assert result.toString().equals("0.5");
     }
 }

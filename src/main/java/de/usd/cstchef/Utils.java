@@ -17,6 +17,7 @@ import burp.BurpUtils;
 import burp.Logger;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.handler.ResponseAction;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
 import de.usd.cstchef.operations.arithmetic.Divide;
@@ -240,6 +241,12 @@ public class Utils {
 
     public static Class<? extends Operation>[] getOperations() {
         return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+    }
+
+    public enum MessageType{
+        REQUEST,
+        RESPONSE,
+        RAW
     }
 
 }

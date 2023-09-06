@@ -2,6 +2,10 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.BurpUtils;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.internal.MontoyaObjectFactory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Addition;
@@ -30,9 +34,9 @@ public class SubtractionTest extends Subtraction
         isFloat = false;
 
         String testValue = "22";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("12");
+        assert result.toString().equals("12");
     }
 
     @Test
@@ -42,10 +46,10 @@ public class SubtractionTest extends Subtraction
         isFloat = true;
 
         String testValue = "2.2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        System.out.println(new String(result));
-        assert new String(result).startsWith("0.1");
+        System.out.println(result.toString());
+        assert result.toString().startsWith("0.1");
     }
 
     @Test
@@ -55,8 +59,8 @@ public class SubtractionTest extends Subtraction
         isFloat = false;
 
         String testValue = "2.8";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("1");
+        assert result.toString().equals("1");
     }
 }

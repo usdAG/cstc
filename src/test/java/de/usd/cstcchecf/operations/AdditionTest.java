@@ -2,6 +2,7 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Addition;
@@ -29,9 +30,9 @@ public class AdditionTest extends Addition
         isFloat = false;
 
         String testValue = "22";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("32");
+        assert result.toString().equals("32");
     }
 
     @Test
@@ -41,9 +42,9 @@ public class AdditionTest extends Addition
         isFloat = true;
 
         String testValue = "2.2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("4.4");
+        assert result.toString().equals("4.4");
     }
 
     @Test
@@ -53,8 +54,8 @@ public class AdditionTest extends Addition
         isFloat = false;
 
         String testValue = "2.2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("4");
+        assert result.toString().equals("4");
     }
 }

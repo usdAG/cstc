@@ -2,6 +2,7 @@ package de.usd.cstcchecf.operations;
 
 import org.junit.Test;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -35,9 +36,9 @@ public class SumTest extends Sum
         isFloat = false;
 
         String testValue = "1,2,3,4,5,6";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("21");
+        assert result.toString().equals("21");
     }
 
     @Test
@@ -47,9 +48,9 @@ public class SumTest extends Sum
         isFloat = true;
 
         String testValue = "1,2,3,4,5,6";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("21.0");
+        assert result.toString().equals("21.0");
     }
 
     @Test
@@ -59,9 +60,9 @@ public class SumTest extends Sum
         isFloat = false;
 
         String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("23");
+        assert result.toString().equals("23");
     }
 
     @Test
@@ -71,8 +72,8 @@ public class SumTest extends Sum
         isFloat = true;
 
         String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert new String(result).equals("22.5");
+        assert result.toString().equals("22.5");
     }
 }
