@@ -44,7 +44,7 @@ public class RequestFilterDialog extends JPanel {
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new GridLayout(7, 0));
         labelPanel.add(new JLabel(""));
-        List<String> labels = Arrays.asList("Proxy", "Repeater", "Spider", "Scanner", "Intruder", "Extender");
+        List<String> labels = Arrays.asList("Proxy", "Repeater", "Scanner", "Intruder", "Extender");
         for (String label : labels) {
             labelPanel.add(new JLabel(label));
         }

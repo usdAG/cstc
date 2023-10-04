@@ -26,7 +26,6 @@ public class CstcHttpHandler implements HttpHandler {
 
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
-        RequestFilterDialog.getInstance().getFilterMask(null);
         if (view.getFilterState().shouldProcess(FilterState.BurpOperation.OUTGOING)) {
             ByteArray request = requestToBeSent.toByteArray();
             ByteArray modifiedRequest = view.getOutgoingRecipePanel().bake(request);
@@ -34,7 +33,7 @@ public class CstcHttpHandler implements HttpHandler {
             return continueWith(HttpRequest.httpRequest(modifiedRequest));
         }
         else{
-            return continueWith(HttpRequest.httpRequest());
+            return continueWith(requestToBeSent);
         }
     }
 
@@ -47,7 +46,7 @@ public class CstcHttpHandler implements HttpHandler {
             return continueWith(HttpResponse.httpResponse(modifiedResponse));
         }
         else{
-            return continueWith(HttpResponse.httpResponse());
+            return continueWith(responseReceived);
         }
     }
 
