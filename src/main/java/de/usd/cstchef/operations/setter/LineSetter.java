@@ -67,9 +67,7 @@ public class LineSetter extends SetterOperation {
             end = length;
 
         if( append.isSelected() ) {
-            ByteArray value = ByteArray.byteArray(newValue.length() + lineEndings.length());
-            System.arraycopy(lineEndings, 0, value, 0, lineEndings.length());
-            System.arraycopy(newValue, 0, value, lineEndings.length(), newValue.length());
+            ByteArray value = lineEndings.withAppended(newValue);
             return Utils.insertAtOffset(input, end, end, value);
         } else {
             return Utils.insertAtOffset(input, start, end, newValue);

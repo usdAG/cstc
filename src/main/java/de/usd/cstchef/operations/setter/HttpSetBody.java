@@ -23,9 +23,7 @@ public class HttpSetBody extends Operation {
 
         ByteArray noBody = input.subArray(0, bodyOffset);
         ByteArray newBody = replacementTxt.getText();
-        ByteArray newRequest = ByteArray.byteArray(noBody.length() + newBody.length());
-        System.arraycopy(noBody, 0, newRequest, 0, noBody.length());
-        System.arraycopy(newBody, 0, newRequest, noBody.length(), newBody.length());
+        ByteArray newRequest = noBody.withAppended(newBody);
 
         return newRequest;
     }

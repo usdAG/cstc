@@ -48,10 +48,7 @@ public class HttpSetUri extends Operation {
             ByteArray newUri = this.uriTxt.getBytes();
             ByteArray rest = input.subArray(secondMark, length);
 
-            ByteArray newRequest = ByteArray.byteArray(method.length() + newUri.length() + rest.length());
-            System.arraycopy(method, 0, newRequest, 0, method.length());
-            System.arraycopy(newUri, 0, newRequest, method.length(), newUri.length());
-            System.arraycopy(rest, 0, newRequest, method.length() + newUri.length(), rest.length());
+            ByteArray newRequest = method.withAppended(newUri).withAppended(rest);
 
             return newRequest;
 

@@ -96,11 +96,8 @@ public abstract class SetterOperation extends Operation {
 
         ByteArray prefix = request.subArray(0, start);
         ByteArray rest = request.subArray(end, length);        
-
-        ByteArray newRequest = ByteArray.byteArray(prefix.length() + newValue.length() + rest.length());
-        System.arraycopy(prefix, 0, newRequest, 0, prefix.length());
-        System.arraycopy(newValue, 0, newRequest, prefix.length(), newValue.length());
-        System.arraycopy(rest, 0, newRequest, prefix.length() + newValue.length(), rest.length());
+        
+        ByteArray newRequest = prefix.withAppended(newValue).withAppended(rest);
 
         return newRequest;
     }

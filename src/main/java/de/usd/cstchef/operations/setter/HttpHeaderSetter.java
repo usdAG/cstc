@@ -27,13 +27,11 @@ public class HttpHeaderSetter extends SetterOperation {
         MontoyaApi api = BurpUtils.getInstance().getApi();
         int length = input.length();
 
-        byte[] headerSearch = new byte[headerName.length() + 2];
-        System.arraycopy(headerName, 0, headerSearch, 0, headerName.length());
-        System.arraycopy(": ".getBytes(), 0, headerSearch, headerName.length(), 2);
+        ByteArray headerSearch = headerName.withAppended(": ");
 
         try {
 
-            int offset = api.utilities().byteUtils().indexOf(input.getBytes(), headerSearch, false, 0, length);
+            int offset = api.utilities().byteUtils().indexOf(input.getBytes(), headerSearch.getBytes(), false, 0, length);
             int start = api.utilities().byteUtils().indexOf(input.getBytes(), ": ".getBytes(), false, offset, length) + 2;
             int end = api.utilities().byteUtils().indexOf(input.getBytes(), "\r\n".getBytes(), false, start, length);
             return Utils.insertAtOffset(input, start, end, newValue);
@@ -45,10 +43,7 @@ public class HttpHeaderSetter extends SetterOperation {
 
             int bodyOffset = HttpRequest.httpRequest(input).bodyOffset() - 2;
 
-            ByteArray value = ByteArray.byteArray(headerSearch.length + newValue.length() + 2);
-            System.arraycopy(headerSearch, 0, value, 0, headerSearch.length);
-            System.arraycopy(newValue, 0, value, headerName.length() + 2, newValue.length());
-            System.arraycopy("\r\n".getBytes(), 0, value, headerName.length() + 2 + newValue.length(), 2);
+            ByteArray value = headerSearch.withAppended(newValue).withAppended("\r\n");
             return Utils.insertAtOffset(input, bodyOffset, bodyOffset, value);
 
         }

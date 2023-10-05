@@ -22,15 +22,12 @@ public class HttpHeaderExtractor extends Operation {
         if( headerName.length() == 0 )
             return input;
 
-        byte[] headerSearch = new byte[headerName.length() + 4];
-        System.arraycopy("\r\n".getBytes(), 0, headerSearch, 0, 2);
-        System.arraycopy(headerName, 0, headerSearch, 2, headerName.length());
-        System.arraycopy(": ".getBytes(), 0, headerSearch, headerName.length() + 2, 2);
+        ByteArray headerSearch = ByteArray.byteArray("\r\n").withAppended(headerName).withAppended(": ");
 
         MontoyaApi api = BurpUtils.getInstance().getApi();
         int length = input.length();
 
-        int offset = api.utilities().byteUtils().indexOf(input.getBytes(), headerSearch, true, 0, length);
+        int offset = api.utilities().byteUtils().indexOf(input.getBytes(), headerSearch.getBytes(), true, 0, length);
 
         if( offset < 0 )
             throw new IllegalArgumentException("Header not found.");

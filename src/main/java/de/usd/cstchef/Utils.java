@@ -165,11 +165,7 @@ public class Utils {
         ByteArray prefix = input.subArray(0, start);
         ByteArray rest = input.subArray(end, input.length());
 
-        ByteArray output = ByteArray.byteArray(prefix.length() + newValue.length() + rest.length());
-        System.arraycopy(prefix, 0, output, 0, prefix.length());
-        System.arraycopy(newValue, 0, output, prefix.length(), newValue.length());
-        System.arraycopy(rest, 0, output, prefix.length() + newValue.length(), rest.length());
-
+        ByteArray output = prefix.withAppended(newValue).withAppended(rest);
         return output;
     }
 

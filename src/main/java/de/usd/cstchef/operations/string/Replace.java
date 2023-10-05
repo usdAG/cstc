@@ -36,10 +36,7 @@ public class Replace extends Operation {
             ByteArray replaced = exptTxt.getBytes();
             ByteArray replacement = replacementTxt.getBytes();
 
-            ByteArray newRequest = ByteArray.byteArray(input.length() + replacement.length() - replaced.length());
-            System.arraycopy(input, 0, newRequest, 0, start);
-            System.arraycopy(replacement, 0, newRequest, start, replacement.length());
-            System.arraycopy(input, start + replaced.length(), newRequest, start + replacement.length(), input.length() - replaced.length() - start);
+            ByteArray newRequest = input.subArray(0, start).withAppended(replacement).withAppended(input.subArray(start + replaced.length(), input.length()));
 
             result = newRequest;
         }

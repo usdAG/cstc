@@ -24,9 +24,7 @@ public class HttpCookieExtractor extends Operation {
         if( cookieName.length() == 0 )
             return input;
 
-        ByteArray cookieSearch = ByteArray.byteArray(cookieName.length() + 1);
-        System.arraycopy(cookieName, 0, cookieSearch, 0, cookieName.length());
-        System.arraycopy("=".getBytes(), 0, cookieSearch, cookieName.length(), 1);
+        ByteArray cookieSearch = cookieName.withAppended("=");
 
         MontoyaApi api = BurpUtils.getInstance().getApi();
         int length = input.length();

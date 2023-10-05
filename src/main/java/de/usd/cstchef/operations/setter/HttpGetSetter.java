@@ -34,17 +34,19 @@ public class HttpGetSetter extends SetterOperation {
             newValue = urlEncode(newValue, urlEncodeAll.isSelected(), api);
 
         ParsedHttpParameter param = getParameter(input, parameterName, HttpParameterType.URL, api);
-
+        ByteArray newRequest;
         if( param == null ) {
 
             if( !addIfNotPresent.isSelected() )
                 return input;
 
-            HttpRequest.httpRequest(input).withAddedParameters(HttpParameter.urlParameter(parameterName, "dummy"));
-            param = getParameter(input, parameterName, HttpParameterType.URL, api);
+            HttpRequest reqWithModifiedParams = HttpRequest.httpRequest(input).withAddedParameters(HttpParameter.urlParameter(parameterName, "dummy"));
+            param = getParameter(reqWithModifiedParams.toByteArray(), parameterName, HttpParameterType.URL, api);
+            newRequest = replaceParam(reqWithModifiedParams.toByteArray(), param, newValue);
         }
-
-        ByteArray newRequest = replaceParam(input, param, newValue);
+        else{
+            newRequest = replaceParam(input, param, newValue);
+        }
         return newRequest;
     }
 

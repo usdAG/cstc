@@ -505,7 +505,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                     public void run() {
                         if( messageType == MessageType.REQUEST) {
                             outputText.setRequest(HttpRequest.httpRequest(result));
-                            controllerMod.setRequest((HttpRequest)result);
+                            controllerMod.setRequest(HttpRequest.httpRequest(result));
                         } else if (messageType == MessageType.RESPONSE){
                             outputText.setResponse(HttpResponse.httpResponse(result));
                             controllerMod.setResponse(HttpResponse.httpResponse(result));
