@@ -1,7 +1,8 @@
 package de.usd.cstchef.view;
 
 import java.awt.Component;
-import java.util.Arrays;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.Optional;
 
 import javax.swing.JScrollPane;
@@ -13,19 +14,16 @@ import burp.BurpUtils;
 import burp.CstcMessageEditorController;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.ui.Selection;
 import burp.api.montoya.ui.editor.Editor;
-import burp.api.montoya.ui.editor.EditorOptions;
 import burp.api.montoya.ui.editor.HttpRequestEditor;
 import burp.api.montoya.ui.editor.HttpResponseEditor;
 import burp.api.montoya.ui.editor.RawEditor;
-import burp.api.montoya.ui.editor.extension.ExtensionProvidedEditor;
 import de.usd.cstchef.Utils.MessageType;
 
-public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor, RawEditor, DocumentListener {
+public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor, RawEditor, DocumentListener{
 
     private boolean isModified;
     private boolean editable;
@@ -35,10 +33,12 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     private JTextArea fallbackArea;
     private Editor burpEditor;
     private ByteArray lastContent;
+    private RecipePanel recipePanel;
 
-    public BurpEditorWrapper(CstcMessageEditorController controller, MessageType messageType){
+    public BurpEditorWrapper(CstcMessageEditorController controller, MessageType messageType, RecipePanel panel){
         this.api = BurpUtils.getInstance().getApi();
         this.messageType = messageType;
+        this.recipePanel = panel;
         if (BurpUtils.inBurp()) {
             switch(messageType){
                 case REQUEST: burpEditor = api.userInterface().createHttpRequestEditor(); break;
@@ -50,6 +50,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
         } else {
             this.fallbackArea = new JTextArea();
             this.fallbackArea.getDocument().addDocumentListener(this);
+            this.burpEditor.uiComponent().addHierarchyListener(null);
             fallbackMode = true;
         }
     }
@@ -58,16 +59,19 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     @Override
     public void changedUpdate(DocumentEvent arg0) {
         this.isModified = true;
+        recipePanel.autoBake();
     }
 
     @Override
     public void insertUpdate(DocumentEvent arg0) {
         this.isModified = true;
+        recipePanel.autoBake();
     }
 
     @Override
     public void removeUpdate(DocumentEvent arg0) {
         this.isModified = true;
+        recipePanel.autoBake();
     }
 
     @Override
@@ -156,7 +160,4 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
         }
         return burpEditor.uiComponent();
     }
-
-    
-
 }

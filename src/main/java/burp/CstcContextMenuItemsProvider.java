@@ -9,9 +9,11 @@ import java.util.List;
 import javax.swing.JMenuItem;
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent;
 import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.view.View;
 
 public class CstcContextMenuItemsProvider implements ContextMenuItemsProvider {
@@ -30,40 +32,39 @@ public class CstcContextMenuItemsProvider implements ContextMenuItemsProvider {
         List<Component> menuItems = new ArrayList<>();
         JMenuItem incomingMenu = new JMenuItem("Send to CSTC (Incoming)");
         JMenuItem outgoingMenu = new JMenuItem("Send to CSTC (Outgoing)");
-        JMenuItem incomingFormatMenu = new JMenuItem("Send to CSTC (Formating)");
-
-        menuItems.add(incomingMenu);
+        JMenuItem incomingReqFormatMenu = new JMenuItem("Send request to CSTC (Formatting)");
+        JMenuItem incomingResFormatMenu = new JMenuItem("Send response to CSTC (Formatting)");
+        
         menuItems.add(outgoingMenu);
-        menuItems.add(incomingFormatMenu);
+        menuItems.add(incomingMenu);
+        menuItems.add(incomingReqFormatMenu);
+        menuItems.add(incomingResFormatMenu);
 
         incomingMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<HttpRequestResponse> msgs = event.selectedRequestResponses();
-                if (msgs != null && msgs.size() > 0) {
-                    view.getIncomingRecipePanel().setInput(msgs.get(0));
-                }
+                view.getIncomingRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
             }
         });
 
         outgoingMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<HttpRequestResponse> msgs = event.selectedRequestResponses();
-                if (msgs != null && msgs.size() > 0) {
-                    view.getOutgoingRecipePanel().setInput(msgs.get(0));
-                }
-
+                view.getOutgoingRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
             }
         });
 
-        incomingFormatMenu.addActionListener(new ActionListener() {
+        incomingResFormatMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<HttpRequestResponse> msgs = event.selectedRequestResponses();
-                if (msgs != null && msgs.size() > 0) {
-                    view.getFormatRecipePanel().setInput(msgs.get(0));
-                }
+                view.getFormatRecipePanel().setFormatMessage(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0), MessageType.RESPONSE);
+            }
+        });
+
+        incomingReqFormatMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.getFormatRecipePanel().setFormatMessage(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0), MessageType.REQUEST);
             }
         });
 

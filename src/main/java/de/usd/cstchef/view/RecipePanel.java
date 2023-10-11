@@ -100,12 +100,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create input panel
         JPanel inputPanel = new LayoutPanel("Input");
-        inputText = new BurpEditorWrapper(controllerOrig, messageType);
+        inputText = new BurpEditorWrapper(controllerOrig, messageType, this);
         inputPanel.add(inputText.uiComponent());
 
         // create output panel
         JPanel outputPanel = new LayoutPanel("Output");
-        outputText = new BurpEditorWrapper(controllerMod, messageType);
+        outputText = new BurpEditorWrapper(controllerMod, messageType, this);
         outputPanel.add(outputText.uiComponent());
 
         JPanel searchTreePanel = new JPanel();
@@ -335,18 +335,37 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void setInput(HttpRequestResponse requestResponse) {
-        if( messageType == MessageType.REQUEST )
-            this.inputText.setRequest(requestResponse.request());
-        else {
+        if(messageType == MessageType.REQUEST){
+            HttpRequest request = requestResponse.request();
+            if(request == null)
+                    request = HttpRequest.httpRequest(ByteArray.byteArray("The message you have sent via the context menu is not a valid HTML request. Try using the formatting tab."));
+            this.inputText.setRequest(request);
+        }
+        else if(messageType == MessageType.RESPONSE) {
             HttpResponse response = requestResponse.response();
-            if( response.toByteArray() == null )
-                response = HttpResponse.httpResponse(ByteArray.byteArray("Your request has no server response yet :("));
+            if(response == null)
+                response = HttpResponse.httpResponse(ByteArray.byteArray("The message you have sent via the context menu does not have a valid HTML response. Try including a response to a request or use the formatting tab."));
             this.inputText.setResponse(response);
         }
 
         this.controllerOrig.setHttpRequestResponse(requestResponse);
         this.controllerMod.setHttpRequestResponse(requestResponse);
 
+        this.bake(false);
+    }
+
+    public void setFormatMessage(HttpRequestResponse requestResponse, MessageType messageType){
+        ByteArray message;
+        if(messageType == MessageType.REQUEST){
+            message = requestResponse.request().toByteArray();
+        }
+        else{
+            message = requestResponse.response().toByteArray();
+        }
+        if(message == null){
+            message = ByteArray.byteArray("Message could not be parsed as a request or response.");
+        }
+        this.inputText.setContents(message);
         this.bake(false);
     }
 
@@ -554,7 +573,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
     }
 
-    private void autoBake() {
+    public void autoBake() {
         if (!this.autoBake) {
             return;
         }
