@@ -50,8 +50,8 @@ public class RequestFilterDialog extends JPanel {
         }
 
         this.add(labelPanel);
-        this.add("Incoming", incomingPanel);
         this.add("Outgoing", outgoingPanel);
+        this.add("Incoming", incomingPanel);
         this.add("Format", formatPanel);
 
     }
