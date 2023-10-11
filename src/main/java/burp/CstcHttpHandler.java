@@ -1,6 +1,5 @@
 package burp;
 
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.handler.HttpHandler;
 import burp.api.montoya.http.handler.HttpRequestToBeSent;
@@ -10,7 +9,6 @@ import burp.api.montoya.http.handler.ResponseReceivedAction;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.FilterState;
-import de.usd.cstchef.view.RequestFilterDialog;
 import de.usd.cstchef.view.View;
 
 import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
@@ -30,7 +28,7 @@ public class CstcHttpHandler implements HttpHandler {
             ByteArray request = requestToBeSent.toByteArray();
             ByteArray modifiedRequest = view.getOutgoingRecipePanel().bake(request);
             Logger.getInstance().log("modified request: \n" + new String(modifiedRequest.getBytes()));
-            return continueWith(HttpRequest.httpRequest(modifiedRequest));
+            return continueWith(HttpRequest.httpRequest(modifiedRequest).withService(requestToBeSent.httpService()));
         }
         else{
             return continueWith(requestToBeSent);
