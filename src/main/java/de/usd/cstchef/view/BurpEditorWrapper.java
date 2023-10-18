@@ -23,7 +23,7 @@ import burp.api.montoya.ui.editor.HttpResponseEditor;
 import burp.api.montoya.ui.editor.RawEditor;
 import de.usd.cstchef.Utils.MessageType;
 
-public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor, RawEditor, DocumentListener{
+public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor, RawEditor{
 
     private boolean isModified;
     private boolean editable;
@@ -49,29 +49,8 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
             fallbackMode = false;
         } else {
             this.fallbackArea = new JTextArea();
-            this.fallbackArea.getDocument().addDocumentListener(this);
-            this.burpEditor.uiComponent().addHierarchyListener(null);
             fallbackMode = true;
         }
-    }
-
-
-    @Override
-    public void changedUpdate(DocumentEvent arg0) {
-        this.isModified = true;
-        recipePanel.autoBake();
-    }
-
-    @Override
-    public void insertUpdate(DocumentEvent arg0) {
-        this.isModified = true;
-        recipePanel.autoBake();
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent arg0) {
-        this.isModified = true;
-        recipePanel.autoBake();
     }
 
     @Override
@@ -86,6 +65,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public void setContents(ByteArray contents) {
+        this.lastContent = contents;
         ((RawEditor)burpEditor).setContents(contents);
     }
 
@@ -137,7 +117,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public boolean isModified() {
-        return isModified;
+        return this.getContents().equals(lastContent);
     }
 
     @Override
