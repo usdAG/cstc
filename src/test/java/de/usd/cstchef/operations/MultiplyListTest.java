@@ -1,4 +1,4 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
 import org.junit.Test;
 

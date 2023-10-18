@@ -1,4 +1,4 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
 import org.junit.Test;
 
@@ -6,10 +6,10 @@ import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.operations.arithmetic.Sum;
+import de.usd.cstchef.operations.arithmetic.DivideList;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
-public class SumTest extends Sum
+public class DivideListTest extends DivideList
 {
     private String delimiter;
     private boolean isFloat;
@@ -30,50 +30,50 @@ public class SumTest extends Sum
     }
 
     @Test
-    public void CommaSumTest() throws Exception
+    public void CommaDivideTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = false;
 
-        String testValue = "1,2,3,4,5,6";
+        String testValue = "8,2,4";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("21");
+        assert result.toString().equals("1");
     }
 
     @Test
-    public void CommaSumFloatTest() throws Exception
+    public void CommaDivideFloatTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = true;
 
-        String testValue = "1,2,3,4,5,6";
+        String testValue = "8,2,4,2";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("21.0");
+        assert result.toString().equals("0.5");
     }
 
     @Test
-    public void SpacesumTest() throws Exception
+    public void SpaceDivideTest() throws Exception
     {
         delimiter = "Space";
         isFloat = false;
 
-        String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
+        String testValue = "8 2 4 0.5";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("23");
+        assert result.toString().equals("2");
     }
 
     @Test
-    public void SpacesumFloatTest() throws Exception
+    public void SpaceDivideFloatTest() throws Exception
     {
         delimiter = "Space";
         isFloat = true;
 
-        String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
+        String testValue = "8 2 4 4 0.5";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("22.5");
+        assert result.toString().equals("0.5");
     }
 }

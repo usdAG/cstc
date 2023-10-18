@@ -1,14 +1,18 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
 import org.junit.Test;
 
+import burp.BurpUtils;
+import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.internal.MontoyaObjectFactory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.operations.arithmetic.Multiply;
+import de.usd.cstchef.operations.arithmetic.Addition;
+import de.usd.cstchef.operations.arithmetic.Subtraction;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
-public class MultiplyTest extends Multiply
+public class SubtractionTest extends Subtraction
 {
     private String number;
     private boolean isFloat;
@@ -24,7 +28,7 @@ public class MultiplyTest extends Multiply
     }
 
     @Test
-    public void SimpleMultiplyTest() throws Exception
+    public void SimpleSubtraction() throws Exception
     {
         number = "10";
         isFloat = false;
@@ -32,30 +36,31 @@ public class MultiplyTest extends Multiply
         String testValue = "22";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("220");
+        assert result.toString().equals("12");
     }
 
     @Test
-    public void MultiplyFloatTest() throws Exception
+    public void SubtractionFloatTest() throws Exception
     {
-        number = "2.2";
+        number = "2.1";
         isFloat = true;
 
         String testValue = "2.2";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().startsWith("4.84");
+        System.out.println(result.toString());
+        assert result.toString().startsWith("0.1");
     }
 
     @Test
-    public void MultiplyRoundTest() throws Exception
+    public void SubractionRoundTest() throws Exception
     {
         number = "2.2";
         isFloat = false;
 
-        String testValue = "2.2";
+        String testValue = "2.8";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("5");
+        assert result.toString().equals("1");
     }
 }

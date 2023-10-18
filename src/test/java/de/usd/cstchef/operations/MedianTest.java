@@ -1,4 +1,4 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
 import org.junit.Test;
 
@@ -6,10 +6,10 @@ import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.operations.arithmetic.DivideList;
+import de.usd.cstchef.operations.arithmetic.Median;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
-public class DivideListTest extends DivideList
+public class MedianTest extends Median
 {
     private String delimiter;
     private boolean isFloat;
@@ -30,50 +30,26 @@ public class DivideListTest extends DivideList
     }
 
     @Test
-    public void CommaDivideTest() throws Exception
+    public void CommaMedianTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = false;
 
-        String testValue = "8,2,4";
+        String testValue = "1,2,3,4,5";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("1");
+        assert result.toString().equals("3");
     }
 
     @Test
-    public void CommaDivideFloatTest() throws Exception
+    public void CommaMedianFloatTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = true;
 
-        String testValue = "8,2,4,2";
+        String testValue = "1,2,3.5,4,5";
         ByteArray result = perform(ByteArray.byteArray(testValue));
 
-        assert result.toString().equals("0.5");
-    }
-
-    @Test
-    public void SpaceDivideTest() throws Exception
-    {
-        delimiter = "Space";
-        isFloat = false;
-
-        String testValue = "8 2 4 0.5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
-
-        assert result.toString().equals("2");
-    }
-
-    @Test
-    public void SpaceDivideFloatTest() throws Exception
-    {
-        delimiter = "Space";
-        isFloat = true;
-
-        String testValue = "8 2 4 4 0.5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
-
-        assert result.toString().equals("0.5");
+        assert result.toString().equals("3.5");
     }
 }
