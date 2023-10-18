@@ -3,23 +3,23 @@ package burp;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpRequestResponse;
-import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.ui.Selection;
 import burp.api.montoya.ui.editor.RawEditor;
 import burp.api.montoya.ui.editor.extension.EditorCreationContext;
-import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
+import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpResponseEditor;
 import de.usd.cstchef.view.View;
 
 import java.awt.*;
 
-public class MyExtensionProvidedHttpRequestEditor implements ExtensionProvidedHttpRequestEditor
+public class MyExtensionProvidedHttpResponseEditor implements ExtensionProvidedHttpResponseEditor
 {
     private final RawEditor requestEditor;
     private HttpRequestResponse requestResponse;
     private final MontoyaApi api;
     private final View view;
 
-    MyExtensionProvidedHttpRequestEditor(EditorCreationContext creationContext, View view)
+    MyExtensionProvidedHttpResponseEditor(EditorCreationContext creationContext, View view)
     {
         this.api = BurpUtils.getInstance().getApi();
         this.view = view;
@@ -27,9 +27,9 @@ public class MyExtensionProvidedHttpRequestEditor implements ExtensionProvidedHt
     }
 
     @Override
-    public HttpRequest getRequest()
+    public HttpResponse getResponse()
     {
-        return requestResponse.request();
+        return requestResponse.response();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class MyExtensionProvidedHttpRequestEditor implements ExtensionProvidedHt
     @Override
     public boolean isEnabledFor(HttpRequestResponse requestResponse)
     {
-        return requestResponse.request() != null;
+        return requestResponse.response() != null;
     }
 
     @Override

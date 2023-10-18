@@ -20,7 +20,8 @@ public class BurpExtender implements BurpExtension {
         api.userInterface().registerContextMenuItemsProvider(new CstcContextMenuItemsProvider(api, view));
         api.http().registerHttpHandler(new CstcHttpHandler(view));
         api.userInterface().registerSuiteTab(extensionName, view);
-        // api.userInterface().registerHttpRequestEditorProvider(new MyHttpRequestEditorProvider(view));
+        api.userInterface().registerHttpRequestEditorProvider(new MyHttpRequestEditorProvider(view));
+        api.userInterface().registerHttpResponseEditorProvider(new MyHttpResponseEditorProvider(view));
     }
     
 }
