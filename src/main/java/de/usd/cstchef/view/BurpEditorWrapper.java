@@ -39,6 +39,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
         this.api = BurpUtils.getInstance().getApi();
         this.messageType = messageType;
         this.recipePanel = panel;
+        this.lastContent = ByteArray.byteArray("");
         if (BurpUtils.inBurp()) {
             switch(messageType){
                 case REQUEST: burpEditor = api.userInterface().createHttpRequestEditor(); break;
@@ -117,7 +118,9 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public boolean isModified() {
-        return this.getContents().equals(lastContent);
+        boolean result = this.getContents().equals(lastContent);
+        lastContent = this.getContents();
+        return result;
     }
 
     @Override
