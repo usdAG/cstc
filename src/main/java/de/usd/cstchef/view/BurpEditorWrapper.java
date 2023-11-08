@@ -61,13 +61,25 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public ByteArray getContents() {
-        return ((RawEditor)burpEditor).getContents();
+        if(messageType == MessageType.RAW)
+            return ((RawEditor)burpEditor).getContents();
+        else if(messageType == MessageType.REQUEST)
+            return ((HttpRequestEditor)burpEditor).getRequest().toByteArray();
+        else if(messageType == MessageType.RESPONSE)
+            return ((HttpResponseEditor)burpEditor).getResponse().toByteArray();
+        else
+            return ByteArray.byteArray();
     }
 
     @Override
     public void setContents(ByteArray contents) {
         this.lastContent = contents;
-        ((RawEditor)burpEditor).setContents(contents);
+        if(messageType == MessageType.REQUEST)
+            ((HttpRequestEditor)burpEditor).setRequest(HttpRequest.httpRequest(contents));
+        else if(messageType == MessageType.RESPONSE)
+            ((HttpResponseEditor)burpEditor).setResponse(HttpResponse.httpResponse(contents));
+        else
+            ((RawEditor)burpEditor).setContents(contents);
     }
 
     @Override
