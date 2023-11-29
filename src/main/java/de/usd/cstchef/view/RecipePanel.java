@@ -562,7 +562,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
                 if (inputText.isModified()) {
-                    logger.log("autobaking");
                     autoBake();
                 }
             }
