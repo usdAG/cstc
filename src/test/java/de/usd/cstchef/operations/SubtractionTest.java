@@ -1,8 +1,10 @@
 package de.usd.cstchef.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import burp.BurpUtils;
+import burp.CstcObjectFactory;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.internal.MontoyaObjectFactory;
@@ -10,6 +12,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Addition;
 import de.usd.cstchef.operations.arithmetic.Subtraction;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class SubtractionTest extends Subtraction
@@ -62,5 +65,12 @@ public class SubtractionTest extends Subtraction
         ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("1");
+    }
+
+    @Before
+    public void setup(){
+        CstcObjectFactory factory = new UnitTestObjectFactory();
+        this.factory = factory;
+        super.factory = factory;
     }
 }

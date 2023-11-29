@@ -1,12 +1,15 @@
 package de.usd.cstchef.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Mean;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class MeanTest extends Mean
@@ -75,5 +78,12 @@ public class MeanTest extends Mean
         ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("0.25");
+    }
+
+    @Before
+    public void setup(){
+        CstcObjectFactory factory = new UnitTestObjectFactory();
+        this.factory = factory;
+        super.factory = factory;
     }
 }
