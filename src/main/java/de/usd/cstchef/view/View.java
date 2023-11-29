@@ -38,7 +38,7 @@ public class View extends JPanel {
 
         tabbedPane.addTab("Outgoing Requests", null, outgoingRecipePanel, "Outgoing requests from the browser, the repeater or another tool.");
         tabbedPane.addTab("Incoming Responses", null, incomingRecipePanel, "Responses from the server.");
-        tabbedPane.addTab("Formating", null, formatRecipePanel, "Formating for messages.");
+        tabbedPane.addTab("Formatting", null, formatRecipePanel, "Formatting for messages.");
         this.add(tabbedPane);
     }
 
@@ -56,6 +56,10 @@ public class View extends JPanel {
 
     public FilterState getFilterState(){
         return filterState;
+    }
+
+    public void setFilterState(FilterState state){
+        this.filterState = state;
     }
 
     public static void main(String[] args) {

@@ -40,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import burp.BurpExtender;
 import burp.BurpUtils;
 import burp.CstcMessageEditorController;
 import burp.Logger;
@@ -52,7 +53,9 @@ import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.persistence.PersistedObject;
 import de.usd.cstchef.FilterState;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.FilterState.BurpOperation;
 import de.usd.cstchef.Utils.MessageType;
@@ -171,7 +174,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = new JButton("Save to File");
         activeOperationsPanel.addActionComponent(saveButton);
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -288,50 +291,16 @@ public class RecipePanel extends JPanel implements ChangeListener {
         operationsTree.addMouseListener(dma);
         operationsTree.addMouseMotionListener(dma);
 
-        loadRecipeFromBurp();
         startAutoBakeTimer();
+        startAutoSaveTimer();
     }
 
     public FilterState getFilterState() {
         return filterState;
     }
 
-    private void loadRecipeFromBurp() {
-        logger.log("[" + this.recipeName + "] Autoloading...");
-        boolean inBurp = BurpUtils.inBurp();
-        //Check if we run inside a burp
-        if (inBurp) {
-            MontoyaApi api = BurpUtils.getInstance().getApi();
-            String jsonState = api.persistence().extensionData().getString("cstc_" + this.recipeName);
-            if (jsonState != null && jsonState != "") {
-                try {
-                    logger.log("[" + this.recipeName + "] Restoring state.");
-                    //We remove the setting and set it again to be safe in an error case
-                    api.persistence().extensionData().setString("cstc_" + this.recipeName, "");
-                    restoreState(jsonState);
-                    api.persistence().extensionData().setString("cstc_" + this.recipeName, jsonState);
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
-                    Logger.getInstance().err("There was an error restoring the state of RecipePanel " + this.recipeName);
-                }
-            }
-        }
-        else {
-            logger.log("[" + this.recipeName + "] Autoloading aborted. Not running inside Burp.");
-        }
-    }
-
-    private void autoSaveToBurp() {
-        boolean inBurp = BurpUtils.inBurp();
-        //Check if we run inside a burp
-        if (inBurp) {
-            MontoyaApi api = BurpUtils.getInstance().getApi();
-            try {
-                String jsonState = getStateAsJSON();
-                api.persistence().extensionData().setString("cstc_" + this.recipeName, jsonState);
-            } catch (IOException e) {
-                Logger.getInstance().err("There was an error persisting the current state of the recipe panel.");
-            }
-        }
+    public void setFilterState(FilterState state){
+        this.filterState = state;
     }
 
     public void setInput(HttpRequestResponse requestResponse) {
@@ -369,7 +338,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.bake(false);
     }
 
-    private void restoreState(String jsonState) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public void restoreState(String jsonState) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         // TODO do we want to remove all existing operations before loading here?
         this.clear(); // Yes!
         ObjectMapper mapper = new ObjectMapper();
@@ -541,7 +510,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
                         PopupVariableMenu.refresh(variables);
                     }
                 });
-                autoSaveToBurp();
             }
         };
         int threshold = spamProtection ? this.bakeThreshold : 0;
@@ -582,6 +550,33 @@ public class RecipePanel extends JPanel implements ChangeListener {
             this.bake(true);
         } finally {
             store.unlock();
+        }
+    }
+
+    private void startAutoSaveTimer() {
+        TimerTask autoSaveTask = new TimerTask() {
+            public void run() {
+                autoSave();
+            }
+        };
+        Timer timer = new Timer("Timer");
+        long delay  = 10000L;
+        long period = 10000L;
+        timer.scheduleAtFixedRate(autoSaveTask, delay, period);
+    }
+
+    public void autoSave(){
+        PersistedObject savedState = BurpUtils.getInstance().getApi().persistence().extensionData();
+        try {
+            savedState.setString(this.operation + "Recipe", getStateAsJSON());
+        } catch (IOException e) {
+            Logger.getInstance().err("Could not save recipes to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.");
+        }
+        try{
+            savedState.setString("FilterState", new ObjectMapper().writeValueAsString(filterState));
+        }
+        catch(Exception e){
+            Logger.getInstance().err("Could not save the filter state to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.\n" + e.getMessage());
         }
     }
 
