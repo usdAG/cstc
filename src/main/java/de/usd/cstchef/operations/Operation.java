@@ -360,10 +360,10 @@ public abstract class Operation extends JPanel {
             return result;
         } catch (EOFException e) {
             this.setErrorMessage(new EOFException("End of file"));
-            return ByteArray.byteArrayOfLength(0);
+            return factory.createByteArray(0);
         } catch (Throwable e) {
             this.setErrorMessage(e);
-            return ByteArray.byteArrayOfLength(0);
+            return factory.createByteArray(0);
         }
     }
 

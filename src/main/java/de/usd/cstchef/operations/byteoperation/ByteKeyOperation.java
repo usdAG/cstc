@@ -16,7 +16,7 @@ public abstract class ByteKeyOperation extends Operation  {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        ByteArray result = ByteArray.byteArrayOfLength(input.length());
+        ByteArray result = factory.createByteArray(input.length());
         ByteArray key = this.inputTxt.getText();
 
         if (key.length() == 0) {
