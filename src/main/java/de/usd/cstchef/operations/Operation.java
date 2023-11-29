@@ -39,6 +39,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import burp.BurpObjectFactory;
+import burp.CstcObjectFactory;
 import burp.Logger;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.view.ui.FormatTextField;
@@ -75,10 +77,13 @@ public abstract class Operation extends JPanel {
 
     private int operationSkip = 0;
     private int laneSkip = 0;
+    
+    public CstcObjectFactory factory;
 
     public Operation() {
         super();
         this.uiElements = new HashMap<>();
+        this.factory = new BurpObjectFactory();
 
         this.setLayout(new BorderLayout());
         this.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
