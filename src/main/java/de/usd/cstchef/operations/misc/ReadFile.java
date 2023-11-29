@@ -29,7 +29,7 @@ public class ReadFile extends Operation implements ActionListener {
         fis.read(data);
         fis.close();
 
-        return ByteArray.byteArray(data);
+        return factory.createByteArray(data);
     }
 
     public void createUI() {

@@ -46,7 +46,7 @@ public class JWTSign extends Operation implements ActionListener, DocumentListen
 			throw new IllegalArgumentException("Key not valid");
 		}
 		String token = JWT.create().withPayload(input.toString()).sign(this.currentAlgorithm);
-		return ByteArray.byteArray(token);
+		return factory.createByteArray(token);
 	}
 
     public void createUI() {

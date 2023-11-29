@@ -14,10 +14,10 @@ public class Lowercase extends Operation {
 		try {
 			if(input != null) {
 				String inputStr = input.toString();
-				return ByteArray.byteArray(inputStr.toLowerCase());	
+				return factory.createByteArray(inputStr.toLowerCase());	
 			}
 			else {
-				return ByteArray.byteArray("");
+				return factory.createByteArray("");
 			}
 			 
 		} catch (Exception e) {

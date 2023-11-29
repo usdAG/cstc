@@ -37,18 +37,18 @@ public class RsaSignature extends KeystoreOperation {
         String selectedOutputMode = (String)outputMode.getSelectedItem();
 
         if( selectedInputMode.equals("Hex") )
-            input = ByteArray.byteArray(Hex.decode(input.getBytes()));
+            input = factory.createByteArray(Hex.decode(input.getBytes()));
         if( selectedInputMode.equals("Base64") )
-            input = ByteArray.byteArray(Base64.decode(input.getBytes()));
+            input = factory.createByteArray(Base64.decode(input.getBytes()));
 
         signature.initSign(this.selectedEntry.getPrivateKey());
         signature.update(input.getBytes());
-        ByteArray result = ByteArray.byteArray(signature.sign());
+        ByteArray result = factory.createByteArray(signature.sign());
 
         if( selectedOutputMode.equals("Hex") )
-            result = ByteArray.byteArray(Hex.encode(result.getBytes()));
+            result = factory.createByteArray(Hex.encode(result.getBytes()));
         if( selectedOutputMode.equals("Base64") )
-            result = ByteArray.byteArray(Base64.encode(result.getBytes()));
+            result = factory.createByteArray(Base64.encode(result.getBytes()));
 
         return result;
     }

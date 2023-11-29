@@ -28,7 +28,7 @@ public abstract class HashOperation extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-        return ByteArray.byteArray(this.hash(input.getBytes()));
+        return factory.createByteArray(this.hash(input.getBytes()));
     }
 
     protected byte[] hash(byte[] input) throws NoSuchAlgorithmException {

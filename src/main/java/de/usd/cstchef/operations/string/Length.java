@@ -10,7 +10,7 @@ public class Length extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-        return ByteArray.byteArray(String.valueOf(input.length()));
+        return factory.createByteArray(String.valueOf(input.length()));
     }
 
 }

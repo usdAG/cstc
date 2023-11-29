@@ -38,7 +38,7 @@ public class ToHex extends Operation {
         Delimiter delimiter = ToHex.delimiters.get(selectedKey);
 
         if (delimiter.value.length == 0) { // No delimiter
-            return ByteArray.byteArray(Hex.encode(input.getBytes()));
+            return factory.createByteArray(Hex.encode(input.getBytes()));
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -59,7 +59,7 @@ public class ToHex extends Operation {
             }
         }
 
-        return ByteArray.byteArray(out.toByteArray());
+        return factory.createByteArray(out.toByteArray());
     }
 
     @Override

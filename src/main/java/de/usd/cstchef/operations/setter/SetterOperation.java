@@ -79,7 +79,7 @@ public abstract class SetterOperation extends Operation {
             }
 
             out.write(Hex.encode(new byte[] { newValue.getByte(newValue.length() - 1) }));
-            newValue = ByteArray.byteArray(out.toByteArray());
+            newValue = factory.createByteArray(out.toByteArray());
 
         } else {
             newValue = api.utilities().urlUtils().encode(input);

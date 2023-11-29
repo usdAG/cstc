@@ -19,7 +19,7 @@ public class Prefix extends Operation {
         out.write(prefixTxt.getText().getBytes());
         out.write(input.getBytes());
 
-        return ByteArray.byteArray(out.toByteArray());
+        return factory.createByteArray(out.toByteArray());
     }
 
     @Override

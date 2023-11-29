@@ -19,7 +19,7 @@ public class Suffix extends Operation {
         out.write(input.getBytes());
         out.write(suffixTxt.getText().getBytes());
 
-        return ByteArray.byteArray(out.toByteArray());
+        return factory.createByteArray(out.toByteArray());
     }
 
     @Override

@@ -36,7 +36,7 @@ public class MeanTest extends Mean
         isFloat = false;
 
         String testValue = "8,2,5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("5");
     }
@@ -48,7 +48,7 @@ public class MeanTest extends Mean
         isFloat = true;
 
         String testValue = "0.2,0.3,0.4,0.1";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("0.25");
     }
@@ -60,7 +60,7 @@ public class MeanTest extends Mean
         isFloat = false;
 
         String testValue = "8 2 5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("5");
     }
@@ -72,7 +72,7 @@ public class MeanTest extends Mean
         isFloat = true;
 
         String testValue = "0.2 0.3 0.4 0.1";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("0.25");
     }

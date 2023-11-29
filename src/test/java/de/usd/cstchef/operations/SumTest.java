@@ -36,7 +36,7 @@ public class SumTest extends Sum
         isFloat = false;
 
         String testValue = "1,2,3,4,5,6";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("21");
     }
@@ -48,7 +48,7 @@ public class SumTest extends Sum
         isFloat = true;
 
         String testValue = "1,2,3,4,5,6";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("21.0");
     }
@@ -60,7 +60,7 @@ public class SumTest extends Sum
         isFloat = false;
 
         String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("23");
     }
@@ -72,7 +72,7 @@ public class SumTest extends Sum
         isFloat = true;
 
         String testValue = "1.0 2.1 3.2 4.3 5.4 6.5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("22.5");
     }

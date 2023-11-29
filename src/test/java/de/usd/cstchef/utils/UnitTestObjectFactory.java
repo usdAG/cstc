@@ -15,5 +15,10 @@ public class UnitTestObjectFactory implements CstcObjectFactory{
     public ByteArray createByteArray(byte[] bytes) {
         return CstcByteArray.byteArray(bytes);
     }
+
+    @Override
+    public ByteArray createByteArray(int i) {
+        return CstcByteArray.byteArray(i);
+    }
     
 }

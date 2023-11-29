@@ -25,6 +25,10 @@ public class CstcByteArray implements ByteArray{
         return new CstcByteArray(new byte[0]);
     }
 
+    public static ByteArray byteArray(int i){
+        return new CstcByteArray(new byte[i]);
+    }
+
     public String toString(){
         return new String(bytes);
     }

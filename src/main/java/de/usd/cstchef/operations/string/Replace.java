@@ -24,7 +24,7 @@ public class Replace extends Operation {
         ByteArray result = null;
         if( checkbox.isSelected() ) {
             String inputStr = input.toString();
-            result = ByteArray.byteArray(inputStr.replaceAll(exptTxt.getText(), replacementTxt.getText()));
+            result = factory.createByteArray(inputStr.replaceAll(exptTxt.getText(), replacementTxt.getText()));
         } else {
 
             MontoyaApi api = BurpUtils.getInstance().getApi();

@@ -63,7 +63,7 @@ public class HttpSetCookie extends SetterOperation {
             } else {
 
                 int bodyOffset = resp.bodyOffset() - 4;
-                ByteArray value = ByteArray.byteArray(cookieHeader).withAppended(cookieName).withAppended("=").withAppended(newValue).withAppended(";");
+                ByteArray value = factory.createByteArray(cookieHeader).withAppended(cookieName).withAppended("=").withAppended(newValue).withAppended(";");
                 return Utils.insertAtOffset(input, bodyOffset, bodyOffset, value);
             }
         }

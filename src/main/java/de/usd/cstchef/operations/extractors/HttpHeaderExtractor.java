@@ -22,7 +22,7 @@ public class HttpHeaderExtractor extends Operation {
         if( headerName.length() == 0 )
             return input;
 
-        ByteArray headerSearch = ByteArray.byteArray("\r\n").withAppended(headerName).withAppended(": ");
+        ByteArray headerSearch = factory.createByteArray("\r\n").withAppended(headerName).withAppended(": ");
 
         MontoyaApi api = BurpUtils.getInstance().getApi();
         int length = input.length();

@@ -14,10 +14,10 @@ public class Uppercase extends Operation {
 		try {
 			if(input != null) {
 				String inputStr = input.toString();
-				return ByteArray.byteArray(inputStr.toUpperCase());	
+				return factory.createByteArray(inputStr.toUpperCase());	
 			}
 			else {
-				return ByteArray.byteArray("");
+				return factory.createByteArray("");
 			}			 
 		} catch (Exception e) {
 			return input;

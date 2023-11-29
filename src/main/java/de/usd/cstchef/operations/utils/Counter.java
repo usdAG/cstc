@@ -36,7 +36,7 @@ public class Counter extends Operation {
             }
         }
         String storeValue = Long.toString(value + stepSize);
-        VariableStore.getInstance().setVariable(varName, ByteArray.byteArray(storeValue));
+        VariableStore.getInstance().setVariable(varName, factory.createByteArray(storeValue));
         return input;
     }
 

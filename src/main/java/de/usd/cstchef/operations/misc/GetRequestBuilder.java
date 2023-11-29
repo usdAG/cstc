@@ -15,7 +15,7 @@ public class GetRequestBuilder extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-        return ByteArray.byteArray(String.format("GET %s HTTP/1.1\n" + //
+        return factory.createByteArray(String.format("GET %s HTTP/1.1\n" + //
                 "Host: %s\n" + //
                 "Accept: %s", document.getText(), host.getText(), accept.getText()));
     }

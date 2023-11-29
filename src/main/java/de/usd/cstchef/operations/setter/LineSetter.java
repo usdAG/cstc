@@ -33,16 +33,16 @@ public class LineSetter extends SetterOperation {
             return input;
 
         ByteArray newValue = getWhatBytes();
-        ByteArray lineEndings = ByteArray.byteArray("\r\n");
+        ByteArray lineEndings = factory.createByteArray("\r\n");
         switch ((String) this.formatBox.getSelectedItem()) {
         case "\\r\\n":
-            lineEndings = ByteArray.byteArray("\r\n");
+            lineEndings = factory.createByteArray("\r\n");
             break;
         case "\\r":
-            lineEndings = ByteArray.byteArray("\r");
+            lineEndings = factory.createByteArray("\r");
             break;
         case "\\n":
-            lineEndings = ByteArray.byteArray("\n");
+            lineEndings = factory.createByteArray("\n");
             break;
         }
 

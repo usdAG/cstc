@@ -26,7 +26,7 @@ public class UrlEncode extends Operation {
         MontoyaApi api = BurpUtils.getInstance().getApi();
         if( checkbox.isSelected() ) {
 
-            ByteArray delimiter = ByteArray.byteArray("%");
+            ByteArray delimiter = factory.createByteArray("%");
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(delimiter.getBytes());
 
@@ -36,7 +36,7 @@ public class UrlEncode extends Operation {
             }
 
             out.write(Hex.encode(new byte[] { input.getByte(input.length() - 1) }));
-            result = ByteArray.byteArray(out.toByteArray());
+            result = factory.createByteArray(out.toByteArray());
 
         } else {
             //TODO: double conversion!

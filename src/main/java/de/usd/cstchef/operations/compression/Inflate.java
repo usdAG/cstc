@@ -28,6 +28,6 @@ public class Inflate extends Operation {
         }
 
         outputStream.close();
-        return ByteArray.byteArray(outputStream.toByteArray());
+        return factory.createByteArray(outputStream.toByteArray());
     }
 }

@@ -50,9 +50,9 @@ public abstract class ArithmeticDelimiterOperation extends Operation
         result = onFinish(result, numbers);
 
         if( !isFloat() )
-            return ByteArray.byteArray(String.valueOf(Math.round(result)));
+            return factory.createByteArray(String.valueOf(Math.round(result)));
 
-        return ByteArray.byteArray(String.valueOf(result));
+        return factory.createByteArray(String.valueOf(result));
     }
 
     protected double onFinish(double result, double[] lines)

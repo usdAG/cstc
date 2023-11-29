@@ -22,8 +22,8 @@ public class HtmlEncode extends Operation {
         ByteArray result = null;
         if( checkbox.isSelected() ) {
 
-            ByteArray delimiter = ByteArray.byteArray("&#");
-            ByteArray closer = ByteArray.byteArray(";");
+            ByteArray delimiter = factory.createByteArray("&#");
+            ByteArray closer = factory.createByteArray(";");
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             out.write(delimiter.getBytes());
@@ -35,12 +35,12 @@ public class HtmlEncode extends Operation {
 
             out.write(String.valueOf(Byte.toUnsignedInt(input.getByte(input.length() - 1))).getBytes());
             out.write(closer.getBytes());
-            result = ByteArray.byteArray(out.toByteArray());
+            result = factory.createByteArray(out.toByteArray());
 
         } else {
             String tmp = input.toString();
             tmp = StringEscapeUtils.escapeHtml4(tmp);
-            result = ByteArray.byteArray(tmp);
+            result = factory.createByteArray(tmp);
         }
 
         return result;
