@@ -1,14 +1,11 @@
 package burp;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.persistence.PersistedObject;
 import de.usd.cstchef.FilterState;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.FilterState.BurpOperation;
 import de.usd.cstchef.view.View;
 
@@ -16,14 +13,12 @@ public class BurpExtender implements BurpExtension {
 
     private final String extensionName = "CSTC";
     private View view;
-    private static MontoyaApi api;
-
 
     @Override
     public void initialize(MontoyaApi api) {
         BurpUtils.getInstance().init(api);
-        BurpExtender.api = api;
         this.view = new View();
+        BurpUtils.getInstance().setView(view);
         api.extension().setName(extensionName);
         api.userInterface().registerContextMenuItemsProvider(new CstcContextMenuItemsProvider(api, view));
         api.http().registerHttpHandler(new CstcHttpHandler(view));
@@ -41,7 +36,7 @@ public class BurpExtender implements BurpExtension {
         }
         try {
             Logger.getInstance().log(persistence.getString("FilterState"));
-            this.view.setFilterState(new ObjectMapper().readValue(persistence.getString("FilterState"), FilterState.class));
+            BurpUtils.getInstance().setFilterState(new ObjectMapper().readValue(persistence.getString("FilterState"), FilterState.class));
         } catch (Exception e) {
             Logger.getInstance().log("Could not restore the filter state. If this is the first time using CSTC in a project, you can ignore this message.");
         }

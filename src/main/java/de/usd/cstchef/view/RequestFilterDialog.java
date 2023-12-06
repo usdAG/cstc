@@ -11,13 +11,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ToolType;
 import de.usd.cstchef.FilterState;
 import de.usd.cstchef.FilterState.BurpOperation;
 
 public class RequestFilterDialog extends JPanel {
-    FilterState filterState;
 
     private static RequestFilterDialog instance = null;
 
@@ -29,13 +29,7 @@ public class RequestFilterDialog extends JPanel {
     }
 
     private RequestFilterDialog() {
-        this(new FilterState());
-    }
-
-    private RequestFilterDialog(FilterState filterState) {
         this.setLayout(new GridLayout(0, 4));
-
-        this.setFilterState(filterState);
 
         JPanel incomingPanel = createPanel(BurpOperation.INCOMING);
         JPanel outgoingPanel = createPanel(BurpOperation.OUTGOING);
@@ -56,29 +50,21 @@ public class RequestFilterDialog extends JPanel {
 
     }
 
-    public void setFilterState(FilterState filterState) {
-        this.filterState = filterState;
-    }
-
-    public FilterState getFilterState() {
-        return filterState;
-    }
-
     private JPanel createPanel(BurpOperation operation) {
-        if (filterState.getFilterMask(operation).isEmpty()) {
-            filterState.getFilterMask(operation).put(new Filter("Proxy", ToolType.PROXY.ordinal()), false);
-            filterState.getFilterMask(operation).put(new Filter("Repeater", ToolType.REPEATER.ordinal()),
+        if (BurpUtils.getInstance().getFilterState().getFilterMask(operation).isEmpty()) {
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Proxy", ToolType.PROXY.ordinal()), false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Repeater", ToolType.REPEATER.ordinal()),
                     false);
-            filterState.getFilterMask(operation).put(new Filter("Scanner", ToolType.SCANNER.ordinal()), false);
-            filterState.getFilterMask(operation).put(new Filter("Intruder", ToolType.INTRUDER.ordinal()),
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Scanner", ToolType.SCANNER.ordinal()), false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Intruder", ToolType.INTRUDER.ordinal()),
                     false);
-            filterState.getFilterMask(operation).put(new Filter("Extender", ToolType.EXTENSIONS.ordinal()),
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Extender", ToolType.EXTENSIONS.ordinal()),
                     false);
         }
 
         JPanel panel = new JPanel();
         panel.add(new JLabel(FilterState.translateBurpOperation(operation)));
-        for (Map.Entry<Filter, Boolean> entry : filterState.getFilterMask(operation).entrySet()) {
+        for (Map.Entry<Filter, Boolean> entry : BurpUtils.getInstance().getFilterState().getFilterMask(operation).entrySet()) {
             Filter filter = entry.getKey();
             boolean selected = entry.getValue();
 
@@ -87,7 +73,7 @@ public class RequestFilterDialog extends JPanel {
             box.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    filterState.getFilterMask(operation).put(filter, box.isSelected());
+                    BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(filter, box.isSelected());
                 }
             });
             panel.add(box);
@@ -98,7 +84,7 @@ public class RequestFilterDialog extends JPanel {
     }
 
     public LinkedHashMap<Filter, Boolean> getFilterMask(BurpOperation operation) {
-        return filterState.getFilterMask(operation);
+        return BurpUtils.getInstance().getFilterState().getFilterMask(operation);
     }
 
     public class Filter {

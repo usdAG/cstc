@@ -3,6 +3,7 @@ package de.usd.cstchef.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -23,6 +24,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -83,13 +85,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private Timer bakeTimer;
 
-    private FilterState filterState;
+    private JLabel inactiveWarning;
 
-    public RecipePanel(BurpOperation operation, MessageType messageType, FilterState filterState) {
+    public RecipePanel(BurpOperation operation, MessageType messageType) {
 
         this.operation = operation;
         this.messageType = messageType;
-        this.filterState = filterState;
         this.recipeName = FilterState.translateBurpOperation(operation);
 
         ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
@@ -148,6 +149,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
         // create active operations (middle) panel
         LayoutPanel activeOperationsPanel = new LayoutPanel("Recipe");
 
+
+        inactiveWarning = new JLabel(this.operation.toString() + " Operations currently inactive!");
+        inactiveWarning.setForeground(Color.RED);
+        inactiveWarning.setFont(inactiveWarning.getFont().deriveFont(inactiveWarning.getFont().getStyle() | Font.BOLD));
+        activeOperationsPanel.addActionComponent(inactiveWarning);
+
         // add action items
         JButton filters = new JButton("Filter");
         this.requestFilterDialog = RequestFilterDialog.getInstance();
@@ -158,10 +165,11 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 int result = JOptionPane.showConfirmDialog(null, requestFilterDialog, "Request Filter",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    filterState.setFilterMask(requestFilterDialog.getFilterMask(BurpOperation.INCOMING),
+                    BurpUtils.getInstance().getFilterState().setFilterMask(requestFilterDialog.getFilterMask(BurpOperation.INCOMING),
                             requestFilterDialog.getFilterMask(BurpOperation.OUTGOING),
                             requestFilterDialog.getFilterMask(BurpOperation.FORMAT));
                 }
+                BurpUtils.getInstance().getView().updateInactiveWarnings();
             }
         });
 
@@ -295,12 +303,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
         startAutoSaveTimer();
     }
 
-    public FilterState getFilterState() {
-        return filterState;
+    public void hideInactiveWarning(){
+        this.inactiveWarning.setVisible(false);
     }
 
-    public void setFilterState(FilterState state){
-        this.filterState = state;
+    public void showInactiveWarning(){
+        this.inactiveWarning.setVisible(true);
     }
 
     public void setInput(HttpRequestResponse requestResponse) {
@@ -573,7 +581,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             Logger.getInstance().err("Could not save recipes to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.");
         }
         try{
-            savedState.setString("FilterState", new ObjectMapper().writeValueAsString(filterState));
+            savedState.setString("FilterState", new ObjectMapper().writeValueAsString(BurpUtils.getInstance().getFilterState()));
         }
         catch(Exception e){
             Logger.getInstance().err("Could not save the filter state to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.\n" + e.getMessage());

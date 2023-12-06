@@ -10,6 +10,7 @@ import javax.swing.WindowConstants;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import burp.BurpUtils;
 import de.usd.cstchef.FilterState;
 import de.usd.cstchef.FilterState.BurpOperation;
 import de.usd.cstchef.Utils.MessageType;
@@ -19,7 +20,6 @@ public class View extends JPanel {
     private RecipePanel incomingRecipePanel;
     private RecipePanel outgoingRecipePanel;
     private RecipePanel formatRecipePanel;
-    private FilterState filterState;
     private RequestFilterDialog requestFilterDialog;
 
     public View() {
@@ -28,13 +28,11 @@ public class View extends JPanel {
         this.setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        filterState = new FilterState();
-
         requestFilterDialog = RequestFilterDialog.getInstance();
 
-        incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, MessageType.RESPONSE, filterState);
-        outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, MessageType.REQUEST, filterState);
-        formatRecipePanel = new RecipePanel(BurpOperation.FORMAT, MessageType.RAW, filterState);
+        incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, MessageType.RESPONSE);
+        outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, MessageType.REQUEST);
+        formatRecipePanel = new RecipePanel(BurpOperation.FORMAT, MessageType.RAW);
 
         tabbedPane.addTab("Outgoing Requests", null, outgoingRecipePanel, "Outgoing requests from the browser, the repeater or another tool.");
         tabbedPane.addTab("Incoming Responses", null, incomingRecipePanel, "Responses from the server.");
@@ -54,14 +52,6 @@ public class View extends JPanel {
         return this.formatRecipePanel;
     }
 
-    public FilterState getFilterState(){
-        return filterState;
-    }
-
-    public void setFilterState(FilterState state){
-        this.filterState = state;
-    }
-
     public static void main(String[] args) {
         JFrame frame = new JFrame("CSTC");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -71,5 +61,26 @@ public class View extends JPanel {
         frame.setSize(800, 600);
         frame.setVisible(true);
 //        frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+    }
+
+    public void updateInactiveWarnings() {
+        incomingRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()){
+            if(b == true)
+                incomingRecipePanel.hideInactiveWarning();
+        }
+
+        outgoingRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()){
+            if(b == true)
+                outgoingRecipePanel.hideInactiveWarning();
+        }
+
+        formatRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getFormatFilterSettings().values()){
+            if(b == true)
+                formatRecipePanel.hideInactiveWarning();
+        }
+
     }
 }

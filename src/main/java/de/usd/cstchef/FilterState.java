@@ -135,6 +135,15 @@ public class FilterState implements Serializable{
     public enum BurpOperation {
         INCOMING,
         OUTGOING,
-        FORMAT
+        FORMAT;
+
+        public String toString(){
+            switch(this){
+                case INCOMING: return "Incoming";
+                case OUTGOING: return "Outgoing";
+                case FORMAT: return "Formatting";
+                default: return "";
+            }
+        }
     }
 }

@@ -1,11 +1,15 @@
 package burp;
 
 import burp.api.montoya.MontoyaApi;
+import de.usd.cstchef.FilterState;
+import de.usd.cstchef.view.View;
 
 public class BurpUtils {
 
     private static BurpUtils instance;
     private MontoyaApi api;
+    private View view;
+    private FilterState filterState;
 
     public static BurpUtils getInstance() {
         if (BurpUtils.instance == null) {
@@ -19,6 +23,7 @@ public class BurpUtils {
 
     public void init(MontoyaApi api) {
         this.api = api;
+        this.filterState = new FilterState();
     }
 
     public MontoyaApi getApi() throws IllegalAccessError {
@@ -26,6 +31,22 @@ public class BurpUtils {
             throw new IllegalAccessError("Only works within burpsuite");
         }
         return api;
+    }
+
+    public void setView(View view){
+        this.view = view;
+    }
+
+    public View getView(){
+        return view;
+    }
+
+    public FilterState getFilterState(){
+        return filterState;
+    }
+
+    public void setFilterState(FilterState state){
+        this.filterState = state;
     }
 
     public static boolean inBurp() {
