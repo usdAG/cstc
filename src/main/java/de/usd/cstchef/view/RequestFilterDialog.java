@@ -63,7 +63,7 @@ public class RequestFilterDialog extends JPanel {
         }
 
         JPanel panel = new JPanel();
-        panel.add(new JLabel(FilterState.translateBurpOperation(operation)));
+        panel.add(new JLabel(operation.toString()));
         for (Map.Entry<Filter, Boolean> entry : BurpUtils.getInstance().getFilterState().getFilterMask(operation).entrySet()) {
             Filter filter = entry.getKey();
             boolean selected = entry.getValue();

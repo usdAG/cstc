@@ -91,7 +91,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         this.operation = operation;
         this.messageType = messageType;
-        this.recipeName = FilterState.translateBurpOperation(operation);
+        this.recipeName = operation.toString();
 
         ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
         tooltipManager.setInitialDelay(0);
