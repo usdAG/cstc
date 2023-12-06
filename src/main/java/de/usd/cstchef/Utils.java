@@ -1,22 +1,32 @@
 package de.usd.cstchef;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
 import burp.Logger;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.handler.ResponseAction;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
 import de.usd.cstchef.operations.arithmetic.Divide;
@@ -132,45 +142,40 @@ public class Utils {
     }
 
     public static String replaceVariables(String text) {
-        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
-        for (Entry<String, byte[]> entry : variables.entrySet()) {
+        HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
+        for (Entry<String, ByteArray> entry : variables.entrySet()) {
             // TODO this is easy, but very bad, how to do this right?
-            text = text.replace("$" + entry.getKey(), new String(entry.getValue()));
+            text = text.replace("$" + entry.getKey(), entry.getValue().toString());
         }
 
         return text;
     }
 
-    public static byte[] replaceVariablesByte(byte[] bytes) {
-        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+    public static ByteArray replaceVariablesByte(ByteArray bytes) {
+        HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-
-        byte[] currentKey;
-        for (Entry<String, byte[]> entry : variables.entrySet()) {
+        ByteArray currentKey;
+        for (Entry<String, ByteArray> entry : variables.entrySet()) {
 
             int offset = 0;
-            currentKey = ("$" + entry.getKey()).getBytes();
+            currentKey = ByteArray.byteArray("$" + entry.getKey());
 
-            while( offset >= 0 ) {
-                offset = helpers.indexOf(bytes, currentKey, true, offset, bytes.length);
-                if( offset >= 0 )
-                    bytes = insertAtOffset(bytes, offset, offset + currentKey.length, entry.getValue());
+            while (offset >= 0) {
+                offset = api.utilities().byteUtils().indexOf(bytes.getBytes(), currentKey.getBytes(), true, offset,
+                        bytes.length());
+                if (offset >= 0)
+                    bytes = insertAtOffset(bytes, offset, offset + currentKey.length(), entry.getValue());
             }
         }
         return bytes;
     }
 
-    public static byte[] insertAtOffset(byte[] input, int start, int end, byte[] newValue) {
-        byte[] prefix = Arrays.copyOfRange(input, 0, start);
-        byte[] rest = Arrays.copyOfRange(input, end, input.length);
+    public static ByteArray insertAtOffset(ByteArray input, int start, int end, ByteArray newValue) {
+        ByteArray prefix = input.subArray(0, start);
+        ByteArray rest = input.subArray(end, input.length());
 
-        byte[] output = new byte[prefix.length + newValue.length + rest.length];
-        System.arraycopy(prefix, 0, output, 0, prefix.length);
-        System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
-        System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
-
+        ByteArray output = prefix.withAppended(newValue).withAppended(rest);
         return output;
     }
 
@@ -216,32 +221,44 @@ public class Utils {
     @SuppressWarnings("unchecked")
     public static Class<? extends Operation>[] getOperationsDev() {
         return new Class[] {
-            Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
-            Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
-            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, GetRequestBuilder.class,
-            GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
-            HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
-            HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
-            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class, HttpMultipartSetter.class,
-            HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
-            HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
-            HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
-            JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class, LineExtractor.class,
-            LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
-            Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
-            RandomNumber.class, RandomUUID.class ,ReadFile.class, RegexExtractor.class, Reverse.class, Replace.class,
-            RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
-            SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
-            StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class, Subtraction.class,
-            Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
-            TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
-            Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-            Xor.class, SoapMultiSignature.class
+                Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
+                Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+                Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
+                GetRequestBuilder.class,
+                GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
+                HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
+                HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
+                HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
+                HttpMultipartSetter.class,
+                HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
+                HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
+                HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
+                JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class,
+                LineExtractor.class,
+                LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
+                Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
+                RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class,
+                Replace.class,
+                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
+                SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
+                StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
+                Subtraction.class,
+                Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
+                TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
+                UrlDecode.class, UrlEncode.class,
+                Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
+                Xor.class, SoapMultiSignature.class
         };
     }
 
     public static Class<? extends Operation>[] getOperations() {
         return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+    }
+
+    public enum MessageType {
+        REQUEST,
+        RESPONSE,
+        RAW
     }
 
 }

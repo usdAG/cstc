@@ -1,11 +1,15 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import burp.CstcObjectFactory;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.MultiplyList;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class MultiplyListTest extends MultiplyList
@@ -35,9 +39,9 @@ public class MultiplyListTest extends MultiplyList
         isFloat = false;
 
         String testValue = "1,2,3,4,5,6";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("720");
+        assert result.toString().equals("720");
     }
 
     @Test
@@ -47,9 +51,9 @@ public class MultiplyListTest extends MultiplyList
         isFloat = true;
 
         String testValue = "3,0.5,0.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("0.75");
+        assert result.toString().equals("0.75");
     }
 
     @Test
@@ -59,10 +63,10 @@ public class MultiplyListTest extends MultiplyList
         isFloat = false;
 
         String testValue = "1 2 3 4 5 6";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        System.out.println(new String(result));
-        assert new String(result).equals("720");
+        System.out.println(result.toString());
+        assert result.toString().equals("720");
     }
 
     @Test
@@ -72,8 +76,15 @@ public class MultiplyListTest extends MultiplyList
         isFloat = true;
 
         String testValue = "3 0.5 0.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("0.75");
+        assert result.toString().equals("0.75");
+    }
+
+    @Before
+    public void setup(){
+        CstcObjectFactory factory = new UnitTestObjectFactory();
+        this.factory = factory;
+        super.factory = factory;
     }
 }

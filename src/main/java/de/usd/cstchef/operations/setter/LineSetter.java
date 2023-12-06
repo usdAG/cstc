@@ -6,8 +6,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Utils;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -19,7 +19,7 @@ public class LineSetter extends SetterOperation {
     private JComboBox<String> formatBox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         int lineNumber;
         try {
@@ -32,45 +32,42 @@ public class LineSetter extends SetterOperation {
         if( lineNumber <= 0 )
             return input;
 
-        byte[] newValue = getWhatBytes();
-        byte[] lineEndings = "\r\n".getBytes();
+        ByteArray newValue = getWhatBytes();
+        ByteArray lineEndings = factory.createByteArray("\r\n");
         switch ((String) this.formatBox.getSelectedItem()) {
         case "\\r\\n":
-            lineEndings = "\r\n".getBytes();
+            lineEndings = factory.createByteArray("\r\n");
             break;
         case "\\r":
-            lineEndings = "\r".getBytes();
+            lineEndings = factory.createByteArray("\r");
             break;
         case "\\n":
-            lineEndings = "\n".getBytes();
+            lineEndings = factory.createByteArray("\n");
             break;
         }
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-        int length = input.length;
+        MontoyaApi api = BurpUtils.getInstance().getApi();
+        int length = input.length();
 
         int start = 0;
         int offset = 0;
         int counter = 0;
         while( counter < lineNumber - 1 ) {
-            offset = helpers.indexOf(input, lineEndings, false, start, length);
+            offset = api.utilities().byteUtils().indexOf(input.getBytes(), lineEndings.getBytes(), false, start, length);
             if( offset >= 0 ) {
-                start = offset + lineEndings.length;
+                start = offset + lineEndings.length();
                 counter++;
             } else {
                 break;
             }
         }
 
-        int end = helpers.indexOf(input, lineEndings, false, start, length);
+        int end = api.utilities().byteUtils().indexOf(input.getBytes(), lineEndings.getBytes(), false, start, length);
         if( end < 0 )
             end = length;
 
         if( append.isSelected() ) {
-            byte[] value = new byte[newValue.length + lineEndings.length];
-            System.arraycopy(lineEndings, 0, value, 0, lineEndings.length);
-            System.arraycopy(newValue, 0, value, lineEndings.length, newValue.length);
+            ByteArray value = lineEndings.withAppended(newValue);
             return Utils.insertAtOffset(input, end, end, value);
         } else {
             return Utils.insertAtOffset(input, start, end, newValue);

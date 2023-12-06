@@ -7,6 +7,7 @@ import javax.swing.JComboBox;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -24,7 +25,7 @@ public class RsaSignature extends KeystoreOperation {
         this.createMyUI();
     }
 
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         if( !this.keyAvailable.isSelected() )
             throw new IllegalArgumentException("No private key available.");
@@ -36,18 +37,18 @@ public class RsaSignature extends KeystoreOperation {
         String selectedOutputMode = (String)outputMode.getSelectedItem();
 
         if( selectedInputMode.equals("Hex") )
-            input = Hex.decode(input);
+            input = factory.createByteArray(Hex.decode(input.getBytes()));
         if( selectedInputMode.equals("Base64") )
-            input = Base64.decode(input);
+            input = factory.createByteArray(Base64.decode(input.getBytes()));
 
         signature.initSign(this.selectedEntry.getPrivateKey());
-        signature.update(input);
-        byte[] result = signature.sign();
+        signature.update(input.getBytes());
+        ByteArray result = factory.createByteArray(signature.sign());
 
         if( selectedOutputMode.equals("Hex") )
-            result = Hex.encode(result);
+            result = factory.createByteArray(Hex.encode(result.getBytes()));
         if( selectedOutputMode.equals("Base64") )
-            result = Base64.encode(result);
+            result = factory.createByteArray(Base64.encode(result.getBytes()));
 
         return result;
     }

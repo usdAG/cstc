@@ -1,11 +1,15 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import burp.CstcObjectFactory;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.DivideList;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class DivideListTest extends DivideList
@@ -35,9 +39,9 @@ public class DivideListTest extends DivideList
         isFloat = false;
 
         String testValue = "8,2,4";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("1");
+        assert result.toString().equals("1");
     }
 
     @Test
@@ -47,9 +51,9 @@ public class DivideListTest extends DivideList
         isFloat = true;
 
         String testValue = "8,2,4,2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("0.5");
+        assert result.toString().equals("0.5");
     }
 
     @Test
@@ -59,9 +63,9 @@ public class DivideListTest extends DivideList
         isFloat = false;
 
         String testValue = "8 2 4 0.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("2");
+        assert result.toString().equals("2");
     }
 
     @Test
@@ -71,8 +75,15 @@ public class DivideListTest extends DivideList
         isFloat = true;
 
         String testValue = "8 2 4 4 0.5";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("0.5");
+        assert result.toString().equals("0.5");
+    }
+
+    @Before
+    public void setup(){
+        CstcObjectFactory factory = new UnitTestObjectFactory();
+        this.factory = factory;
+        super.factory = factory;
     }
 }

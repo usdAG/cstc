@@ -1,9 +1,11 @@
 package de.usd.cstchef.operations.setter;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -11,22 +13,21 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpXmlSetter extends SetterOperation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String parameterName = getWhere();
         if( parameterName.equals("") )
             return input;
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        byte[] newValue = getWhatBytes();
-        IParameter param = getParameter(input, parameterName, IParameter.PARAM_XML, helpers);
+        ByteArray newValue = getWhatBytes();
+        ParsedHttpParameter param = getParameter(input, parameterName, HttpParameterType.XML, api);
 
         if( param == null )
             return input;
 
-        byte[] newRequest = replaceParam(input, param, newValue);
+        ByteArray newRequest = replaceParam(input, param, newValue);
         return newRequest;
     }
 

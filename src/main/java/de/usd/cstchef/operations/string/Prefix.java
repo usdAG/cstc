@@ -2,6 +2,7 @@ package de.usd.cstchef.operations.string;
 
 import java.io.ByteArrayOutputStream;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -13,12 +14,12 @@ public class Prefix extends Operation {
     private FormatTextField prefixTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(prefixTxt.getText());
-        out.write(input);
+        out.write(prefixTxt.getText().getBytes());
+        out.write(input.getBytes());
 
-        return out.toByteArray();
+        return factory.createByteArray(out.toByteArray());
     }
 
     @Override

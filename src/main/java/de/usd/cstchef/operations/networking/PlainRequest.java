@@ -7,10 +7,11 @@ import java.util.concurrent.Future;
 
 import javax.swing.JCheckBox;
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IHttpRequestResponse;
-import burp.IHttpService;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.HttpService;
+import burp.api.montoya.http.message.HttpRequestResponse;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -24,17 +25,15 @@ public class PlainRequest extends Operation {
     private JCheckBox sslEnabledBox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helper = callbacks.getHelpers();
-        String protocol = sslEnabledBox.isSelected() ? "https" : "http";
-        IHttpService service = helper.buildHttpService(hostTxt.getText(), Integer.valueOf(portTxt.getText()), protocol);
+    protected ByteArray perform(ByteArray input) throws Exception {
+        MontoyaApi api = BurpUtils.getInstance().getApi();
+        HttpService service = HttpService.httpService(hostTxt.getText(), Integer.valueOf(portTxt.getText()), sslEnabledBox.isSelected());
 
-        Callable<IHttpRequestResponse> runnable = new PlainRequestRunnable(input, service, callbacks);
+        Callable<HttpRequestResponse> runnable = new PlainRequestRunnable(input, service, api);
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<IHttpRequestResponse> future = executor.submit(runnable);
-        IHttpRequestResponse result = future.get();
-        return result == null ? null : result.getResponse();
+        Future<HttpRequestResponse> future = executor.submit(runnable);
+        HttpRequestResponse result = future.get();
+        return result == null ? null : result.response().toByteArray();
     }
 
     @Override
@@ -49,21 +48,21 @@ public class PlainRequest extends Operation {
         this.addUIElement("SSL", this.sslEnabledBox);
     }
 
-    public class PlainRequestRunnable implements Callable<IHttpRequestResponse>{
+    public class PlainRequestRunnable implements Callable<HttpRequestResponse>{
 
-        private byte[] data;
-        private IHttpService service;
-        private IBurpExtenderCallbacks callbacks;
+        private ByteArray data;
+        private HttpService service;
+        private MontoyaApi api;
 
-        public PlainRequestRunnable(byte[] dataToSent, IHttpService service, IBurpExtenderCallbacks callbacks){
+        public PlainRequestRunnable(ByteArray dataToSent, HttpService service, MontoyaApi api){
             this.data = dataToSent;
-            this.callbacks = callbacks;
             this.service = service;
+            this.api = api;
         }
 
         @Override
-        public IHttpRequestResponse call() throws Exception {
-            return callbacks.makeHttpRequest(this.service, this.data);
+        public HttpRequestResponse call() throws Exception {
+            return api.http().sendRequest(HttpRequest.httpRequest(service, data));
         }
 
     }

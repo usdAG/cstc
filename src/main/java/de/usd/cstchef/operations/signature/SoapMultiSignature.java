@@ -43,6 +43,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.FormatTextField;
@@ -87,7 +88,7 @@ public class SoapMultiSignature extends KeystoreOperation {
         writer.println("test");
         writer.close();
         for( FormatTextField field : referenceFields ) {
-          String referenceString = new String(field.getText());
+          String referenceString = field.getText().toString();
           Reference ref = fac.newReference("#" + referenceString, fac.newDigestMethod(digestMethods.get(digMethod), null), Collections.singletonList (fac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)), null, null);
           referenceList.add(ref);
         }
@@ -99,7 +100,7 @@ public class SoapMultiSignature extends KeystoreOperation {
     }
 
     private void validateIdAttributes(Document doc) throws Exception {
-      String idAttribute = new String(idIdentifier.getText());
+      String idAttribute = idIdentifier.getText().toString();
       XPathFactory xPathfactory = XPathFactory.newInstance();
       XPath xpath = xPathfactory.newXPath();
       XPathExpression expr = xpath.compile("descendant-or-self::*/@" + idAttribute);
@@ -139,7 +140,7 @@ public class SoapMultiSignature extends KeystoreOperation {
     }
 
 
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
       String signMethod = (String)signatureMethod.getSelectedItem();
       PrivateKeyEntry keyEntry = this.selectedEntry;
@@ -152,7 +153,7 @@ public class SoapMultiSignature extends KeystoreOperation {
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
-      Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input));
+      Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
       try {
         validateIdAttributes(doc);
       } catch( Exception e ) {
@@ -167,7 +168,7 @@ public class SoapMultiSignature extends KeystoreOperation {
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       transformer.transform(source, result);
-      return bos.toByteArray();
+      return factory.createByteArray(bos.toByteArray());
     }
 
     public void createMyUI() {

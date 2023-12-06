@@ -31,13 +31,14 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
 
 import burp.Logger;
+import burp.api.montoya.core.ByteArray;
 
 @OperationInfos(name = "JWT Decode", category = OperationCategory.SIGNATURE, description = "Decode a given JWT payload and return its contents")
 public class JWTDecode extends Operation {
 
 	@Override
-	protected byte[] perform(byte[] input) throws Exception {
-		DecodedJWT content = JWT.decode(new String(input));		
-		return Base64.getDecoder().decode(content.getPayload());
+	protected ByteArray perform(ByteArray input) throws Exception {
+		DecodedJWT content = JWT.decode(input.toString());		
+		return factory.createByteArray(Base64.getDecoder().decode(content.getPayload()));
 	}
 }

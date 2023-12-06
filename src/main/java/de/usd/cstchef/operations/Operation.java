@@ -39,7 +39,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import burp.BurpObjectFactory;
+import burp.CstcObjectFactory;
 import burp.Logger;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.view.ui.FormatTextField;
 import de.usd.cstchef.view.ui.VariableTextArea;
 import de.usd.cstchef.view.ui.VariableTextField;
@@ -74,10 +77,13 @@ public abstract class Operation extends JPanel {
 
     private int operationSkip = 0;
     private int laneSkip = 0;
+    
+    public CstcObjectFactory factory;
 
     public Operation() {
         super();
         this.uiElements = new HashMap<>();
+        this.factory = new BurpObjectFactory();
 
         this.setLayout(new BorderLayout());
         this.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -347,17 +353,17 @@ public abstract class Operation extends JPanel {
         return dim;
     }
 
-    public byte[] performOperation(byte[] input) {
+    public ByteArray performOperation(ByteArray input) {
         try {
-            byte[] result = this.perform(input);
+            ByteArray result = this.perform(input);
             this.setErrorMessage(null);
             return result;
         } catch (EOFException e) {
             this.setErrorMessage(new EOFException("End of file"));
-            return new byte[0];
+            return factory.createByteArray(0);
         } catch (Throwable e) {
             this.setErrorMessage(e);
-            return new byte[0];
+            return factory.createByteArray(0);
         }
     }
 
@@ -457,7 +463,7 @@ public abstract class Operation extends JPanel {
         public OperationCategory category() default OperationCategory.MISC;
     }
 
-    protected abstract byte[] perform(byte[] input) throws Exception;
+    protected abstract ByteArray perform(ByteArray input) throws Exception;
 
     public void createUI() {
 

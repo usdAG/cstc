@@ -2,6 +2,7 @@ package de.usd.cstchef.operations.utils;
 
 import javax.swing.JTextField;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
@@ -14,7 +15,7 @@ public class StoreVariable extends Operation {
     private String oldVarName;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String newVarName = this.varNameTxt.getText().trim();
         VariableStore store = VariableStore.getInstance();
         // remove old variable from hashmap

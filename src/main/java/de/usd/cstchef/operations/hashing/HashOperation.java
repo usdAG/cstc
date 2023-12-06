@@ -7,6 +7,7 @@ import javax.swing.JComboBox;
 
 import org.bouncycastle.util.encoders.Hex;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 
 public abstract class HashOperation extends Operation {
@@ -26,8 +27,8 @@ public abstract class HashOperation extends Operation {
     }
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        return this.hash(input);
+    protected ByteArray perform(ByteArray input) throws Exception {
+        return factory.createByteArray(this.hash(input.getBytes()));
     }
 
     protected byte[] hash(byte[] input) throws NoSuchAlgorithmException {

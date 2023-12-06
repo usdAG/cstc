@@ -5,9 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -19,25 +22,24 @@ public class HttpMultipartExtractor extends Operation {
     protected VariableTextField parameter;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
             return input;
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        List<IParameter> parameters = helpers.analyzeRequest(input).getParameters();
+        List<ParsedHttpParameter> parameters = HttpRequest.httpRequest(input).parameters();
         Iterator iterator = parameters.iterator();
         while (iterator.hasNext()) {
-            IParameter extractedParam = (IParameter) iterator.next();
-            if (extractedParam.getType() == IParameter.PARAM_BODY &&
-                    extractedParam.getName().equals(parameterName)) {
-                int start = extractedParam.getValueStart();
-                int end = extractedParam.getValueEnd();
+            ParsedHttpParameter extractedParam = (ParsedHttpParameter) iterator.next();
+            if (extractedParam.type() == HttpParameterType.BODY &&
+                    extractedParam.name().equals(parameterName)) {
+                int start = extractedParam.valueOffsets().startIndexInclusive();
+                int end = extractedParam.valueOffsets().endIndexExclusive();
 
-                byte[] result = Arrays.copyOfRange(input, start, end);
+                ByteArray result = input.subArray(start, end);
                 return result;
             }
         }

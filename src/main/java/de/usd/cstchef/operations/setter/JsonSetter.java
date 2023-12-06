@@ -11,6 +11,7 @@ import javax.swing.JCheckBox;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
@@ -22,12 +23,12 @@ public class JsonSetter extends SetterOperation implements ActionListener {
     private VariableTextField path;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         if( getWhere().equals("") )
             return input;
 
-        DocumentContext document = JsonPath.parse(new String(input));
+        DocumentContext document = JsonPath.parse(input.toString());
 
         try {
             document.read(getWhere());
@@ -41,11 +42,11 @@ public class JsonSetter extends SetterOperation implements ActionListener {
                 insertPath = "$";
 
             document = document.put(insertPath, getWhere(), getWhat());
-            return document.jsonString().getBytes();
+            return factory.createByteArray(document.jsonString());
         }
 
         document.set(getWhere(), getWhat());
-        return document.jsonString().getBytes();
+        return factory.createByteArray(document.jsonString());
     }
 
     @Override

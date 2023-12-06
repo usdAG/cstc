@@ -12,10 +12,12 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.text.JTextComponent;
 
+import burp.api.montoya.core.ByteArray;
+
 public class PopupVariableMenu extends JPopupMenu implements ActionListener, PopupMenuListener {
 
     private JTextComponent parent;
-    private static SortedMap<String, byte[]> variableMap;
+    private static SortedMap<String, ByteArray> variableMap;
 
     public PopupVariableMenu(JTextComponent parent) {
         super();
@@ -34,11 +36,11 @@ public class PopupVariableMenu extends JPopupMenu implements ActionListener, Pop
         }
     }
 
-    public static void refresh(HashMap<String, byte[]> variables) {
+    public static void refresh(HashMap<String, ByteArray> variables) {
         if (variables == null) {
-            variableMap = new TreeMap<String, byte[]>();
+            variableMap = new TreeMap<String,ByteArray>();
         } else {
-            variableMap = new TreeMap<String, byte[]>(variables);
+            variableMap = new TreeMap<String, ByteArray>(variables);
         }
     }
 

@@ -7,8 +7,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -19,29 +21,20 @@ public class WriteFile extends Operation implements ActionListener {
 
     private final JFileChooser fileChooser = new JFileChooser();
     private VariableTextField fileNameTxt;
+    private JCheckBox overwriteCheckbox;
     private String lastPath = "";
     private FileOutputStream out;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String path = fileNameTxt.getText();
 
-        if (!lastPath.equals(path)) {
-            if (out != null) {
-                out.close();
-                out = null;
-            }
-            if (!path.isEmpty()) {
-                out = new FileOutputStream(path);
-            }
-            lastPath = path;
-        }
-
-        if (out != null) {
-            out.write(input);
+        if (!path.isEmpty()) {
+            out = new FileOutputStream(path, this.overwriteCheckbox.isSelected());
+            out.write(input.getBytes());
             out.write('\n');
+            out.close();
         }
-
         return input;
     }
 
@@ -53,6 +46,10 @@ public class WriteFile extends Operation implements ActionListener {
         JButton chooseFileButton = new JButton("Select file");
         chooseFileButton.addActionListener(this);
         this.addUIElement(null, chooseFileButton, false, "button1");
+
+        this.overwriteCheckbox = new JCheckBox("Append Contents");
+        this.overwriteCheckbox.setSelected(true);
+        this.addUIElement("Append Contents", overwriteCheckbox);
     }
 
 

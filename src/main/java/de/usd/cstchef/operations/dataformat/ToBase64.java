@@ -9,6 +9,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import burp.BurpUtils;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.utilities.Base64DecodingOptions;
+import burp.api.montoya.utilities.Base64EncodingOptions;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -20,13 +25,14 @@ public class ToBase64 extends Operation implements ActionListener {
 	private JCheckBox urlSafeCheckBox;
 	
     @Override
-    protected byte[] perform(byte[] input) {
-    	if(!this.urlSafe) {
-    		return Base64.getEncoder().encode(input);	
+    protected ByteArray perform(ByteArray input) {
+    	MontoyaApi api = BurpUtils.getInstance().getApi();
+		if(!this.urlSafe) {
+			return api.utilities().base64Utils().encode(input);
     	}
     	else {
-    		return Base64.getUrlEncoder().encode(input);
-    	}        
+    		return api.utilities().base64Utils().encode(input, Base64EncodingOptions.URL);
+    	}    
     }
 
     public void createUI() {

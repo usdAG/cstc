@@ -2,9 +2,10 @@ package de.usd.cstchef.operations.conditional;
 
 import javax.swing.JCheckBox;
 
+import burp.BurpExtender;
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -15,10 +16,10 @@ public class StringMatch extends ConditionalOperation {
     private JCheckBox caseSensitive;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-
-        byte[] search = this.expr.getBytes();
-        if( search.length != input.length ) {
+    protected ByteArray perform(ByteArray input) throws Exception {
+        
+        ByteArray search = this.expr.getBytes();
+        if( search.length() != input.length() ) {
             if( invert.isSelected() ) {
                 this.setOperationSkip();
                 this.setLaneSkip();
@@ -28,9 +29,8 @@ public class StringMatch extends ConditionalOperation {
             return input;
         }
 
-        IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = cbs.getHelpers();
-        int start = helpers.indexOf(input, search, caseSensitive.isSelected(), 0, input.length);
+        MontoyaApi api = BurpUtils.getInstance().getApi();
+        int start = api.utilities().byteUtils().indexOf(input.getBytes(), search.getBytes(), caseSensitive.isSelected(), 0, input.length());
 
         if( (start >= 0) ^ invert.isSelected() ) {
             this.setOperationSkip();

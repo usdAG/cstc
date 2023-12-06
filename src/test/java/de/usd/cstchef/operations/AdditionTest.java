@@ -1,16 +1,21 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import burp.CstcObjectFactory;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Addition;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class AdditionTest extends Addition
 {
     private String number;
     private boolean isFloat;
+    private CstcObjectFactory factory;
 
     protected double getNumber()
     {
@@ -29,9 +34,9 @@ public class AdditionTest extends Addition
         isFloat = false;
 
         String testValue = "22";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("32");
+        assert result.toString().equals("32");
     }
 
     @Test
@@ -41,9 +46,9 @@ public class AdditionTest extends Addition
         isFloat = true;
 
         String testValue = "2.2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("4.4");
+        assert result.toString().equals("4.4");
     }
 
     @Test
@@ -53,8 +58,15 @@ public class AdditionTest extends Addition
         isFloat = false;
 
         String testValue = "2.2";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue));
 
-        assert new String(result).equals("4");
+        assert result.toString().equals("4");
+    }
+
+    @Before
+    public void setup(){
+        CstcObjectFactory factory = new UnitTestObjectFactory();
+        this.factory = factory;
+        super.factory = factory;
     }
 }

@@ -5,6 +5,9 @@ import java.util.Set;
 import javax.swing.JComboBox;
 import org.bouncycastle.util.encoders.Hex;
 
+import burp.BurpUtils;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.dataformat.ToHex.Delimiter;
@@ -16,19 +19,19 @@ public class FromHex extends Operation {
     private JComboBox<String> delimiterBox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String selectedKey = (String) this.delimiterBox.getSelectedItem();
         Delimiter delimiter = ToHex.delimiters.get(selectedKey);
 
         if (delimiter.value.length == 0) { // No delimiter
-            return Hex.decode(input);
+            return factory.createByteArray(Hex.decode(input.getBytes()));
         }
 
         String delimiterStr = new String(delimiter.value);
-        String inputStr = new String(input);
+        String inputStr = input.toString();
         inputStr = inputStr.replace(delimiterStr, "");
 
-        return Hex.decode(inputStr);
+        return factory.createByteArray(Hex.decode(inputStr.getBytes()));
     }
 
     @Override

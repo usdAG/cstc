@@ -3,9 +3,11 @@ package de.usd.cstchef.operations.extractors;
 import java.util.Arrays;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -17,26 +19,25 @@ public class HttpPostExtractor extends Operation {
     protected VariableTextField parameter;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String parameterName = parameter.getText();
         if( parameterName.equals("") )
             return input;
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        IParameter param = helpers.getRequestParameter(input, parameterName);
+        ParsedHttpParameter param = HttpRequest.httpRequest(input).parameters().stream().filter(p -> p.name().equals(parameterName)).findFirst().get();
         if( param == null)
             throw new IllegalArgumentException("Parameter name not found.");
-        if( param.getType() != IParameter.PARAM_BODY )
+        if( param.type() != HttpParameterType.BODY )
             throw new IllegalArgumentException("Parameter type is not POST");
 
-        int start = param.getValueStart();
-        int end = param.getValueEnd();
+            int start = param.valueOffsets().startIndexInclusive();
+            int end = param.valueOffsets().endIndexExclusive();
 
-        byte[] result = Arrays.copyOfRange(input, start, end);
-        return result;
+            ByteArray result = input.subArray(start, end);
+            return result;
     }
 
     @Override

@@ -3,8 +3,8 @@ package de.usd.cstchef.operations.string;
 import org.bouncycastle.util.Arrays;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -17,9 +17,9 @@ public class SplitAndSelect extends Operation {
     private VariableTextField delim;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
-        byte[] delimmiter = delim.getBytes();
+        ByteArray delimmiter = delim.getBytes();
 
         int itemNumber = 0;
         try {
@@ -32,28 +32,27 @@ public class SplitAndSelect extends Operation {
         if( itemNumber < 0 )
             return input;
 
-        IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = cbs.getHelpers();
-        int length = input.length;
+        MontoyaApi api = BurpUtils.getInstance().getApi();
+        int length = input.length();
 
         int start = 0;
         int offset = 0;
         int counter = 0;
         while( counter < itemNumber ) {
-            offset = helpers.indexOf(input, delimmiter, false, start, length);
+            offset = api.utilities().byteUtils().indexOf(input.getBytes(), delimmiter.getBytes(), false, start, length);
             if( offset >= 0 ) {
-                start = offset + delimmiter.length;
+                start = offset + delimmiter.length();
                 counter++;
             } else {
                 break;
             }
         }
 
-        int end = helpers.indexOf(input, delimmiter, false, start, length);
+        int end = api.utilities().byteUtils().indexOf(input.getBytes(), delimmiter.getBytes(), false, start, length);
         if( end < 0 )
             end = length;
 
-        byte[] result = Arrays.copyOfRange(input, start, end);
+        ByteArray result = input.subArray(start, end);
         return result;
     }
 

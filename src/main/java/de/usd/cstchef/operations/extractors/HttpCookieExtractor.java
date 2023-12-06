@@ -2,10 +2,11 @@ package de.usd.cstchef.operations.extractors;
 
 import org.bouncycastle.util.Arrays;
 
+import burp.BurpExtender;
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IResponseInfo;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -17,22 +18,18 @@ public class HttpCookieExtractor extends Operation {
     private VariableTextField cookieNameField;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
-        byte[] cookieName = cookieNameField.getBytes();
-        if( cookieName.length == 0 )
+        ByteArray cookieName = cookieNameField.getBytes();
+        if( cookieName.length() == 0 )
             return input;
 
-        byte[] cookieSearch = new byte[cookieName.length + 1];
-        System.arraycopy(cookieName, 0, cookieSearch, 0, cookieName.length);
-        System.arraycopy("=".getBytes(), 0, cookieSearch, cookieName.length, 1);
+        ByteArray cookieSearch = cookieName.withAppended("=");
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-        int length = input.length;
+        MontoyaApi api = BurpUtils.getInstance().getApi();
+        int length = input.length();
 
-        IResponseInfo resp = helpers.analyzeResponse(input);
-        boolean isRequest = (resp.getStatusCode() == 0);
+        boolean isRequest = (HttpResponse.httpResponse(input).statusCode() == 0);
 
         String cookieHeader = "\r\nSet-Cookie: ";
         if(isRequest)
@@ -40,15 +37,15 @@ public class HttpCookieExtractor extends Operation {
 
         try {
 
-            int offset = helpers.indexOf(input, cookieHeader.getBytes(), false, 0, length);
-            int line_end = helpers.indexOf(input, "\r\n".getBytes(), false, offset + 2, length);
-            int start = helpers.indexOf(input, cookieSearch, true, offset, line_end);
-            int end = helpers.indexOf(input, ";".getBytes(), true, start, line_end);
+            int offset = api.utilities().byteUtils().indexOf(input.getBytes(), cookieHeader.getBytes(), false, 0, length);
+            int line_end = api.utilities().byteUtils().indexOf(input.getBytes(), "\r\n".getBytes(), false, offset + 2, length);
+            int start = api.utilities().byteUtils().indexOf(input.getBytes(), cookieSearch.getBytes(), true, offset, line_end);
+            int end = api.utilities().byteUtils().indexOf(input.getBytes(), ";".getBytes(), true, start, line_end);
 
             if( end < 0 )
                 end = line_end;
 
-            return Arrays.copyOfRange(input, start + cookieName.length + 1, end);
+            return input.subArray(start+ cookieName.length() + 1, end);
 
         } catch( IllegalArgumentException e ) {
             throw new IllegalArgumentException("Cookie not found.");

@@ -2,6 +2,7 @@ package de.usd.cstchef.operations.conditional;
 
 import javax.swing.JComboBox;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -11,13 +12,13 @@ public class NumberCompare extends ConditionalOperation {
     private JComboBox<String> operationBox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         Double inputNumber;
         Double userNumber;
 
         try {
-            String tmp = new String(input);
+            String tmp = input.toString();
             inputNumber = Double.valueOf(tmp);
             userNumber = Double.valueOf(this.expr.getText());
         } catch( Exception e ) {

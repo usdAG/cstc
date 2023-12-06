@@ -40,17 +40,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import burp.BurpExtender;
 import burp.BurpUtils;
 import burp.CstcMessageEditorController;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IHttpRequestResponse;
-import burp.IParameter;
-import burp.IRequestInfo;
 import burp.Logger;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.HttpMessage;
+import burp.api.montoya.http.message.HttpRequestResponse;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
+import burp.api.montoya.persistence.PersistedObject;
 import de.usd.cstchef.FilterState;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.FilterState.BurpOperation;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 
 public class RecipePanel extends JPanel implements ChangeListener {
@@ -59,7 +67,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private int operationSteps = 10;
     private boolean autoBake = true;
-    private boolean isRequest = true;
+    private MessageType messageType;
     private int bakeThreshold = 400;
     private String recipeName;
     private BurpOperation operation;
@@ -77,10 +85,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private FilterState filterState;
 
-    public RecipePanel(BurpOperation operation, boolean isRequest, FilterState filterState) {
+    public RecipePanel(BurpOperation operation, MessageType messageType, FilterState filterState) {
 
         this.operation = operation;
-        this.isRequest = isRequest;
+        this.messageType = messageType;
         this.filterState = filterState;
         this.recipeName = FilterState.translateBurpOperation(operation);
 
@@ -95,13 +103,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create input panel
         JPanel inputPanel = new LayoutPanel("Input");
-        inputText = new BurpEditorWrapper(controllerOrig, true);
-        inputPanel.add(inputText.getComponent());
+        inputText = new BurpEditorWrapper(controllerOrig, messageType, this);
+        inputPanel.add(inputText.uiComponent());
 
         // create output panel
         JPanel outputPanel = new LayoutPanel("Output");
-        outputText = new BurpEditorWrapper(controllerMod, false);
-        outputPanel.add(outputText.getComponent());
+        outputText = new BurpEditorWrapper(controllerMod, messageType, this);
+        outputPanel.add(outputText.uiComponent());
 
         JPanel searchTreePanel = new JPanel();
         searchTreePanel.setLayout(new BorderLayout());
@@ -166,7 +174,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = new JButton("Save to File");
         activeOperationsPanel.addActionComponent(saveButton);
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -283,59 +291,30 @@ public class RecipePanel extends JPanel implements ChangeListener {
         operationsTree.addMouseListener(dma);
         operationsTree.addMouseMotionListener(dma);
 
-        loadRecipeFromBurp();
         startAutoBakeTimer();
+        startAutoSaveTimer();
     }
 
     public FilterState getFilterState() {
         return filterState;
     }
 
-    private void loadRecipeFromBurp() {
-        logger.log("[" + this.recipeName + "] Autoloading...");
-        boolean inBurp = BurpUtils.inBurp();
-        //Check if we run inside a burp
-        if (inBurp) {
-            IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-            String jsonState = callbacks.loadExtensionSetting("cstc_" + this.recipeName);
-            if (jsonState != null && jsonState != "") {
-                try {
-                    logger.log("[" + this.recipeName + "] Restoring state.");
-                    //We remove the setting and set it again to be safe in an error case
-                    callbacks.saveExtensionSetting("cstc_" + this.recipeName, "");
-                    restoreState(jsonState);
-                    callbacks.saveExtensionSetting("cstc_" + this.recipeName, jsonState);
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
-                    Logger.getInstance().err("There was an error restoring the state of RecipePanel " + this.recipeName);
-                }
-            }
-        }
-        else {
-            logger.log("[" + this.recipeName + "] Autoloading aborted. Not running inside Burp.");
-        }
+    public void setFilterState(FilterState state){
+        this.filterState = state;
     }
 
-    private void autoSaveToBurp() {
-        boolean inBurp = BurpUtils.inBurp();
-        //Check if we run inside a burp
-        if (inBurp) {
-            try {
-                String jsonState = getStateAsJSON();
-                BurpUtils.getInstance().getCallbacks().saveExtensionSetting("cstc_" + this.recipeName, jsonState);
-            } catch (IOException e) {
-                Logger.getInstance().err("There was an error persisting the current state of the recipe panel.");
-            }
+    public void setInput(HttpRequestResponse requestResponse) {
+        if(messageType == MessageType.REQUEST){
+            HttpRequest request = requestResponse.request();
+            if(request == null)
+                    request = HttpRequest.httpRequest(ByteArray.byteArray("The message you have sent via the context menu is not a valid HTML request. Try using the formatting tab."));
+            this.inputText.setRequest(request);
         }
-    }
-
-    public void setInput(IHttpRequestResponse requestResponse) {
-        if( isRequest )
-            this.inputText.setMessage(requestResponse.getRequest(), true);
-        else {
-            byte[] responseBytes = requestResponse.getResponse();
-            if( responseBytes == null )
-                responseBytes = "Your request has no server response yet :(".getBytes();
-            this.inputText.setMessage(responseBytes, false);
+        else if(messageType == MessageType.RESPONSE) {
+            HttpResponse response = requestResponse.response();
+            if(response == null)
+                response = HttpResponse.httpResponse(ByteArray.byteArray("The message you have sent via the context menu does not have a valid HTML response. Try including a response to a request or use the formatting tab."));
+            this.inputText.setResponse(response);
         }
 
         this.controllerOrig.setHttpRequestResponse(requestResponse);
@@ -344,7 +323,22 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.bake(false);
     }
 
-    private void restoreState(String jsonState) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public void setFormatMessage(HttpRequestResponse requestResponse, MessageType messageType){
+        ByteArray message;
+        if(messageType == MessageType.REQUEST){
+            message = requestResponse.request().toByteArray();
+        }
+        else{
+            message = requestResponse.response().toByteArray();
+        }
+        if(message == null){
+            message = ByteArray.byteArray("Message could not be parsed as a request or response.");
+        }
+        this.inputText.setContents(message);
+        this.bake(false);
+    }
+
+    public void restoreState(String jsonState) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         // TODO do we want to remove all existing operations before loading here?
         this.clear(); // Yes!
         ObjectMapper mapper = new ObjectMapper();
@@ -401,12 +395,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private byte[] doBake(byte[] input) {
-        if (input == null || input.length == 0) {
-            return new byte[0];
+    private ByteArray doBake(ByteArray input) {
+        if (input == null || input.length() == 0) {
+            return ByteArray.byteArrayOfLength(0);
         }
-        byte[] result = input.clone();
-        byte[] intermediateResult = input;
+        ByteArray result = input.copy();
+        ByteArray intermediateResult = input;
         boolean outputChanged;
         VariableStore store = VariableStore.getInstance();
         out: for (int j = 0; j < this.operationLines.getComponentCount(); j++) {
@@ -450,32 +444,30 @@ public class RecipePanel extends JPanel implements ChangeListener {
         }
 
         if (BurpUtils.inBurp()) {
-            IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-            IExtensionHelpers helpers = callbacks.getHelpers();
-
-            IRequestInfo info;
+            MontoyaApi api = BurpUtils.getInstance().getApi();
+            HttpRequest req;
             try {
-                info = helpers.analyzeRequest(result);
+                req = HttpRequest.httpRequest(result);
+
             } catch( IllegalArgumentException e ) {
                 // In this case there is no valid HTTP request and no Content-Length update is requried.
                 return result;
             }
 
-            List<java.lang.String> headers = info.getHeaders();
-            int offset = info.getBodyOffset();
+            List<HttpHeader> headers = req.headers();
+            int offset = req.bodyOffset();
 
-            if( result.length == offset ) {
+            if( result.length() == offset ) {
                 // In this case there is no body and we do not need to update the content length header.
                 return result;
             }
 
-            for(String header : headers) {
-                if(header.startsWith("Content-Length:")) {
-                    // To update the content-length header, we just add a dummy parameter and remove it right away.
-                    // Burps extension helpers will care about updating the length without any string transformations.
-                    IParameter dummy = helpers.buildParameter("dummy", "dummy", IParameter.PARAM_BODY);
-                    result = helpers.addParameter(result, dummy);
-                    result = helpers.removeParameter(result, dummy);
+            
+
+            for(HttpHeader header : headers) {
+                if(header.toString().startsWith("Content-Length:")) {
+                    HttpParameter dummy = HttpParameter.bodyParameter("dummy", "dummy");
+                    result = HttpRequest.httpRequest(result).withAddedParameters(dummy).withRemovedParameters(dummy).toByteArray();
                     break;
                 }
             }
@@ -494,17 +486,22 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                byte[] result = doBake(inputText.getMessage());
-                HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray());
+                HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if( isRequest) {
-                            outputText.setMessage(result, true);
-                            controllerMod.setRequest(result);
-                        } else {
-                            outputText.setMessage(result, false);
-                            controllerMod.setResponse(result);
+                        if( messageType == MessageType.REQUEST) {
+                            outputText.setRequest(HttpRequest.httpRequest(result));
+                            controllerMod.setRequest(HttpRequest.httpRequest(result));
+                        } else if (messageType == MessageType.RESPONSE){
+                            outputText.setResponse(HttpResponse.httpResponse(result));
+                            controllerMod.setResponse(HttpResponse.httpResponse(result));
+                        }
+                        else{
+                            outputText.setContents(result);
+                            // TODO: MessageEditorController?
+
                         }
                         VariablesWindow vw = VariablesWindow.getInstance();
                         if (vw.isVisible()) {
@@ -513,14 +510,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
                         PopupVariableMenu.refresh(variables);
                     }
                 });
-                autoSaveToBurp();
             }
         };
         int threshold = spamProtection ? this.bakeThreshold : 0;
         this.bakeTimer.schedule(tt, threshold);
     }
 
-    public byte[] bake(byte[] input) {
+    public ByteArray bake(ByteArray input) {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();
@@ -533,8 +529,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private void startAutoBakeTimer() {
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
-                if (inputText.isMessageModified()) {
-                    logger.log("autobaking");
+                if (inputText.isModified()) {
                     autoBake();
                 }
             }
@@ -545,7 +540,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
     }
 
-    private void autoBake() {
+    public void autoBake() {
         if (!this.autoBake) {
             return;
         }
@@ -555,6 +550,33 @@ public class RecipePanel extends JPanel implements ChangeListener {
             this.bake(true);
         } finally {
             store.unlock();
+        }
+    }
+
+    private void startAutoSaveTimer() {
+        TimerTask autoSaveTask = new TimerTask() {
+            public void run() {
+                autoSave();
+            }
+        };
+        Timer timer = new Timer("Timer");
+        long delay  = 10000L;
+        long period = 10000L;
+        timer.scheduleAtFixedRate(autoSaveTask, delay, period);
+    }
+
+    public void autoSave(){
+        PersistedObject savedState = BurpUtils.getInstance().getApi().persistence().extensionData();
+        try {
+            savedState.setString(this.operation + "Recipe", getStateAsJSON());
+        } catch (IOException e) {
+            Logger.getInstance().err("Could not save recipes to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.");
+        }
+        try{
+            savedState.setString("FilterState", new ObjectMapper().writeValueAsString(filterState));
+        }
+        catch(Exception e){
+            Logger.getInstance().err("Could not save the filter state to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.\n" + e.getMessage());
         }
     }
 

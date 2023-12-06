@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentListener;
 import org.bouncycastle.util.encoders.Hex;
 
+import burp.api.montoya.core.ByteArray;
+
 public class FormatTextField extends JPanel implements ActionListener {
 
     public VariableTextField txtField;
@@ -62,29 +64,29 @@ public class FormatTextField extends JPanel implements ActionListener {
         this.formatBox.setSelectedItem(encoding);
     }
 
-    public byte[] getText() throws UnsupportedEncodingException {
+    public ByteArray getText() throws UnsupportedEncodingException {
 
-        byte[] raw = this.txtField.getBytes();
-        byte[] result = null;
+        ByteArray raw = this.txtField.getBytes();
+        ByteArray result = null;
 
         switch ((String) this.formatBox.getSelectedItem()) {
             case "Raw":
                 result = raw;
                 break;
             case "Hex":
-                result = Hex.decode(raw);
+                result = ByteArray.byteArray(Hex.decode(raw.getBytes()));
                 break;
             case "Base64":
-                result = Base64.getDecoder().decode(raw);
+                result = ByteArray.byteArray(Base64.getDecoder().decode(raw.getBytes()));
                 break;
             case "Latin1":
-                result = this.txtField.getText().getBytes("ISO-8859-1");
+                result = ByteArray.byteArray(this.txtField.getText().getBytes("ISO-8859-1"));
                 break;
             case "UTF-8":
-                result = this.txtField.getText().getBytes("UTF-8");
+                result = ByteArray.byteArray(this.txtField.getText().getBytes("UTF-8"));
                 break;
             case "Empty":
-                result = new byte[16];
+                result = ByteArray.byteArray(16);
                 break;
         }
         return result;

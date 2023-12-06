@@ -1,115 +1,50 @@
 package burp;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import javax.swing.JMenuItem;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import burp.api.montoya.BurpExtension;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.persistence.PersistedObject;
 import de.usd.cstchef.FilterState;
-import de.usd.cstchef.view.FormatTab;
-import de.usd.cstchef.view.RecipePanel;
+import de.usd.cstchef.Utils;
+import de.usd.cstchef.FilterState.BurpOperation;
 import de.usd.cstchef.view.View;
 
-public class BurpExtender implements IBurpExtender, ITab, IMessageEditorTabFactory, IHttpListener, IContextMenuFactory {
+public class BurpExtender implements BurpExtension {
 
     private final String extensionName = "CSTC";
-    private IBurpExtenderCallbacks callbacks;
     private View view;
-
-    @Override
-    public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks) {
-        this.callbacks = callbacks;
-        Logger.getInstance().init(callbacks.getStdout(), callbacks.getStderr());
-        BurpUtils.getInstance().init(callbacks);
-
-        callbacks.setExtensionName(this.extensionName);
-        callbacks.addSuiteTab(this);
-        callbacks.registerHttpListener(this);
-        callbacks.registerContextMenuFactory(this);
-        callbacks.registerMessageEditorTabFactory(this);
-    }
+    private static MontoyaApi api;
 
 
     @Override
-    public String getTabCaption() {
-        return this.extensionName;
-    }
-
-    @Override
-    public Component getUiComponent() {
+    public void initialize(MontoyaApi api) {
+        BurpUtils.getInstance().init(api);
+        BurpExtender.api = api;
         this.view = new View();
-        return this.view;
-    }
-
-    @Override
-    public void processHttpMessage(int toolFlag, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
-        if (messageIsRequest && view.getFilterState().shouldProcess(toolFlag, FilterState.BurpOperation.OUTGOING)) {
-            byte[] request = messageInfo.getRequest();
-            byte[] modifiedRequest = view.getOutgoingRecipePanel().bake(request);
-            Logger.getInstance().log("modified request: \n" + new String(modifiedRequest));
-            messageInfo.setRequest(modifiedRequest);
-        } else if (view.getFilterState().shouldProcess(toolFlag, FilterState.BurpOperation.INCOMING)) {
-            byte[] response = messageInfo.getResponse();
-            byte[] modifiedResponse = view.getIncomingRecipePanel().bake(response);
-            messageInfo.setResponse(modifiedResponse);
-            Logger.getInstance().log("modified response: \n" + new String(modifiedResponse));
+        api.extension().setName(extensionName);
+        api.userInterface().registerContextMenuItemsProvider(new CstcContextMenuItemsProvider(api, view));
+        api.http().registerHttpHandler(new CstcHttpHandler(view));
+        api.userInterface().registerSuiteTab(extensionName, view);
+        api.userInterface().registerHttpRequestEditorProvider(new MyHttpRequestEditorProvider(view));
+        api.userInterface().registerHttpResponseEditorProvider(new MyHttpResponseEditorProvider(view));
+        // Restore saved recipe for each panel
+        PersistedObject persistence = api.persistence().extensionData();
+        try {
+            this.view.getFormatRecipePanel().restoreState(persistence.getString(BurpOperation.FORMAT + "Recipe"));
+            this.view.getIncomingRecipePanel().restoreState(persistence.getString(BurpOperation.INCOMING + "Recipe"));
+            this.view.getOutgoingRecipePanel().restoreState(persistence.getString(BurpOperation.OUTGOING + "Recipe"));
+        } catch (Exception e) {
+            Logger.getInstance().log("Could not restore the recipe for one or multiple panels. If this is the first time using CSTC in a project, you can ignore this message.");
+        }
+        try {
+            Logger.getInstance().log(persistence.getString("FilterState"));
+            this.view.setFilterState(new ObjectMapper().readValue(persistence.getString("FilterState"), FilterState.class));
+        } catch (Exception e) {
+            Logger.getInstance().log("Could not restore the filter state. If this is the first time using CSTC in a project, you can ignore this message.");
         }
     }
-
-    @Override
-    public List<JMenuItem> createMenuItems(IContextMenuInvocation invoc) {
-
-        List<JMenuItem> menuItems = new ArrayList<>();
-        JMenuItem incomingMenu = new JMenuItem("Send to CSTC (Incoming)");
-        JMenuItem outgoingMenu = new JMenuItem("Send to CSTC (Outgoing)");
-        JMenuItem incomingFormatMenu = new JMenuItem("Send to CSTC (Formating)");
-
-        menuItems.add(incomingMenu);
-        menuItems.add(outgoingMenu);
-        menuItems.add(incomingFormatMenu);
-
-        incomingMenu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
-                if (msgs != null && msgs.length > 0) {
-                    view.getIncomingRecipePanel().setInput(msgs[0]);
-                }
-            }
-        });
-
-        outgoingMenu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
-                if (msgs != null && msgs.length > 0) {
-                    view.getOutgoingRecipePanel().setInput(msgs[0]);
-                }
-
-            }
-        });
-
-        incomingFormatMenu.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                IHttpRequestResponse[] msgs = invoc.getSelectedMessages();
-                if (msgs != null && msgs.length > 0) {
-                    view.getFormatRecipePanel().setInput(msgs[0]);
-                }
-            }
-        });
-
-        return menuItems;
-    }
-
-    @Override
-    public IMessageEditorTab createNewInstance(IMessageEditorController controller, boolean editable) {
-        RecipePanel requestFormatPanel = this.view.getOutgoingRecipePanel();
-        // TODO do we need the format panel or do we want to use the incoming recipe?
-        RecipePanel responseFormatPanel = this.view.getFormatRecipePanel();
-        return new FormatTab(requestFormatPanel, responseFormatPanel, editable);
-    }
+    
 }

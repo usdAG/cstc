@@ -4,6 +4,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.DocumentListener;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Utils;
 import de.usd.cstchef.view.PopupVariableMenu;
 
@@ -24,8 +25,8 @@ public class VariableTextArea extends JScrollPane {
         return Utils.replaceVariables(text);
     }
 
-    public byte[] getBytes() {
-        byte[] bytes = this.txtArea.getText().getBytes();
+    public ByteArray getBytes() {
+        ByteArray bytes = ByteArray.byteArray(this.txtArea.getText());
         return Utils.replaceVariablesByte(bytes);
     }
 

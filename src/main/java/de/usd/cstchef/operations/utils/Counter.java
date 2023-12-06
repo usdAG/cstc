@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 
 import javax.swing.JTextField;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
@@ -18,7 +19,7 @@ public class Counter extends Operation {
     private JTextField stepSizeTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String varName = this.varNameTxt.getText().trim();
         long value;
         long stepSize = Long.valueOf(this.stepSizeTxt.getText());
@@ -26,16 +27,16 @@ public class Counter extends Operation {
         if (VariableStore.getInstance().getVariable(varName) == null) {
             value = startValue;
         } else {
-            byte[] currentValue = VariableStore.getInstance().getVariable(varName);
+            ByteArray currentValue = VariableStore.getInstance().getVariable(varName);
             try {
-                value = Long.parseLong(new String(currentValue));
+                value = Long.parseLong(currentValue.toString());
             } catch (NumberFormatException e) {
                 this.setErrorMessage(e);
                 value = startValue;
             }
         }
         String storeValue = Long.toString(value + stepSize);
-        VariableStore.getInstance().setVariable(varName, storeValue.getBytes());
+        VariableStore.getInstance().setVariable(varName, factory.createByteArray(storeValue));
         return input;
     }
 

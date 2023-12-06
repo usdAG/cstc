@@ -30,6 +30,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.RSAKeyProvider;
 
 import burp.Logger;
+import burp.api.montoya.core.ByteArray;
 
 @OperationInfos(name = "JWT Sign", category = OperationCategory.SIGNATURE, description = "Sign a given JWT payload")
 public class JWTSign extends Operation implements ActionListener, DocumentListener {
@@ -40,12 +41,12 @@ public class JWTSign extends Operation implements ActionListener, DocumentListen
 	private boolean hasError= false;
 	
 	@Override
-	protected byte[] perform(byte[] input) throws Exception {
+	protected ByteArray perform(ByteArray input) throws Exception {
 		if(this.hasError) {			
 			throw new IllegalArgumentException("Key not valid");
 		}
-		String token = JWT.create().withPayload(new String(input)).sign(this.currentAlgorithm);
-		return token.getBytes();
+		String token = JWT.create().withPayload(input.toString()).sign(this.currentAlgorithm);
+		return factory.createByteArray(token);
 	}
 
     public void createUI() {

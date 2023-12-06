@@ -2,6 +2,7 @@ package de.usd.cstchef.operations.utils;
 
 import javax.swing.JTextField;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
@@ -14,10 +15,10 @@ public class GetVariable extends Operation {
     private JTextField defaultTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String varName = this.varNameTxt.getText().trim();
-        byte[] var = VariableStore.getInstance().getVariable(varName);
-        return var == null ? this.defaultTxt.getText().getBytes() : var;
+        ByteArray var = VariableStore.getInstance().getVariable(varName);
+        return var == null ? factory.createByteArray(this.defaultTxt.getText()) : var;
     }
 
     public void createUI() {

@@ -1,11 +1,19 @@
 package de.usd.cstchef;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import burp.Logger;
 import de.usd.cstchef.view.RequestFilterDialog.Filter;
 
-public class FilterState {
+public class FilterState implements Serializable{
     private LinkedHashMap<Filter, Boolean> incomingFilterSettings;
     private LinkedHashMap<Filter, Boolean> outgoingFilterSettings;
     private LinkedHashMap<Filter, Boolean> formatFilterSettings;
@@ -72,7 +80,7 @@ public class FilterState {
         }
     }
 
-    public boolean shouldProcess(int tool, BurpOperation operation) {
+    public boolean shouldProcess(BurpOperation operation) {
         LinkedHashMap<Filter, Boolean> filterSettings;
         int filterMask = 0;
         switch (operation) {
@@ -97,7 +105,31 @@ public class FilterState {
                 filterMask |= filter.getValue();
             }
         }
-        return (filterMask & tool) != 0;
+        return filterMask != 0;
+    }
+
+    public LinkedHashMap<Filter,Boolean> getIncomingFilterSettings() {
+        return this.incomingFilterSettings;
+    }
+
+    public void setIncomingFilterSettings(LinkedHashMap<Filter,Boolean> incomingFilterSettings) {
+        this.incomingFilterSettings = incomingFilterSettings;
+    }
+
+    public LinkedHashMap<Filter,Boolean> getOutgoingFilterSettings() {
+        return this.outgoingFilterSettings;
+    }
+
+    public void setOutgoingFilterSettings(LinkedHashMap<Filter,Boolean> outgoingFilterSettings) {
+        this.outgoingFilterSettings = outgoingFilterSettings;
+    }
+
+    public LinkedHashMap<Filter,Boolean> getFormatFilterSettings() {
+        return this.formatFilterSettings;
+    }
+
+    public void setFormatFilterSettings(LinkedHashMap<Filter,Boolean> formatFilterSettings) {
+        this.formatFilterSettings = formatFilterSettings;
     }
 
     public enum BurpOperation {
