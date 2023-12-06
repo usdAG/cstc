@@ -29,7 +29,7 @@ public class Gzip extends Operation {
         in.close();
         gzos.close();
         out.close();
-        return ByteArray.byteArray(out.toByteArray());
+        return factory.createByteArray(out.toByteArray());
     }
 
 }

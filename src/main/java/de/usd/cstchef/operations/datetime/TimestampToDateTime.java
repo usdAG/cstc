@@ -29,7 +29,7 @@ public class TimestampToDateTime extends Operation {
         Instant instant = this.milliseconds.isSelected() ? Instant.ofEpochMilli(timestamp) : Instant.ofEpochSecond(timestamp);        
         Date date = Date.from(instant);        
         
-        return ByteArray.byteArray(format.format(date));
+        return factory.createByteArray(format.format(date));
     }
 
     public void createUI() {

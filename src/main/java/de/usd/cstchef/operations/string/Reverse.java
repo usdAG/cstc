@@ -12,7 +12,7 @@ public class Reverse extends Operation {
 
 	@Override
 	protected ByteArray perform(ByteArray input) throws Exception {
-		return ByteArray.byteArray(Arrays.reverse(input.getBytes()));
+		return factory.createByteArray(Arrays.reverse(input.getBytes()));
 	}
 
 }

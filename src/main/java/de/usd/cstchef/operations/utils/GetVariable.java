@@ -18,7 +18,7 @@ public class GetVariable extends Operation {
     protected ByteArray perform(ByteArray input) throws Exception {
         String varName = this.varNameTxt.getText().trim();
         ByteArray var = VariableStore.getInstance().getVariable(varName);
-        return var == null ? ByteArray.byteArray(this.defaultTxt.getText()) : var;
+        return var == null ? factory.createByteArray(this.defaultTxt.getText()) : var;
     }
 
     public void createUI() {

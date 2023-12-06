@@ -1,12 +1,15 @@
 package de.usd.cstchef.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Median;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class MedianTest extends Median
@@ -36,7 +39,7 @@ public class MedianTest extends Median
         isFloat = false;
 
         String testValue = "1,2,3,4,5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("3");
     }
@@ -48,8 +51,15 @@ public class MedianTest extends Median
         isFloat = true;
 
         String testValue = "1,2,3.5,4,5";
-        ByteArray result = perform(ByteArray.byteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("3.5");
+    }
+
+    @Before
+    public void setup(){
+        CstcObjectFactory factory = new UnitTestObjectFactory();
+        this.factory = factory;
+        super.factory = factory;
     }
 }

@@ -29,7 +29,7 @@ public class GUnzip extends Operation {
         gis.close();
         out.close();
         in.close();
-        return ByteArray.byteArray(out.toByteArray());
+        return factory.createByteArray(out.toByteArray());
     }
 
 }

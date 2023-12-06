@@ -41,11 +41,11 @@ public class JsonExtractor extends Operation {
         Class<? extends Object> resultClass = result.getClass();
 
         if( resultClass == String.class ) {
-            return ByteArray.byteArray((String)result);
+            return factory.createByteArray((String)result);
         } else if( resultClass == Integer.class || resultClass == Float.class || resultClass == Double.class ) {
-            return  ByteArray.byteArray((String)result);
+            return  factory.createByteArray((String)result);
         } else if( resultClass == Boolean.class ) {
-            return  ByteArray.byteArray((String)result);
+            return  factory.createByteArray((String)result);
         }
 
         throw new IllegalArgumentException("JSON data of unknown type.");

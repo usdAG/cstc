@@ -39,6 +39,6 @@ public class JWTDecode extends Operation {
 	@Override
 	protected ByteArray perform(ByteArray input) throws Exception {
 		DecodedJWT content = JWT.decode(input.toString());		
-		return ByteArray.byteArray(Base64.getDecoder().decode(content.getPayload()));
+		return factory.createByteArray(Base64.getDecoder().decode(content.getPayload()));
 	}
 }

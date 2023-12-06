@@ -42,11 +42,11 @@ public class JsonSetter extends SetterOperation implements ActionListener {
                 insertPath = "$";
 
             document = document.put(insertPath, getWhere(), getWhat());
-            return ByteArray.byteArray(document.jsonString());
+            return factory.createByteArray(document.jsonString());
         }
 
         document.set(getWhere(), getWhat());
-        return ByteArray.byteArray(document.jsonString());
+        return factory.createByteArray(document.jsonString());
     }
 
     @Override

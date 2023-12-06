@@ -21,7 +21,7 @@ public class UnixTimestamp extends Operation {
         else {
             timestamp = System.currentTimeMillis() / 1000L;
         }
-        return ByteArray.byteArray(String.valueOf(timestamp));
+        return factory.createByteArray(String.valueOf(timestamp));
     }
 
     public void createUI() {

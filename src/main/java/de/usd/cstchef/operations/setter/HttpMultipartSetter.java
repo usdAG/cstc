@@ -41,7 +41,7 @@ public class HttpMultipartSetter extends SetterOperation {
                 int changeLength = newValue.length();
                 int afterChangeLength = input.length() - beforeChangeLength - (end - start) - 1;
 
-                output = ByteArray.byteArray(beforeChangeLength + changeLength + afterChangeLength);
+                output = factory.createByteArray(beforeChangeLength + changeLength + afterChangeLength);
 
                 for (int i = 0; i < beforeChangeLength; i++) {
                     output.setByte(i, input.getByte(i));

@@ -53,7 +53,7 @@ public class RsaDecryption extends KeystoreOperation {
         if( selectedOutputMode.equals("Base64") )
             encrypted = Base64.encode(encrypted);
 
-        return ByteArray.byteArray(encrypted);
+        return factory.createByteArray(encrypted);
     }
 
     public void createMyUI() {

@@ -69,11 +69,11 @@ public class RandomNumber extends Operation {
         if(maxFracDigits == 0) {
             // use int mode
             int randomValue = secRand.nextInt(boundMax - boundMin + 1) + boundMin;
-            return ByteArray.byteArray(numberFormatter.format(randomValue));
+            return factory.createByteArray(numberFormatter.format(randomValue));
         } else {
             // use double mode
             double randomValue = boundMin + (boundMax - boundMin) * secRand.nextDouble();
-            return ByteArray.byteArray(numberFormatter.format(randomValue));
+            return factory.createByteArray(numberFormatter.format(randomValue));
         }
     }
 

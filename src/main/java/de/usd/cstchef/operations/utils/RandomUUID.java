@@ -13,7 +13,7 @@ public class RandomUUID extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
         final String uuid = UUID.randomUUID().toString();
-        return ByteArray.byteArray(uuid);
+        return factory.createByteArray(uuid);
     }
 
 }

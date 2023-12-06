@@ -18,7 +18,7 @@ public class DateTime extends Operation {
     protected ByteArray perform(ByteArray input) throws Exception {
         String pattern = this.patternTxt.getText().trim();
         SimpleDateFormat format = new SimpleDateFormat(pattern);
-        return ByteArray.byteArray(format.format(new Date()));
+        return factory.createByteArray(format.format(new Date()));
     }
 
     public void createUI() {

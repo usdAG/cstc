@@ -24,14 +24,14 @@ public class FromHex extends Operation {
         Delimiter delimiter = ToHex.delimiters.get(selectedKey);
 
         if (delimiter.value.length == 0) { // No delimiter
-            return ByteArray.byteArray(Hex.decode(input.getBytes()));
+            return factory.createByteArray(Hex.decode(input.getBytes()));
         }
 
         String delimiterStr = new String(delimiter.value);
         String inputStr = input.toString();
         inputStr = inputStr.replace(delimiterStr, "");
 
-        return ByteArray.byteArray(Hex.decode(inputStr.getBytes()));
+        return factory.createByteArray(Hex.decode(inputStr.getBytes()));
     }
 
     @Override

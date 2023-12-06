@@ -24,7 +24,7 @@ public class Hmac extends Operation {
         SecretKeySpec signingKey = new SecretKeySpec(key, algo);
         Mac mac = Mac.getInstance(algo);
         mac.init(signingKey);
-        return ByteArray.byteArray(Hex.encode(mac.doFinal(input.getBytes())));
+        return factory.createByteArray(Hex.encode(mac.doFinal(input.getBytes())));
     }
 
     @Override

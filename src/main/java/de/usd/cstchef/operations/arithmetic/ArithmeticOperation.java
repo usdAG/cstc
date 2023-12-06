@@ -36,9 +36,9 @@ public abstract class ArithmeticOperation extends Operation
             Double result_number = calculate(input_number, static_number);
 
             if ( isFloat() )
-                return ByteArray.byteArray(String.valueOf(result_number));
+                return factory.createByteArray(String.valueOf(result_number));
 
-            return ByteArray.byteArray(String.valueOf(Math.round(result_number)));
+            return factory.createByteArray(String.valueOf(Math.round(result_number)));
 
         }
 

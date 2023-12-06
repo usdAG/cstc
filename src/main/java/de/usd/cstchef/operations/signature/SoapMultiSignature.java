@@ -168,7 +168,7 @@ public class SoapMultiSignature extends KeystoreOperation {
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
       transformer.transform(source, result);
-      return ByteArray.byteArray(bos.toByteArray());
+      return factory.createByteArray(bos.toByteArray());
     }
 
     public void createMyUI() {

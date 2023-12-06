@@ -48,7 +48,7 @@ public class TimestampOffset extends Operation {
         	shiftedTimestamp = timestamp + calculatedOffset;
         }
         
-        return ByteArray.byteArray(String.valueOf(shiftedTimestamp));
+        return factory.createByteArray(String.valueOf(shiftedTimestamp));
     }
     
     private long getOffset(TimeOffsets interval, int offset, boolean milliseconds) {

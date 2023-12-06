@@ -14,7 +14,7 @@ public class HtmlDecode extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-        return ByteArray.byteArray(StringEscapeUtils.unescapeHtml4(input.toString()));
+        return factory.createByteArray(StringEscapeUtils.unescapeHtml4(input.toString()));
     }
 
 }

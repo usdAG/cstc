@@ -41,7 +41,7 @@ public class RegexExtractor extends Operation {
         if( buf.length() > 0 )
             buf.setLength(buf.length() - 1);
 
-        return ByteArray.byteArray(buf.toString());
+        return factory.createByteArray(buf.toString());
     }
 
     @Override

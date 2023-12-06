@@ -12,7 +12,7 @@ public abstract class DecryptionOperation extends CryptOperation {
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-        return ByteArray.byteArray(this.crypt(input.getBytes(), Cipher.DECRYPT_MODE, this.algorithm, (String) this.cipherMode.getSelectedItem(),
+        return factory.createByteArray(this.crypt(input.getBytes(), Cipher.DECRYPT_MODE, this.algorithm, (String) this.cipherMode.getSelectedItem(),
                 (String) this.paddings.getSelectedItem()));
     }
 
