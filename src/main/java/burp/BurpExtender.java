@@ -48,9 +48,7 @@ public class BurpExtender implements BurpExtension {
 
     private void restoreFilterState(PersistedObject persistence) {
         try {
-            Logger.getInstance().log(persistence.getString("FilterState"));
             BurpUtils.getInstance().setFilterState(new ObjectMapper().readValue(persistence.getString("FilterState"), FilterState.class));
-            Logger.getInstance().log("Loaded Filter Settings: " + BurpUtils.getInstance().getFilterState().getIncomingFilterSettings() + "\n" + BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings() + "\n" + BurpUtils.getInstance().getFilterState().getFormatFilterSettings());
             RequestFilterDialog.getInstance().updateFilterSettings();
         } catch (Exception e) {
             Logger.getInstance().log(
