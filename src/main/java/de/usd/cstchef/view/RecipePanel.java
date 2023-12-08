@@ -47,6 +47,7 @@ import burp.BurpUtils;
 import burp.CstcMessageEditorController;
 import burp.Logger;
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.BurpSuiteEdition;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.HttpMessage;
@@ -56,12 +57,12 @@ import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedObject;
-import de.usd.cstchef.FilterState;
 import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
-import de.usd.cstchef.FilterState.BurpOperation;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
+import de.usd.cstchef.view.filter.FilterState;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class RecipePanel extends JPanel implements ChangeListener {
 
@@ -78,7 +79,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private BurpEditorWrapper outputText;
 
     private JPanel operationLines;
-    private RequestFilterDialog requestFilterDialog;
 
     private CstcMessageEditorController controllerOrig;
     private CstcMessageEditorController controllerMod;
@@ -157,19 +157,23 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // add action items
         JButton filters = new JButton("Filter");
-        this.requestFilterDialog = RequestFilterDialog.getInstance();
         activeOperationsPanel.addActionComponent(filters);
         filters.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(null, requestFilterDialog, "Request Filter",
+                int result = JOptionPane.showConfirmDialog(null, RequestFilterDialog.getInstance(), "Request Filter",
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
-                    BurpUtils.getInstance().getFilterState().setFilterMask(requestFilterDialog.getFilterMask(BurpOperation.INCOMING),
-                            requestFilterDialog.getFilterMask(BurpOperation.OUTGOING),
-                            requestFilterDialog.getFilterMask(BurpOperation.FORMAT));
+                    BurpUtils.getInstance().getFilterState().setFilterMask(
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.INCOMING),
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING),
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.FORMAT));
                 }
                 BurpUtils.getInstance().getView().updateInactiveWarnings();
+                if (!BurpUtils.getInstance().getApi().burpSuite().version().edition()
+                        .equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
+                    saveFilterState();
+                }
             }
         });
 
@@ -274,8 +278,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
             JPanel panel = opPanel.getOperationsPanel();
             MoveOperationMouseAdapter moma = new MoveOperationMouseAdapter(opPanel, operationLines);
-            panel.addMouseListener(moma );
-            panel.addMouseMotionListener(moma );
+            panel.addMouseListener(moma);
+            panel.addMouseMotionListener(moma);
         }
 
         JScrollPane activeOperationsScrollPane = new JScrollPane(operationLines, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
@@ -300,7 +304,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
         operationsTree.addMouseMotionListener(dma);
 
         startAutoBakeTimer();
-        startAutoSaveTimer();
     }
 
     public void hideInactiveWarning(){
@@ -315,7 +318,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         if(messageType == MessageType.REQUEST){
             HttpRequest request = requestResponse.request();
             if(request == null)
-                    request = HttpRequest.httpRequest(ByteArray.byteArray("The message you have sent via the context menu is not a valid HTML request. Try using the formatting tab."));
+                request = HttpRequest.httpRequest(ByteArray.byteArray("The message you have sent via the context menu is not a valid HTML request. Try using the formatting tab."));
             this.inputText.setRequest(request);
         }
         else if(messageType == MessageType.RESPONSE) {
@@ -561,30 +564,25 @@ public class RecipePanel extends JPanel implements ChangeListener {
         }
     }
 
-    private void startAutoSaveTimer() {
-        TimerTask autoSaveTask = new TimerTask() {
-            public void run() {
-                autoSave();
-            }
-        };
-        Timer timer = new Timer("Timer");
-        long delay  = 10000L;
-        long period = 10000L;
-        timer.scheduleAtFixedRate(autoSaveTask, delay, period);
-    }
-
-    public void autoSave(){
+    private void saveRecipe() {
         PersistedObject savedState = BurpUtils.getInstance().getApi().persistence().extensionData();
         try {
             savedState.setString(this.operation + "Recipe", getStateAsJSON());
         } catch (IOException e) {
-            Logger.getInstance().err("Could not save recipes to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.");
+            Logger.getInstance().err(
+                    "Could not save recipes to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.");
         }
-        try{
-            savedState.setString("FilterState", new ObjectMapper().writeValueAsString(BurpUtils.getInstance().getFilterState()));
-        }
-        catch(Exception e){
-            Logger.getInstance().err("Could not save the filter state to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.\n" + e.getMessage());
+    }
+
+    private void saveFilterState() {
+        PersistedObject savedState = BurpUtils.getInstance().getApi().persistence().extensionData();
+        try {
+            savedState.setString("FilterState",
+                    new ObjectMapper().writeValueAsString(BurpUtils.getInstance().getFilterState()));
+        } catch (Exception e) {
+            Logger.getInstance().err(
+                    "Could not save the filter state to the Burp project. If you are running Burp Suite Community Edition, this behavior is expected since saving project files is exclusive to BurpSuite Pro users.\n"
+                            + e.getMessage());
         }
     }
 
@@ -598,6 +596,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
         this.autoBake();
+
+        if (!BurpUtils.getInstance().getApi().burpSuite().version().edition().equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
+            saveRecipe();
+        }
     }
 
 }

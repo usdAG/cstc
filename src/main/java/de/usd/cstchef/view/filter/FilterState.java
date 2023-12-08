@@ -1,21 +1,17 @@
-package de.usd.cstchef;
+package de.usd.cstchef.view.filter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import burp.Logger;
-import de.usd.cstchef.view.RequestFilterDialog.Filter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public class FilterState implements Serializable{
+    @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
     private LinkedHashMap<Filter, Boolean> incomingFilterSettings;
+    @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
     private LinkedHashMap<Filter, Boolean> outgoingFilterSettings;
+    @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
     private LinkedHashMap<Filter, Boolean> formatFilterSettings;
 
     public FilterState(LinkedHashMap<Filter, Boolean> incomingFilterSettings,
@@ -65,19 +61,6 @@ public class FilterState implements Serializable{
         this.incomingFilterSettings = incomingFilterMask;
         this.outgoingFilterSettings = outgoingFilterMask;
         this.formatFilterSettings = formatFilterMask;
-    }
-
-    public static String translateBurpOperation(BurpOperation operation) {
-        switch (operation) {
-            case INCOMING:
-                return "Incoming";
-            case OUTGOING:
-                return "Outgoing";
-            case FORMAT:
-                return "Formatting";
-            default:
-                return new String();
-        }
     }
 
     public boolean shouldProcess(BurpOperation operation) {
@@ -130,6 +113,10 @@ public class FilterState implements Serializable{
 
     public void setFormatFilterSettings(LinkedHashMap<Filter,Boolean> formatFilterSettings) {
         this.formatFilterSettings = formatFilterSettings;
+    }
+
+    public String toString(){
+        return "Incoming: " + this.incomingFilterSettings.toString() + "\nOutgoing: " + this.outgoingFilterSettings.toString() + "\nFormatting: " + this.formatFilterSettings.toString();
     }
 
     public enum BurpOperation {

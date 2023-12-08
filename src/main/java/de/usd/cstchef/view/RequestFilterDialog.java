@@ -12,10 +12,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ToolType;
-import de.usd.cstchef.FilterState;
-import de.usd.cstchef.FilterState.BurpOperation;
+import de.usd.cstchef.view.filter.Filter;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class RequestFilterDialog extends JPanel {
 
@@ -43,6 +42,7 @@ public class RequestFilterDialog extends JPanel {
             labelPanel.add(new JLabel(label));
         }
 
+        this.removeAll();
         this.add(labelPanel);
         this.add("Outgoing", outgoingPanel);
         this.add("Incoming", incomingPanel);
@@ -64,7 +64,7 @@ public class RequestFilterDialog extends JPanel {
 
         JPanel panel = new JPanel();
         panel.add(new JLabel(operation.toString()));
-        for (Map.Entry<Filter, Boolean> entry : BurpUtils.getInstance().getFilterState().getFilterMask(operation).entrySet()) {
+                for (Map.Entry<Filter, Boolean> entry : BurpUtils.getInstance().getFilterState().getFilterMask(operation).entrySet()) {
             Filter filter = entry.getKey();
             boolean selected = entry.getValue();
 
@@ -83,33 +83,11 @@ public class RequestFilterDialog extends JPanel {
         return panel;
     }
 
-    public LinkedHashMap<Filter, Boolean> getFilterMask(BurpOperation operation) {
-        return BurpUtils.getInstance().getFilterState().getFilterMask(operation);
+    public void updateFilterSettings(){
+        RequestFilterDialog.instance = new RequestFilterDialog();
     }
 
-    public class Filter {
-        private String name;
-        private int value;
-
-        public Filter(String name, int value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int value) {
-            this.value = value;
-        }
+    public LinkedHashMap<Filter, Boolean> getFilterMask(BurpOperation operation) {
+        return BurpUtils.getInstance().getFilterState().getFilterMask(operation);
     }
 }

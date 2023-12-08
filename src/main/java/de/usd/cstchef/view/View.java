@@ -11,24 +11,25 @@ import javax.swing.WindowConstants;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import burp.BurpUtils;
-import de.usd.cstchef.FilterState;
-import de.usd.cstchef.FilterState.BurpOperation;
 import de.usd.cstchef.Utils.MessageType;
+import de.usd.cstchef.view.filter.FilterState;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class View extends JPanel {
 
     private RecipePanel incomingRecipePanel;
     private RecipePanel outgoingRecipePanel;
     private RecipePanel formatRecipePanel;
-    private RequestFilterDialog requestFilterDialog;
 
-    public View() {
+    public View(){
+        this(new FilterState());
+    }
+
+    public View(FilterState state) {
         Security.addProvider(new BouncyCastleProvider());
 
         this.setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
-
-        requestFilterDialog = RequestFilterDialog.getInstance();
 
         incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, MessageType.RESPONSE);
         outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, MessageType.REQUEST);

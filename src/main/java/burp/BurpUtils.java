@@ -1,8 +1,8 @@
 package burp;
 
 import burp.api.montoya.MontoyaApi;
-import de.usd.cstchef.FilterState;
 import de.usd.cstchef.view.View;
+import de.usd.cstchef.view.filter.FilterState;
 
 public class BurpUtils {
 
