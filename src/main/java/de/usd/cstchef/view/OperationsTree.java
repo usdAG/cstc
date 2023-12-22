@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
+import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -30,7 +31,7 @@ public class OperationsTree extends JTree {
 
     public OperationsTree() {
         super();
-
+        this.setUI(new CustomTreeUI());
         this.model = (DefaultTreeModel) this.getModel();
         this.model.setRoot(this.createTree());
         this.setToolTipText("");
@@ -67,7 +68,7 @@ public class OperationsTree extends JTree {
         }
 
         ArrayList<DefaultMutableTreeNode> nodesToRemove = new ArrayList<>();
-           Enumeration<TreeNode> e = root.breadthFirstEnumeration();
+        Enumeration<TreeNode> e = root.breadthFirstEnumeration();
         while (e.hasMoreElements()) {
             DefaultMutableTreeNode nextNode = (DefaultMutableTreeNode) e.nextElement();
             if (!nextNode.toString().toLowerCase().contains(text.toLowerCase())) {
@@ -96,7 +97,7 @@ public class OperationsTree extends JTree {
         this.expandAll(new TreePath(root));
     }
 
-     private void removeNode(TreeNode selNode) {
+    private void removeNode(TreeNode selNode) {
         if (selNode == null) {
             return;
         }
@@ -109,7 +110,7 @@ public class OperationsTree extends JTree {
         if (selNode.getChildCount() == 0) {
             this.model.removeNodeFromParent((MutableTreeNode) selNode);
         }
-     }
+    }
 
     private DefaultMutableTreeNode createTree() {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode();
@@ -156,5 +157,13 @@ public class OperationsTree extends JTree {
             }
         }
         this.expandPath(path);
+    }
+
+    public class CustomTreeUI extends BasicTreeUI {
+        @Override
+        protected boolean shouldPaintExpandControl(javax.swing.tree.TreePath path, int row, boolean isExpanded,
+                boolean hasBeenExpanded, boolean isLeaf) {
+            return true; // Always display expand/collapse control
+        }
     }
 }

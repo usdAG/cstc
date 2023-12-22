@@ -118,7 +118,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
         searchTreePanel.add(searchText, BorderLayout.PAGE_START);
 
         OperationsTree operationsTree = new OperationsTree();
-        operationsTree.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         operationsTree.setRootVisible(false);
         searchTreePanel.add(new JScrollPane(operationsTree));
         searchText.getDocument().addDocumentListener(new DocumentListener() {
