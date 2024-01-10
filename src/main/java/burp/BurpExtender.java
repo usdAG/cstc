@@ -33,6 +33,7 @@ public class BurpExtender implements BurpExtension {
             restoreFilterState(persistence);
             restoreRecipe(persistence);
         }
+        view.updateInactiveWarnings();
     }
 
     private void restoreRecipe(PersistedObject persistence) {
