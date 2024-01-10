@@ -1,6 +1,7 @@
 package burp.objects;
 
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.core.Range;
@@ -205,6 +206,30 @@ public class CstcByteArray implements ByteArray{
     public ByteArray withAppended(ByteArray byteArray) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withAppended'");
+    }
+
+    @Override
+    public int indexOf(Pattern pattern) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'indexOf'");
+    }
+
+    @Override
+    public int indexOf(Pattern pattern, int startIndexInclusive, int endIndexExclusive) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'indexOf'");
+    }
+
+    @Override
+    public int countMatches(Pattern pattern) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countMatches'");
+    }
+
+    @Override
+    public int countMatches(Pattern pattern, int startIndexInclusive, int endIndexExclusive) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'countMatches'");
     }
 
 }
