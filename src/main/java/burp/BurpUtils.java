@@ -1,6 +1,7 @@
 package burp;
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.view.View;
 import de.usd.cstchef.view.filter.FilterState;
 
@@ -56,6 +57,10 @@ public class BurpUtils {
         } catch (IllegalAccessError e) {
             return false;
         }
+    }
+
+    public static ByteArray subArray(ByteArray array, int start, int end){
+        return start == end ? ByteArray.byteArray(0) : array.subArray( start, end);
     }
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.bouncycastle.util.encoders.Hex;
 
-
+import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.params.HttpParameter;
@@ -94,8 +94,8 @@ public abstract class SetterOperation extends Operation {
         int start = param.valueOffsets().startIndexInclusive();
         int end = param.valueOffsets().endIndexExclusive();
 
-        ByteArray prefix = request.subArray(0, start);
-        ByteArray rest = request.subArray(end, length);        
+        ByteArray prefix = BurpUtils.subArray(request, 0, start);
+        ByteArray rest = BurpUtils.subArray(request, end, length);        
         
         ByteArray newRequest = prefix.withAppended(newValue).withAppended(rest);
 

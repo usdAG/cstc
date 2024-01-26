@@ -36,7 +36,7 @@ public class Replace extends Operation {
             ByteArray replaced = exptTxt.getBytes();
             ByteArray replacement = replacementTxt.getBytes();
 
-            ByteArray newRequest = input.subArray(0, start).withAppended(replacement).withAppended(input.subArray(start + replaced.length(), input.length()));
+            ByteArray newRequest = BurpUtils.subArray(input, 0, start).withAppended(replacement).withAppended(BurpUtils.subArray(input, start + replaced.length(), input.length()));
 
             result = newRequest;
         }

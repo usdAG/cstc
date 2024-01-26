@@ -65,7 +65,7 @@ public class LineExtractor extends Operation {
         if( end < 0 )
             end = length;
 
-        ByteArray result = input.subArray(start, end);
+        ByteArray result = BurpUtils.subArray(input, start, end);
         return result;
     }
 

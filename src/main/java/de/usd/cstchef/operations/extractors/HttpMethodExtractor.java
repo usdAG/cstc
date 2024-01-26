@@ -19,7 +19,7 @@ public class HttpMethodExtractor extends Operation {
             int length = input.length();
 
             int methodEnd = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, 0, length);
-            ByteArray result = input.subArray(0, methodEnd);
+            ByteArray result = BurpUtils.subArray(input, 0, methodEnd);
 
             return result;
 

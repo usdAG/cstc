@@ -44,9 +44,9 @@ public class HttpSetUri extends Operation {
                 secondMark = lineMark;
             }
 
-            ByteArray method = input.subArray(0, firstMark + 1);
+            ByteArray method = BurpUtils.subArray(input, 0, firstMark + 1);
             ByteArray newUri = this.uriTxt.getBytes();
-            ByteArray rest = input.subArray(secondMark, length);
+            ByteArray rest = BurpUtils.subArray(input, secondMark, length);
 
             ByteArray newRequest = method.withAppended(newUri).withAppended(rest);
 

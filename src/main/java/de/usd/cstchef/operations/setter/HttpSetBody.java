@@ -21,7 +21,7 @@ public class HttpSetBody extends Operation {
         MontoyaApi api = BurpUtils.getInstance().getApi();
         int bodyOffset = HttpRequest.httpRequest(input).bodyOffset();
 
-        ByteArray noBody = input.subArray(0, bodyOffset);
+        ByteArray noBody = BurpUtils.subArray(input, 0, bodyOffset);
         ByteArray newBody = replacementTxt.getText();
         ByteArray newRequest = noBody.withAppended(newBody);
 

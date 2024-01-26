@@ -39,7 +39,7 @@ public class HttpHeaderExtractor extends Operation {
         if( valueEnd < 0 )
             throw new IllegalArgumentException("Invalid Header format.");
 
-        ByteArray result = input.subArray(valueStart + 1, valueEnd);
+        ByteArray result = BurpUtils.subArray(input, valueStart + 1, valueEnd);
         return result;
     }
 

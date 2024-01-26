@@ -45,7 +45,7 @@ public class HttpCookieExtractor extends Operation {
             if( end < 0 )
                 end = line_end;
 
-            return input.subArray(start+ cookieName.length() + 1, end);
+            return BurpUtils.subArray(input, start+ cookieName.length() + 1, end);
 
         } catch( IllegalArgumentException e ) {
             throw new IllegalArgumentException("Cookie not found.");

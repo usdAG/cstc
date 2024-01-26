@@ -39,7 +39,7 @@ public class HttpUriExtractor extends Operation {
                 secondMark = lineMark;
             }
 
-            ByteArray result = input.subArray(firstMark + 1, secondMark);
+            ByteArray result = BurpUtils.subArray(input, firstMark + 1, secondMark);
             return result;
 
         } catch (Exception e) {

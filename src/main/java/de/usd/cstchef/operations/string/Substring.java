@@ -4,6 +4,7 @@ import javax.swing.JSpinner;
 
 import org.bouncycastle.util.Arrays;
 
+import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
@@ -28,7 +29,7 @@ public class Substring extends Operation {
         if( end > input.length() )
             end = input.length() + 1;
 
-        ByteArray slice = input.subArray(start, end);
+        ByteArray slice = BurpUtils.subArray(input, start, end);
         return slice;
     }
 

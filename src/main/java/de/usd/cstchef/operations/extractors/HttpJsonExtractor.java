@@ -38,7 +38,7 @@ public class HttpJsonExtractor extends Operation {
             int start = param.valueOffsets().startIndexInclusive();
             int end = param.valueOffsets().endIndexExclusive();
 
-            ByteArray result = input.subArray(start, end);
+            ByteArray result = BurpUtils.subArray(input, start, end);
             return result;
     }
 

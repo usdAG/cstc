@@ -172,11 +172,8 @@ public class Utils {
     }
 
     public static ByteArray insertAtOffset(ByteArray input, int start, int end, ByteArray newValue) {
-        ByteArray prefix = input.subArray(0, start);
-        ByteArray rest = ByteArray.byteArray("");
-        if (end != input.length()){
-            rest = input.subArray(end, input.length());
-        }
+        ByteArray prefix = BurpUtils.subArray(input, 0, start);
+        ByteArray rest = BurpUtils.subArray(input, end, input.length());
         
         ByteArray output = prefix.withAppended(newValue).withAppended(rest);
         return output;

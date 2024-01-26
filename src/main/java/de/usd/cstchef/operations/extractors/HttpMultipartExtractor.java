@@ -39,7 +39,7 @@ public class HttpMultipartExtractor extends Operation {
                 int start = extractedParam.valueOffsets().startIndexInclusive();
                 int end = extractedParam.valueOffsets().endIndexExclusive();
 
-                ByteArray result = input.subArray(start, end);
+                ByteArray result = BurpUtils.subArray(input, start, end);
                 return result;
             }
         }

@@ -49,7 +49,7 @@ public class VariableStore {
 
         for (Map.Entry<String, ByteArray> entry : this.variables.entrySet()) {
             ByteArray orig = entry.getValue();
-            ByteArray newContent = orig.subArray( 0, orig.length());
+            ByteArray newContent = BurpUtils.subArray(orig, 0, orig.length());
             variablesCopy.put(entry.getKey(), newContent);
         }
         return variablesCopy;
