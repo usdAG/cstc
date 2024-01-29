@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import burp.api.montoya.core.ToolSource;
+
 public class FilterState implements Serializable{
     @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
     private LinkedHashMap<Filter, Boolean> incomingFilterSettings;
@@ -63,7 +65,7 @@ public class FilterState implements Serializable{
         this.formatFilterSettings = formatFilterMask;
     }
 
-    public boolean shouldProcess(BurpOperation operation) {
+    public boolean shouldProcess(BurpOperation operation, ToolSource toolSource) {
         LinkedHashMap<Filter, Boolean> filterSettings;
         int filterMask = 0;
         switch (operation) {
@@ -83,12 +85,11 @@ public class FilterState implements Serializable{
 
         for (Map.Entry<Filter, Boolean> entry : filterSettings.entrySet()) {
             Filter filter = entry.getKey();
-            boolean selected = entry.getValue();
-            if (selected) {
-                filterMask |= filter.getValue();
+            if(filter.getToolType().equals(toolSource.toolType())){
+                return entry.getValue() == true;
             }
         }
-        return filterMask != 0;
+        return false;
     }
 
     public LinkedHashMap<Filter,Boolean> getIncomingFilterSettings() {

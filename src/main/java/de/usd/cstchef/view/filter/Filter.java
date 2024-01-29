@@ -3,28 +3,29 @@ package de.usd.cstchef.view.filter;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import burp.Logger;
+import burp.api.montoya.core.ToolType;
 
 public class Filter {
-        private String name;
+        private ToolType toolType;
         private int value;
 
-        public Filter(String name, int value) {
-            this.name = name;
+        public Filter(ToolType toolType, int value) {
+            this.toolType = toolType;
             this.value = value;
         }
 
         public Filter(String s) {
             String[] pairs = s.split(":");
-            this.name = pairs[0].trim();
+            this.toolType = ToolType.valueOf(pairs[0].trim());
             this.value = Integer.parseInt(pairs[1].trim());
         }
 
-        public String getName() {
-            return name;
+        public ToolType getToolType() {
+            return toolType;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public void setToolType(ToolType name) {
+            this.toolType = name;
         }
 
         public int getValue() {
@@ -38,6 +39,6 @@ public class Filter {
         @Override
         @JsonValue
         public String toString() {
-            return name + ": " + value;
+            return toolType.toString() + ": " + value;
         }
     }

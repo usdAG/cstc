@@ -52,13 +52,13 @@ public class RequestFilterDialog extends JPanel {
 
     private JPanel createPanel(BurpOperation operation) {
         if (BurpUtils.getInstance().getFilterState().getFilterMask(operation).isEmpty()) {
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Proxy", ToolType.PROXY.ordinal()), false);
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Repeater", ToolType.REPEATER.ordinal()),
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.PROXY, ToolType.PROXY.ordinal()), false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.REPEATER, ToolType.REPEATER.ordinal()),
                     false);
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Scanner", ToolType.SCANNER.ordinal()), false);
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Intruder", ToolType.INTRUDER.ordinal()),
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.SCANNER, ToolType.SCANNER.ordinal()), false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.INTRUDER, ToolType.INTRUDER.ordinal()),
                     false);
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter("Extender", ToolType.EXTENSIONS.ordinal()),
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.EXTENSIONS, ToolType.EXTENSIONS.ordinal()),
                     false);
         }
 
