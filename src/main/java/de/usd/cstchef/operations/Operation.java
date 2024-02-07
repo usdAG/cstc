@@ -43,6 +43,8 @@ import burp.BurpObjectFactory;
 import burp.CstcObjectFactory;
 import burp.Logger;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.view.ui.FormatTextField;
 import de.usd.cstchef.view.ui.VariableTextArea;
@@ -472,6 +474,23 @@ public abstract class Operation extends JPanel {
 
     public void onRemove() {
 
+    }
+
+    public ByteArray parseRawMessage(ByteArray input){
+        try{
+            HttpRequest.httpRequest(input);
+            return perform(input, MessageType.REQUEST);
+        }
+        catch(Exception e){
+            
+        }
+        try{
+            HttpResponse.httpResponse(input);
+            return perform(input, MessageType.RESPONSE);
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("Input could not be parsed to a request or a response.");
+        }
     }
 
     private class NotifyChangeListener implements DocumentListener, ActionListener, ChangeListener {

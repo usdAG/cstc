@@ -48,21 +48,7 @@ public class HttpCookieExtractor extends Operation {
             return ByteArray.byteArray();
         }
         else{
-            //  try to parse to request and response, if not working, throw exception
-            try{
-                HttpRequest.httpRequest(input);
-                return this.perform(input, MessageType.REQUEST);
-            }
-            catch(Exception e){
-                
-            }
-            try{
-                HttpResponse.httpResponse(input);
-                return this.perform(input, MessageType.RESPONSE);
-            }
-            catch(Exception e){
-                throw new IllegalArgumentException("Input could not be parsed to a request or a response.");
-            }
+            return parseRawMessage(input);
         }
     }
 

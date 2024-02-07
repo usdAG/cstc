@@ -25,22 +25,14 @@ public class HttpXmlExtractor extends Operation {
 
         String keyName = fieldTxt.getText();
         if (keyName.equals(""))
-            return input;
+            return ByteArray.byteArray();
 
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-
-        ParsedHttpParameter param = HttpRequest.httpRequest(input).parameters().stream()
-                .filter(p -> p.name().equals(keyName)).findFirst().get();
-        if (param == null)
-            throw new IllegalArgumentException("Key not found.");
-        if (param.type() != HttpParameterType.XML)
-            throw new IllegalArgumentException("Parameter type is not XML");
-
-        int start = param.valueOffsets().startIndexInclusive();
-        int end = param.valueOffsets().endIndexExclusive();
-
-        ByteArray result = BurpUtils.subArray(input, start, end);
-        return result;
+        try{
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(keyName, HttpParameterType.XML));
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("Input is not a valid request");
+        }
     }
 
     @Override

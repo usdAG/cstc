@@ -27,24 +27,15 @@ public class HttpMultipartExtractor extends Operation {
 
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
-            return input;
+            return ByteArray.byteArray();
 
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-
-        List<ParsedHttpParameter> parameters = HttpRequest.httpRequest(input).parameters();
-        Iterator iterator = parameters.iterator();
-        while (iterator.hasNext()) {
-            ParsedHttpParameter extractedParam = (ParsedHttpParameter) iterator.next();
-            if (extractedParam.type() == HttpParameterType.BODY &&
-                    extractedParam.name().equals(parameterName)) {
-                int start = extractedParam.valueOffsets().startIndexInclusive();
-                int end = extractedParam.valueOffsets().endIndexExclusive();
-
-                ByteArray result = BurpUtils.subArray(input, start, end);
-                return result;
-            }
+        try{
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.MULTIPART_ATTRIBUTE));
         }
-        throw new IllegalArgumentException("Parameter name not found.");
+        catch(Exception e){
+            throw new IllegalArgumentException("Input is not a valid request");
+        }
+
 
     }
 

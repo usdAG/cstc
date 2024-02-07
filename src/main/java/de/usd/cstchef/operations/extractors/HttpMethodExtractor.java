@@ -5,6 +5,7 @@ import org.bouncycastle.util.Arrays;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -15,17 +16,11 @@ public class HttpMethodExtractor extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        try {
-            MontoyaApi api = BurpUtils.getInstance().getApi();
-            int length = input.length();
-
-            int methodEnd = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, 0, length);
-            ByteArray result = BurpUtils.subArray(input, 0, methodEnd);
-
-            return result;
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Provided input is not a valid http request.");
+        try{
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).method());
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("Input is not a valid request");
         }
     }
 }

@@ -7,6 +7,8 @@ import javax.swing.JCheckBox;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -26,25 +28,11 @@ public class HttpUriExtractor extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        try {
-
-            MontoyaApi api = BurpUtils.getInstance().getApi();
-            int length = input.length();
-
-            int firstMark = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, 0, length);
-            int lineMark = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, firstMark + 1, length);
-
-            int secondMark =  api.utilities().byteUtils().indexOf(input.getBytes(), "?".getBytes(), false, firstMark + 1, length);
-
-            if( this.checkbox.isSelected() || secondMark < 0 || secondMark >= lineMark) {
-                secondMark = lineMark;
-            }
-
-            ByteArray result = BurpUtils.subArray(input, firstMark + 1, secondMark);
-            return result;
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Provided input is not a valid http request.");
+        try{
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).url());
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("Input is not a valid request");
         }
     }
 }

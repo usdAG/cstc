@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
@@ -15,13 +16,14 @@ public class HttpBodyExtractor extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        try {
-            // TODO: differentiate between Response and Request
-            int bodyOffset = HttpResponse.httpResponse(input).bodyOffset();
-            //TODO: Check for range errors
-            return BurpUtils.subArray(input, bodyOffset, input.length());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Provided input is not a valid http request.");
+        if(messageType == MessageType.REQUEST){
+            return HttpRequest.httpRequest().body();
+        }
+        else if(messageType == MessageType.RESPONSE){
+            return HttpResponse.httpResponse().body();
+        }
+        else{
+            return parseRawMessage(input);
         }
     }
 }

@@ -26,20 +26,13 @@ public class HttpGetExtractor extends Operation {
 
         String parameterName = parameter.getText();
         if( parameterName.equals("") )
-            return input;
-
-
-        ParsedHttpParameter param = HttpRequest.httpRequest(input).parameters().stream().filter(p -> p.name().equals(parameterName)).findFirst().get();
-        if( param == null)
+            return ByteArray.byteArray();
+        try{
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL));
+        }
+        catch(Exception e){
             throw new IllegalArgumentException("Parameter name not found.");
-        if( param.type() != HttpParameterType.URL )
-            throw new IllegalArgumentException("Parameter type is not GET.");
-
-        int start = param.valueOffsets().startIndexInclusive();
-        int end = param.valueOffsets().endIndexExclusive();
-
-        ByteArray result = BurpUtils.subArray(input, start, end);
-        return result;
+        }
 
     }
 
