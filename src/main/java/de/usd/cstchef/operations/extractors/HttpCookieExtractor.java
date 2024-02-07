@@ -45,7 +45,7 @@ public class HttpCookieExtractor extends Operation {
                 if(c.name().equals(cookieName))
                     return ByteArray.byteArray(c.value());
             }
-            return input;
+            return ByteArray.byteArray();
         }
         else{
             //  try to parse to request and response, if not working, throw exception
