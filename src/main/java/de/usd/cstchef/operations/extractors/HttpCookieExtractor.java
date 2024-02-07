@@ -37,7 +37,7 @@ public class HttpCookieExtractor extends Operation {
                     return ByteArray.byteArray(seperateCookie[1]);
                 }
             }
-            return input;
+            return ByteArray.byteArray();
         }
         else if(messageType == MessageType.RESPONSE){
             HttpResponse response = HttpResponse.httpResponse(input);
