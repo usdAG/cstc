@@ -5,6 +5,7 @@ import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.ui.Selection;
+import burp.api.montoya.ui.editor.EditorOptions;
 import burp.api.montoya.ui.editor.RawEditor;
 import burp.api.montoya.ui.editor.extension.EditorCreationContext;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
@@ -24,7 +25,7 @@ public class MyExtensionProvidedHttpRequestEditor implements ExtensionProvidedHt
     {
         this.api = BurpUtils.getInstance().getApi();
         this.view = view;
-        requestEditor = api.userInterface().createRawEditor();
+        requestEditor = api.userInterface().createRawEditor(EditorOptions.READ_ONLY);
     }
 
     @Override
