@@ -5,6 +5,7 @@ import java.util.Arrays;
 import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -13,7 +14,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class HttpBodyExtractor extends Operation {
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         try {
             // TODO: differentiate between Response and Request
             int bodyOffset = HttpResponse.httpResponse(input).bodyOffset();

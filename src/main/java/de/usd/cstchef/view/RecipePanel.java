@@ -405,7 +405,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private ByteArray doBake(ByteArray input) {
+    private ByteArray doBake(ByteArray input, MessageType messageType) {
         if (input == null || input.length() == 0) {
             return ByteArray.byteArrayOfLength(0);
         }
@@ -434,7 +434,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                     continue;
                 }
 
-                intermediateResult = op.performOperation(intermediateResult);
+                intermediateResult = op.performOperation(intermediateResult, messageType);
                 outputChanged = true;
 
                 if (op.isBreakpoint()) {
@@ -496,7 +496,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray());
+                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray(), messageType);
                 HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -526,11 +526,11 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.bakeTimer.schedule(tt, threshold);
     }
 
-    public ByteArray bake(ByteArray input) {
+    public ByteArray bake(ByteArray input, MessageType messageType) {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();
-            return this.doBake(input);
+            return this.doBake(input, messageType);
         } finally {
             store.unlock();
         }

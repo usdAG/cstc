@@ -6,6 +6,7 @@ import javax.swing.JComboBox;
 import org.bouncycastle.util.encoders.Hex;
 
 import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -18,7 +19,7 @@ public class Hmac extends Operation {
     private JComboBox<String> hashAlgoBox;
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         byte[] key = this.keyTxt.getText().getBytes();
         String algo = "Hmac" + (String) hashAlgoBox.getSelectedItem();
         SecretKeySpec signingKey = new SecretKeySpec(key, algo);

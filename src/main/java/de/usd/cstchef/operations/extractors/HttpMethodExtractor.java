@@ -5,6 +5,7 @@ import org.bouncycastle.util.Arrays;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -13,7 +14,7 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpMethodExtractor extends Operation {
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         try {
             MontoyaApi api = BurpUtils.getInstance().getApi();
             int length = input.length();

@@ -6,6 +6,7 @@ import org.bouncycastle.util.Arrays;
 
 import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -17,7 +18,7 @@ public class Substring extends Operation {
     private JSpinner endSpinner;
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         int start = (int) startSpinner.getValue();
         int end = (int) endSpinner.getValue();

@@ -1,5 +1,6 @@
 package de.usd.cstchef.operations.signature;
 
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -37,7 +38,7 @@ import burp.api.montoya.core.ByteArray;
 public class JWTDecode extends Operation {
 
 	@Override
-	protected ByteArray perform(ByteArray input) throws Exception {
+	protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 		DecodedJWT content = JWT.decode(input.toString());		
 		return factory.createByteArray(Base64.getDecoder().decode(content.getPayload()));
 	}

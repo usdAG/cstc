@@ -43,6 +43,7 @@ import burp.BurpObjectFactory;
 import burp.CstcObjectFactory;
 import burp.Logger;
 import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.view.ui.FormatTextField;
 import de.usd.cstchef.view.ui.VariableTextArea;
 import de.usd.cstchef.view.ui.VariableTextField;
@@ -353,9 +354,9 @@ public abstract class Operation extends JPanel {
         return dim;
     }
 
-    public ByteArray performOperation(ByteArray input) {
+    public ByteArray performOperation(ByteArray input, MessageType messageType) {
         try {
-            ByteArray result = this.perform(input);
+            ByteArray result = this.perform(input, messageType);
             this.setErrorMessage(null);
             return result;
         } catch (EOFException e) {
@@ -463,7 +464,7 @@ public abstract class Operation extends JPanel {
         public OperationCategory category() default OperationCategory.MISC;
     }
 
-    protected abstract ByteArray perform(ByteArray input) throws Exception;
+    protected abstract ByteArray perform(ByteArray input, MessageType messageType) throws Exception;
 
     public void createUI() {
 

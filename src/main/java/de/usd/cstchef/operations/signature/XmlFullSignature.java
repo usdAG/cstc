@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.OperationCategory;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
 @OperationInfos(name = "Xml Full Signature", category = OperationCategory.SIGNATURE, description = "Create a XML signature over the whole document.")
@@ -23,7 +24,7 @@ public class XmlFullSignature extends XmlSignature {
       super();
     }
 
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setNamespaceAware(true);
       dbf.setXIncludeAware(false);

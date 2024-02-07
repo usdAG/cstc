@@ -1,5 +1,6 @@
 package de.usd.cstchef.operations.signature;
 
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -41,7 +42,7 @@ public class JWTSign extends Operation implements ActionListener, DocumentListen
 	private boolean hasError= false;
 	
 	@Override
-	protected ByteArray perform(ByteArray input) throws Exception {
+	protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 		if(this.hasError) {			
 			throw new IllegalArgumentException("Key not valid");
 		}
