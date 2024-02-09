@@ -36,7 +36,7 @@ public class HttpJsonExtractor extends Operation {
         
 
         if(messageType == MessageType.REQUEST){
-            return ByteArray.byteArray(HttpRequest.httpRequest().parameter(keyName, HttpParameterType.JSON).value());
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value());
         }
         else if(messageType == MessageType.RESPONSE){
             JsonExtractor extractor = new JsonExtractor();

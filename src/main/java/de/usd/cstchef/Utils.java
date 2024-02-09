@@ -9,12 +9,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -27,6 +29,9 @@ import burp.Logger;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.handler.ResponseAction;
+import burp.api.montoya.http.message.Cookie;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
 import de.usd.cstchef.operations.arithmetic.Divide;
@@ -171,6 +176,35 @@ public class Utils {
         return bytes;
     }
 
+    public static ByteArray httpRequestCookieExtractor(HttpRequest request, String cookieName){
+        String cookies = request.headerValue("Cookie");
+        return ByteArray.byteArray(cookieExtractor(cookies, cookieName));
+    }
+
+    private static String cookieExtractor(String cookies, String cookieName){
+        String[] splitCookies = cookies.split(";");
+        for(String sC : splitCookies){
+            String[] seperateCookie = sC.split("=");
+            if(seperateCookie[0].equals(cookieName)){
+                return seperateCookie[1];
+            }
+        }
+        return new String();
+    }
+
+    public static HttpRequest addCookieToHttpRequest(HttpRequest request, Cookie cookie){
+        String cookies = request.headerValue("Cookie");
+        if(cookies.contains(cookie.name())){
+            cookies.replace(cookie.name() + "=" + cookieExtractor(cookies, cookie.name()), cookie.toString());
+        }
+        else{
+            cookies += "; " + cookie.toString();
+        }
+        request.headers().remove(HttpHeader.httpHeader("Cookie"));
+        request.headers().add(HttpHeader.httpHeader("Cookie", cookies));
+        return request;
+    }
+
     public static ByteArray insertAtOffset(ByteArray input, int start, int end, ByteArray newValue) {
         ByteArray prefix = BurpUtils.subArray(input, 0, start);
         ByteArray rest = BurpUtils.subArray(input, end, input.length());
@@ -259,6 +293,48 @@ public class Utils {
         REQUEST,
         RESPONSE,
         RAW
+    }
+    
+    public static class CSTCCookie implements Cookie{
+        private String name;
+        private String value;
+
+        public CSTCCookie(String cookieName, String cookieValue){
+            this.name = cookieName;
+            this.value = cookieValue;
+        }
+
+        @Override
+        public String name() {
+            return name;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public String domain() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'domain'");
+        }
+
+        @Override
+        public String path() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'path'");
+        }
+
+        @Override
+        public Optional<ZonedDateTime> expiration() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'expiration'");
+        }
+
+        public String toString(){
+            return name() + "=" + value();
+        }
     }
 
 }

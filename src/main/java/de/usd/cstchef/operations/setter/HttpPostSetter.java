@@ -27,30 +27,18 @@ public class HttpPostSetter extends SetterOperation {
         if( parameterName.equals("") )
             return input;
 
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-
-        ByteArray newValue = getWhatBytes();
-
-        if( urlEncodeAll.isSelected() || urlEncode.isSelected() )
-            newValue = urlEncode(newValue, urlEncodeAll.isSelected(), api);
-
-        ParsedHttpParameter param = getParameter(input, parameterName, HttpParameterType.BODY, api);
-
-        if( param == null ) {
-
-            if( !addIfNotPresent.isSelected() )
+        try{
+            HttpRequest request = HttpRequest.httpRequest(input);
+            if(request.hasParameter(HttpParameter.parameter(parameterName, null, HttpParameterType.BODY)) || addIfNotPresent.isSelected()){
+                return request.withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.BODY)).toByteArray();
+            }
+            else{
                 return input;
-
-            HttpRequest.httpRequest(input).withAddedParameters(HttpParameter.bodyParameter(parameterName, "dummy"));
-            param = getParameter(input, parameterName, HttpParameterType.BODY, api);
-            if( param == null )
-                // This case occurs when the HTTP request is a JSON or XML request. Burp does not
-                // support adding parameters to these and therefore the request should stay unmodified.
-                throw new IllegalArgumentException("Failure while adding the parameter. Operation cannot be used on XML or JSON.");
+            }
         }
-
-        ByteArray newRequest = replaceParam(input, param, newValue);
-        return newRequest;
+        catch(Exception e){
+            throw new IllegalArgumentException("Input is not a valid request");
+        }
     }
 
     @Override

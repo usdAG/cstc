@@ -9,6 +9,7 @@ import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.Cookie;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -29,15 +30,7 @@ public class HttpCookieExtractor extends Operation {
 
         if(messageType == MessageType.REQUEST){
             HttpRequest request = HttpRequest.httpRequest(input);
-            String cookies = request.headerValue("Cookie");
-            String[] splitCookies = cookies.split(";");
-            for(String sC : splitCookies){
-                String[] seperateCookie = sC.split("=");
-                if(seperateCookie[0].equals(cookieName)){
-                    return ByteArray.byteArray(seperateCookie[1]);
-                }
-            }
-            return ByteArray.byteArray();
+            return Utils.httpRequestCookieExtractor(request, cookieName);
         }
         else if(messageType == MessageType.RESPONSE){
             HttpResponse response = HttpResponse.httpResponse(input);

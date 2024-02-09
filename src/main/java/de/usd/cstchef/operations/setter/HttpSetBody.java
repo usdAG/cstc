@@ -5,7 +5,11 @@ import java.util.Arrays;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
@@ -19,14 +23,19 @@ public class HttpSetBody extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-        int bodyOffset = HttpRequest.httpRequest(input).bodyOffset();
+        ByteArray replacementBody = replacementTxt.getText();
+        if( replacementBody.toString().equals("") )
+            return input;
 
-        ByteArray noBody = BurpUtils.subArray(input, 0, bodyOffset);
-        ByteArray newBody = replacementTxt.getText();
-        ByteArray newRequest = noBody.withAppended(newBody);
-
-        return newRequest;
+        if(messageType == MessageType.REQUEST){
+            return HttpRequest.httpRequest(input).withBody(replacementBody).toByteArray();
+        }
+        else if(messageType == MessageType.RESPONSE){
+            return HttpResponse.httpResponse(input).withBody(replacementBody).toByteArray();
+        }
+        else{
+            return parseRawMessage(input);
+        }
     }
 
     @Override

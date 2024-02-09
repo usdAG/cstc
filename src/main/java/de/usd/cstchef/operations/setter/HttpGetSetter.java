@@ -27,28 +27,18 @@ public class HttpGetSetter extends SetterOperation {
         if( parameterName.equals("") )
             return input;
 
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-
-        ByteArray newValue = getWhatBytes();
-
-        if( urlEncodeAll.isSelected() || urlEncode.isSelected() )
-            newValue = urlEncode(newValue, urlEncodeAll.isSelected(), api);
-
-        ParsedHttpParameter param = getParameter(input, parameterName, HttpParameterType.URL, api);
-        ByteArray newRequest;
-        if( param == null ) {
-
-            if( !addIfNotPresent.isSelected() )
+        try{
+            HttpRequest request = HttpRequest.httpRequest(input);
+            if(request.hasParameter(HttpParameter.parameter(parameterName, null, HttpParameterType.URL)) || addIfNotPresent.isSelected()){
+                return request.withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.URL)).toByteArray();
+            }
+            else{
                 return input;
-
-            HttpRequest reqWithModifiedParams = HttpRequest.httpRequest(input).withAddedParameters(HttpParameter.urlParameter(parameterName, "dummy"));
-            param = getParameter(reqWithModifiedParams.toByteArray(), parameterName, HttpParameterType.URL, api);
-            newRequest = replaceParam(reqWithModifiedParams.toByteArray(), param, newValue);
+            }
         }
-        else{
-            newRequest = replaceParam(input, param, newValue);
+        catch(Exception e){
+            throw new IllegalArgumentException("Input is not a valid request");
         }
-        return newRequest;
     }
 
     @Override
