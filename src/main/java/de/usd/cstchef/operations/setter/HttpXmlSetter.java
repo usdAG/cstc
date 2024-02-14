@@ -6,6 +6,7 @@ import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -20,16 +21,18 @@ public class HttpXmlSetter extends SetterOperation {
         if( parameterName.equals("") )
             return input;
 
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-
-        ByteArray newValue = getWhatBytes();
-        ParsedHttpParameter param = getParameter(input, parameterName, HttpParameterType.XML, api);
-
-        if( param == null )
-            return input;
-
-        ByteArray newRequest = replaceParam(input, param, newValue);
-        return newRequest;
+        try{
+            HttpRequest request = HttpRequest.httpRequest(input);
+            if(request.hasParameter(HttpParameter.parameter(parameterName, null, HttpParameterType.XML))){
+                return request.withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.XML)).toByteArray();
+            }
+            else{
+                return input;
+            }
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("Input is not a valid request");
+        }
     }
 
 }
