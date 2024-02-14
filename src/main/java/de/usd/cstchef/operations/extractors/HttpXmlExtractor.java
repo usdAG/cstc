@@ -25,7 +25,7 @@ public class HttpXmlExtractor extends Operation {
 
         String keyName = fieldTxt.getText();
         if (keyName.equals(""))
-            return ByteArray.byteArray();
+            return ByteArray.byteArray(0);
 
         try{
             return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(keyName, HttpParameterType.XML));

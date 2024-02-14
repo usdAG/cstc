@@ -23,7 +23,7 @@ public class HttpHeaderExtractor extends Operation {
 
         String headerName = headerNameField.getText();
         if( headerName.length() == 0 )
-            return ByteArray.byteArray();
+            return ByteArray.byteArray(0);
         if(messageType == MessageType.REQUEST){
             return ByteArray.byteArray(HttpRequest.httpRequest(input).headerValue(headerName));
         }

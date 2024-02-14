@@ -27,7 +27,7 @@ public class HttpMultipartExtractor extends Operation {
 
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
-            return ByteArray.byteArray();
+            return ByteArray.byteArray(0);
 
         try{
             return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.MULTIPART_ATTRIBUTE));

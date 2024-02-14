@@ -31,7 +31,7 @@ public class JsonExtractor extends Operation {
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         if( fieldTxt.getText().equals("") )
-            return input;
+            return ByteArray.byteArray(0);
 
         Object document = provider.parse(input.toString());
         Object result = JsonPath.read(document, fieldTxt.getText());

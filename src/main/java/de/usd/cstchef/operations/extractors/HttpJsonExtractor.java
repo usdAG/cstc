@@ -31,7 +31,7 @@ public class HttpJsonExtractor extends Operation {
 
         String keyName = fieldTxt.getText();
         if( keyName.equals("") )
-            return ByteArray.byteArray();
+            return ByteArray.byteArray(0);
 
         
 

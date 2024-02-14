@@ -26,7 +26,7 @@ public class HttpCookieExtractor extends Operation {
 
         String cookieName = cookieNameField.getText();
         if( cookieName.length() == 0 )
-            return ByteArray.byteArray();
+            return ByteArray.byteArray(0);
 
         if(messageType == MessageType.REQUEST){
             HttpRequest request = HttpRequest.httpRequest(input);
