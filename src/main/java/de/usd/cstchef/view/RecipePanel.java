@@ -456,23 +456,21 @@ public class RecipePanel extends JPanel implements ChangeListener {
         if (BurpUtils.inBurp()) {
             MontoyaApi api = BurpUtils.getInstance().getApi();
             HttpRequest req;
+            List<HttpHeader> headers;
+            int offset;
             try {
                 req = HttpRequest.httpRequest(result);
-
+                headers = req.headers();
+                offset = req.bodyOffset();
             } catch( IllegalArgumentException e ) {
                 // In this case there is no valid HTTP request and no Content-Length update is requried.
                 return result;
             }
 
-            List<HttpHeader> headers = req.headers();
-            int offset = req.bodyOffset();
-
             if( result.length() == offset ) {
                 // In this case there is no body and we do not need to update the content length header.
                 return result;
             }
-
-            
 
             for(HttpHeader header : headers) {
                 if(header.toString().startsWith("Content-Length:")) {
