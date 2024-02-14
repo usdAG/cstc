@@ -30,7 +30,7 @@ public class HttpSetCookie extends SetterOperation {
 
         if (messageType == MessageType.REQUEST) {
             HttpRequest request = HttpRequest.httpRequest(input);
-            if (!Utils.httpRequestCookieExtractor(request, cookieName).equals(ByteArray.byteArray())
+            if (!Utils.httpRequestCookieExtractor(request, cookieName).equals(ByteArray.byteArray(0))
                     || addIfNotPresent.isSelected()) {
                 return Utils.addCookieToHttpRequest(request, new Utils.CSTCCookie(cookieName, cookieValue))
                         .toByteArray();
