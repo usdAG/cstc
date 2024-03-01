@@ -182,7 +182,7 @@ public class Utils {
     }
 
     private static String cookieExtractor(String cookies, String cookieName){
-        String[] splitCookies = cookies.split(";");
+        String[] splitCookies = cookies.split("\\s*;\\s*");
         for(String sC : splitCookies){
             String[] seperateCookie = sC.split("=");
             if(seperateCookie[0].equals(cookieName)){
@@ -195,14 +195,12 @@ public class Utils {
     public static HttpRequest addCookieToHttpRequest(HttpRequest request, Cookie cookie){
         String cookies = request.headerValue("Cookie");
         if(cookies.contains(cookie.name())){
-            cookies.replace(cookie.name() + "=" + cookieExtractor(cookies, cookie.name()), cookie.toString());
+            cookies = cookies.replace(cookie.name() + "=" + cookieExtractor(cookies, cookie.name()), cookie.toString());
         }
         else{
             cookies += "; " + cookie.toString();
         }
-        request.headers().remove(HttpHeader.httpHeader("Cookie"));
-        request.headers().add(HttpHeader.httpHeader("Cookie", cookies));
-        return request;
+        return request.withUpdatedHeader(HttpHeader.httpHeader("Cookie", cookies));
     }
 
     public static ByteArray insertAtOffset(ByteArray input, int start, int end, ByteArray newValue) {

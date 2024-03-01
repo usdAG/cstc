@@ -23,7 +23,7 @@ public class HttpXmlSetter extends SetterOperation {
 
         try{
             HttpRequest request = HttpRequest.httpRequest(input);
-            if(request.hasParameter(HttpParameter.parameter(parameterName, null, HttpParameterType.XML))){
+            if(request.hasParameter(parameterName, HttpParameterType.XML)){
                 return request.withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.XML)).toByteArray();
             }
             else{

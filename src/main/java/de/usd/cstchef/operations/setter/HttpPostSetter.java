@@ -29,7 +29,7 @@ public class HttpPostSetter extends SetterOperation {
 
         try{
             HttpRequest request = HttpRequest.httpRequest(input);
-            if(request.hasParameter(HttpParameter.parameter(parameterName, null, HttpParameterType.BODY)) || addIfNotPresent.isSelected()){
+            if(request.hasParameter(parameterName, HttpParameterType.BODY) || addIfNotPresent.isSelected()){
                 return request.withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.BODY)).toByteArray();
             }
             else{

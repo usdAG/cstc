@@ -1,11 +1,14 @@
 package de.usd.cstchef.operations.setter;
 
+import java.util.List;
+
 import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.Cookie;
+import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.requests.HttpRequest;
@@ -34,15 +37,24 @@ public class HttpSetCookie extends SetterOperation {
                     || addIfNotPresent.isSelected()) {
                 return Utils.addCookieToHttpRequest(request, new Utils.CSTCCookie(cookieName, cookieValue))
                         .toByteArray();
-            }
-            else{
+            } else {
                 return input;
             }
         } else if (messageType == MessageType.RESPONSE) {
             HttpResponse response = HttpResponse.httpResponse(input);
-            if (response.hasCookie(cookieName) || addIfNotPresent.isSelected()) {
-                response.cookies().add(new Utils.CSTCCookie(cookieName, cookieValue));
-                return response.toByteArray();
+            List<HttpHeader> headers = response.headers();
+            for (HttpHeader h : headers) {
+                if (h.name().equals("Set-Cookie")) {
+                    if (h.value().contains(cookieName)) {
+                        return response.withRemovedHeader(h)
+                                .withAddedHeader(HttpHeader.httpHeader("Set-Cookie", cookieName + "=" + cookieValue))
+                                .toByteArray();
+                    }
+                }
+            }
+            if (addIfNotPresent.isSelected()) {
+                return response.withAddedHeader(HttpHeader.httpHeader("Set-Cookie", cookieName + "=" + cookieValue))
+                        .toByteArray();
             } else {
                 return input;
             }

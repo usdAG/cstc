@@ -30,7 +30,7 @@ public class HttpMultipartExtractor extends Operation {
             return ByteArray.byteArray(0);
 
         try{
-            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.MULTIPART_ATTRIBUTE));
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.BODY));
         }
         catch(Exception e){
             throw new IllegalArgumentException("Input is not a valid request");

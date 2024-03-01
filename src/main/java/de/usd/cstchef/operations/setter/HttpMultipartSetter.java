@@ -26,7 +26,7 @@ public class HttpMultipartSetter extends SetterOperation {
             return input;
 
         try{
-            return HttpRequest.httpRequest(input).withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.MULTIPART_ATTRIBUTE)).toByteArray();
+            return HttpRequest.httpRequest(input).withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.BODY)).toByteArray();
 
         }
         catch(Exception e){

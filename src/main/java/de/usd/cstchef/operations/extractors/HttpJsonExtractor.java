@@ -39,7 +39,7 @@ public class HttpJsonExtractor extends Operation {
             return ByteArray.byteArray(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value());
         }
         else if(messageType == MessageType.RESPONSE){
-            JsonExtractor extractor = new JsonExtractor();
+            JsonExtractor extractor = new JsonExtractor(keyName);
             return extractor.perform(HttpResponse.httpResponse(input).body(), messageType);
         }
         else{

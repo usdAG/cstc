@@ -1,6 +1,7 @@
 package de.usd.cstchef.operations.extractors;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 
@@ -8,6 +9,7 @@ import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
@@ -28,10 +30,15 @@ public class HttpUriExtractor extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        try{
-            return ByteArray.byteArray(HttpRequest.httpRequest(input).url());
-        }
-        catch(Exception e){
+        try {
+            if (!checkbox.isSelected()) {
+                HttpRequest request = HttpRequest.httpRequest(input);
+                String url = request.url();
+                return ByteArray.byteArray(url.split("\\?")[0]);
+            } else {
+                return ByteArray.byteArray(HttpRequest.httpRequest(input).url());
+            }
+        } catch (Exception e) {
             throw new IllegalArgumentException("Input is not a valid request");
         }
     }

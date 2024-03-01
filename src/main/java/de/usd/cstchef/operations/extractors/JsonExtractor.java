@@ -20,11 +20,16 @@ public class JsonExtractor extends Operation {
     //TODO should this be a VariableTextField?
     private JTextField fieldTxt;
 
-    public JsonExtractor() {
+    public JsonExtractor(){
+        this(new String());
+    }
+
+    public JsonExtractor(String key) {
         super();
         if (JsonExtractor.provider == null) {
             JsonExtractor.provider = Configuration.defaultConfiguration().jsonProvider();
         }
+        this.setKey(key);
     }
 
     @Override
@@ -56,6 +61,10 @@ public class JsonExtractor extends Operation {
     public void createUI() {
         this.fieldTxt = new JTextField();
         this.addUIElement("Field", this.fieldTxt);
+    }
+    
+    public void setKey(String key){
+        this.fieldTxt.setText(key);
     }
 
 }
