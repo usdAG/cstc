@@ -16,6 +16,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -80,7 +82,10 @@ public abstract class Operation extends JPanel {
 
     private int operationSkip = 0;
     private int laneSkip = 0;
-    
+
+    private final String httpRequestRegex = "(GET|POST|HEAD|PUT|DELETE|CONNECT|OPTIONS|TRACE|PATCH)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
+    private final String httpResponseRegex = "HTTP/\\d(\\.\\d)?\\s\\d{3}\\s(\\w*\\s?)*";
+
     public CstcObjectFactory factory;
 
     public Operation() {
@@ -187,7 +192,7 @@ public abstract class Operation extends JPanel {
     public Map<String, Object> getState() {
         Map<String, Object> properties = new HashMap<>();
         for (String key : this.uiElements.keySet()) {
-            if( key.startsWith("noupdate") )
+            if (key.startsWith("noupdate"))
                 properties.put(key, null);
             else
                 properties.put(key, getUiValues(this.uiElements.get(key)));
@@ -210,7 +215,7 @@ public abstract class Operation extends JPanel {
             result = ((JSpinner) comp).getValue();
         } else if (comp instanceof JComboBox) {
             result = ((JComboBox<?>) comp).getSelectedItem();
-            if( result != null )
+            if (result != null)
                 result = result.toString();
         } else if (comp instanceof JCheckBox) {
             result = ((JCheckBox) comp).isSelected();
@@ -248,7 +253,7 @@ public abstract class Operation extends JPanel {
         } else if (comp instanceof FormatTextField) {
             ((FormatTextField) comp).setValues((Map<String, String>) value);
         } else if (comp instanceof JFileChooser) {
-            ((JFileChooser) comp).setName((String)value);
+            ((JFileChooser) comp).setName((String) value);
         }
     }
 
@@ -306,7 +311,7 @@ public abstract class Operation extends JPanel {
         this.addUIElement(caption, comp, true, identifier);
     }
 
-    protected void addUIElement(String caption, Component comp, boolean notifyChange,  String identifier) {
+    protected void addUIElement(String caption, Component comp, boolean notifyChange, String identifier) {
         comp.setCursor(Cursor.getDefaultCursor());
 
         Box box = Box.createHorizontalBox();
@@ -320,7 +325,7 @@ public abstract class Operation extends JPanel {
         box.add(comp);
         this.contentBox.add(box);
         this.contentBox.add(Box.createVerticalStrut(10));
-        if( identifier == null )
+        if (identifier == null)
             identifier = caption;
         this.uiElements.put(identifier, comp);
 
@@ -417,10 +422,10 @@ public abstract class Operation extends JPanel {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-		refreshColors();
-		validate();
-		repaint();
-		notifyChange();
+        refreshColors();
+        validate();
+        repaint();
+        notifyChange();
     }
 
     public boolean isError() {
@@ -432,7 +437,7 @@ public abstract class Operation extends JPanel {
     }
 
     public void setOperationSkip(int count) {
-        if( count < 0 )
+        if (count < 0)
             count = 0;
         this.operationSkip = count;
     }
@@ -442,7 +447,7 @@ public abstract class Operation extends JPanel {
     }
 
     public void setLaneSkip(int count) {
-        if( count < 0 )
+        if (count < 0)
             count = 0;
         this.laneSkip = count;
     }
@@ -476,21 +481,21 @@ public abstract class Operation extends JPanel {
 
     }
 
-    public ByteArray parseRawMessage(ByteArray input){
-        try{
-            HttpRequest.httpRequest(input);
+    public ByteArray parseRawMessage(ByteArray input) throws Exception{
+
+        final Pattern requestPattern = Pattern.compile(httpRequestRegex);
+        final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
+        if (requestMatcher.matches()) {
             return perform(input, MessageType.REQUEST);
         }
-        catch(Exception e){
-            
-        }
-        try{
-            HttpResponse.httpResponse(input);
+
+        final Pattern responsePattern = Pattern.compile(httpResponseRegex);
+        final Matcher responseMatcher = responsePattern.matcher(input.toString().split("\n")[0].trim());
+        if (responseMatcher.matches()) {
             return perform(input, MessageType.RESPONSE);
         }
-        catch(Exception e){
-            throw new IllegalArgumentException("Input could not be parsed to a request or a response.");
-        }
+
+        throw new IllegalArgumentException("Input is not a valid HTTP message");
     }
 
     private class NotifyChangeListener implements DocumentListener, ActionListener, ChangeListener {

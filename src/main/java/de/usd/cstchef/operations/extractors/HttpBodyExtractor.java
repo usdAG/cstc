@@ -11,7 +11,7 @@ import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 
-@OperationInfos(name = "HTTP Body", category = OperationCategory.EXTRACTORS, description = "Extracts the body of a HTTP request.")
+@OperationInfos(name = "HTTP Body", category = OperationCategory.EXTRACTORS, description = "Extracts the body of a HTTP messages.")
 public class HttpBodyExtractor extends Operation {
 
     @Override

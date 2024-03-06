@@ -30,16 +30,23 @@ public class HttpUriExtractor extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        try {
-            if (!checkbox.isSelected()) {
-                HttpRequest request = HttpRequest.httpRequest(input);
-                String url = request.url();
-                return ByteArray.byteArray(url.split("\\?")[0]);
-            } else {
-                return ByteArray.byteArray(HttpRequest.httpRequest(input).url());
+
+        if (messageType == MessageType.REQUEST) {
+            try {
+                if (!checkbox.isSelected()) {
+                    HttpRequest request = HttpRequest.httpRequest(input);
+                    String url = request.url();
+                    return ByteArray.byteArray(url.split("\\?")[0]);
+                } else {
+                    return ByteArray.byteArray(HttpRequest.httpRequest(input).url());
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Input is not a valid request");
             }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Input is not a valid request");
+        } else if (messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        } else {
+            return parseRawMessage(input);
         }
     }
 }

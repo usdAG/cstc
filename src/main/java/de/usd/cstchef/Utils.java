@@ -184,9 +184,9 @@ public class Utils {
     private static String cookieExtractor(String cookies, String cookieName){
         String[] splitCookies = cookies.split("\\s*;\\s*");
         for(String sC : splitCookies){
-            String[] seperateCookie = sC.split("=");
-            if(seperateCookie[0].equals(cookieName)){
-                return seperateCookie[1];
+            String[] separateCookie = sC.split("=");
+            if(separateCookie[0].equals(cookieName)){
+                return separateCookie[1];
             }
         }
         return new String();

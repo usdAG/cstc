@@ -23,14 +23,20 @@ public class HttpPostExtractor extends Operation {
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String parameterName = parameter.getText();
-        if( parameterName.equals("") )
+        if (parameterName.equals(""))
             return ByteArray.byteArray(0);
 
-        try{
-            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.BODY));
-        }
-        catch(Exception e){
-            throw new IllegalArgumentException("Input is not a valid request");
+        if (messageType == MessageType.REQUEST) {
+            try {
+                return ByteArray.byteArray(
+                        HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.BODY));
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Input is not a valid request");
+            }
+        } else if (messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        } else {
+            return parseRawMessage(input);
         }
     }
 

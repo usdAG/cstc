@@ -1,15 +1,19 @@
 package de.usd.cstchef.operations.extractors;
 import java.util.Arrays;
 
+
 import burp.BurpExtender;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.Cookie;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.ui.editor.HttpRequestEditor;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -27,12 +31,22 @@ public class HttpGetExtractor extends Operation {
         String parameterName = parameter.getText();
         if( parameterName.equals("") )
             return ByteArray.byteArray(0);
-        try{
-            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL));
+
+        if(messageType == MessageType.REQUEST){
+            try{
+                return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL));
+            }
+            catch(Exception e){
+                throw new IllegalArgumentException("Parameter name not found.");
+            }
         }
-        catch(Exception e){
-            throw new IllegalArgumentException("Parameter name not found.");
+        else if(messageType == MessageType.RESPONSE){
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
         }
+        else{
+            return parseRawMessage(input);
+        }
+        
 
     }
 
