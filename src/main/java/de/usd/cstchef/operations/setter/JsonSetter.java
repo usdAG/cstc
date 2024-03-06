@@ -8,10 +8,8 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JCheckBox;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
 import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -25,29 +23,7 @@ public class JsonSetter extends SetterOperation implements ActionListener {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-
-        if( getWhere().equals("") )
-            return input;
-
-        DocumentContext document = JsonPath.parse(input.toString());
-
-        try {
-            document.read(getWhere());
-        } catch( Exception e ) {
-
-            if( !addIfNotPresent.isSelected() )
-                throw new IllegalArgumentException("Key not found.");
-
-            String insertPath = this.path.getText();
-            if( insertPath.equals("Insert-Path") || insertPath.equals("") )
-                insertPath = "$";
-
-            document = document.put(insertPath, getWhere(), getWhat());
-            return factory.createByteArray(document.jsonString());
-        }
-
-        document.set(getWhere(), getWhat());
-        return factory.createByteArray(document.jsonString());
+        return Utils.jsonSetter(input, getWhere(), getWhat(), addIfNotPresent.isSelected(), path.getText());
     }
 
     @Override

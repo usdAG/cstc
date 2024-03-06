@@ -23,8 +23,11 @@ import java.util.zip.ZipInputStream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
 
 import burp.BurpUtils;
+import burp.CstcObjectFactory;
 import burp.Logger;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
@@ -209,6 +212,32 @@ public class Utils {
         
         ByteArray output = prefix.withAppended(newValue).withAppended(rest);
         return output;
+    }
+
+    public static ByteArray jsonSetter(ByteArray input, String key, String value, boolean addIfNotPresent, String path){
+        DocumentContext document = JsonPath.parse(input.toString());
+
+            try {
+                document.read(key);
+            } catch (Exception e) {
+
+                if (!addIfNotPresent)
+                    throw new IllegalArgumentException("Key not found.");
+
+                String insertPath = path;
+                if (insertPath.equals("Insert-Path") || insertPath.equals(""))
+                    insertPath = "$";
+
+                try {
+                    document = document.put(insertPath, key, value);
+                    return  ByteArray.byteArray(document.jsonString());
+                } catch (Exception ex) {
+                    throw new IllegalArgumentException("Could not parse JSON from input");
+                }
+            }
+
+            document.set(key, value);
+            return ByteArray.byteArray(document.jsonString());
     }
 
     public static Class<? extends Operation>[] getOperationsBurp() {
