@@ -76,12 +76,5 @@ public class View extends JPanel {
             if(b == true)
                 outgoingRecipePanel.hideInactiveWarning();
         }
-
-        formatRecipePanel.showInactiveWarning();
-        for(Boolean b : BurpUtils.getInstance().getFilterState().getFormatFilterSettings().values()){
-            if(b == true)
-                formatRecipePanel.hideInactiveWarning();
-        }
-
     }
 }

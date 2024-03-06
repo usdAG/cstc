@@ -13,20 +13,15 @@ public class FilterState implements Serializable{
     private LinkedHashMap<Filter, Boolean> incomingFilterSettings;
     @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
     private LinkedHashMap<Filter, Boolean> outgoingFilterSettings;
-    @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
-    private LinkedHashMap<Filter, Boolean> formatFilterSettings;
 
     public FilterState(LinkedHashMap<Filter, Boolean> incomingFilterSettings,
-            LinkedHashMap<Filter, Boolean> outgoingFilterSettings,
-            LinkedHashMap<Filter, Boolean> formatFilterSettings) {
+            LinkedHashMap<Filter, Boolean> outgoingFilterSettings) {
         this.incomingFilterSettings = incomingFilterSettings;
         this.outgoingFilterSettings = outgoingFilterSettings;
-        this.formatFilterSettings = formatFilterSettings;
     }
 
     public FilterState() {
-        this(new LinkedHashMap<Filter, Boolean>(), new LinkedHashMap<Filter, Boolean>(),
-                new LinkedHashMap<Filter, Boolean>());
+        this(new LinkedHashMap<Filter, Boolean>(), new LinkedHashMap<Filter, Boolean>());
     }
 
     public void setFilterMask(LinkedHashMap<Filter, Boolean> filterMask, BurpOperation operation) {
@@ -36,9 +31,6 @@ public class FilterState implements Serializable{
                 break;
             case OUTGOING:
                 outgoingFilterSettings = filterMask;
-                break;
-            case FORMAT:
-                formatFilterSettings = filterMask;
                 break;
             default:
                 break;
@@ -51,18 +43,15 @@ public class FilterState implements Serializable{
                 return incomingFilterSettings;
             case OUTGOING:
                 return outgoingFilterSettings;
-            case FORMAT:
-                return formatFilterSettings;
             default:
                 return new LinkedHashMap<Filter, Boolean>();
         }
     }
 
     public void setFilterMask(LinkedHashMap<Filter, Boolean> incomingFilterMask,
-            LinkedHashMap<Filter, Boolean> outgoingFilterMask, LinkedHashMap<Filter, Boolean> formatFilterMask) {
+            LinkedHashMap<Filter, Boolean> outgoingFilterMask) {
         this.incomingFilterSettings = incomingFilterMask;
         this.outgoingFilterSettings = outgoingFilterMask;
-        this.formatFilterSettings = formatFilterMask;
     }
 
     public boolean shouldProcess(BurpOperation operation, ToolSource toolSource) {
@@ -74,9 +63,6 @@ public class FilterState implements Serializable{
                 break;
             case OUTGOING:
                 filterSettings = outgoingFilterSettings;
-                break;
-            case FORMAT:
-                filterSettings = formatFilterSettings;
                 break;
             default:
                 filterSettings = new LinkedHashMap<>();
@@ -108,16 +94,8 @@ public class FilterState implements Serializable{
         this.outgoingFilterSettings = outgoingFilterSettings;
     }
 
-    public LinkedHashMap<Filter,Boolean> getFormatFilterSettings() {
-        return this.formatFilterSettings;
-    }
-
-    public void setFormatFilterSettings(LinkedHashMap<Filter,Boolean> formatFilterSettings) {
-        this.formatFilterSettings = formatFilterSettings;
-    }
-
     public String toString(){
-        return "Incoming: " + this.incomingFilterSettings.toString() + "\nOutgoing: " + this.outgoingFilterSettings.toString() + "\nFormatting: " + this.formatFilterSettings.toString();
+        return "Incoming: " + this.incomingFilterSettings.toString() + "\nOutgoing: " + this.outgoingFilterSettings.toString();
     }
 
     public enum BurpOperation {

@@ -28,11 +28,10 @@ public class RequestFilterDialog extends JPanel {
     }
 
     private RequestFilterDialog() {
-        this.setLayout(new GridLayout(0, 4));
+        this.setLayout(new GridLayout(0, 3));
 
         JPanel incomingPanel = createPanel(BurpOperation.INCOMING);
         JPanel outgoingPanel = createPanel(BurpOperation.OUTGOING);
-        JPanel formatPanel = createPanel(BurpOperation.FORMAT);
 
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new GridLayout(7, 0));
@@ -46,7 +45,6 @@ public class RequestFilterDialog extends JPanel {
         this.add(labelPanel);
         this.add("Outgoing", outgoingPanel);
         this.add("Incoming", incomingPanel);
-        this.add("Format", formatPanel);
 
     }
 

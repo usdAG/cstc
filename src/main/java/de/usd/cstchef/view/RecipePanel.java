@@ -152,11 +152,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
         inactiveWarning = new JLabel(this.operation.toString() + " Operations currently inactive!");
         inactiveWarning.setForeground(Color.RED);
         inactiveWarning.setFont(inactiveWarning.getFont().deriveFont(inactiveWarning.getFont().getStyle() | Font.BOLD));
-        activeOperationsPanel.addActionComponent(inactiveWarning);
+        if(!this.operation.equals(BurpOperation.FORMAT))
+            activeOperationsPanel.addActionComponent(inactiveWarning);
 
         // add action items
         JButton filters = new JButton("Filter");
-        activeOperationsPanel.addActionComponent(filters);
+        if(this.operation != BurpOperation.FORMAT)
+            activeOperationsPanel.addActionComponent(filters);
         filters.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -165,8 +167,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 if (result == JOptionPane.OK_OPTION) {
                     BurpUtils.getInstance().getFilterState().setFilterMask(
                             RequestFilterDialog.getInstance().getFilterMask(BurpOperation.INCOMING),
-                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING),
-                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.FORMAT));
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING));
                 }
                 BurpUtils.getInstance().getView().updateInactiveWarnings();
                 if (!BurpUtils.getInstance().getApi().burpSuite().version().edition()
