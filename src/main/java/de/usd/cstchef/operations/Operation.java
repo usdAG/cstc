@@ -480,22 +480,25 @@ public abstract class Operation extends JPanel {
     public void onRemove() {
 
     }
-
-    public ByteArray parseRawMessage(ByteArray input) throws Exception{
-
+    
+    public MessageType parseMessageType(ByteArray input) throws Exception{
         final Pattern requestPattern = Pattern.compile(httpRequestRegex);
         final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
         if (requestMatcher.matches()) {
-            return perform(input, MessageType.REQUEST);
+            return MessageType.REQUEST;
         }
 
         final Pattern responsePattern = Pattern.compile(httpResponseRegex);
         final Matcher responseMatcher = responsePattern.matcher(input.toString().split("\n")[0].trim());
         if (responseMatcher.matches()) {
-            return perform(input, MessageType.RESPONSE);
+            return MessageType.RESPONSE;
         }
 
         throw new IllegalArgumentException("Input is not a valid HTTP message");
+    }
+
+    public ByteArray parseRawMessage(ByteArray input) throws Exception{
+        return perform(input, parseMessageType(input));
     }
 
     private class NotifyChangeListener implements DocumentListener, ActionListener, ChangeListener {
