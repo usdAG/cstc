@@ -2,13 +2,11 @@ package de.usd.cstchef.operations.setter;
 
 import javax.swing.JCheckBox;
 
-import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
-import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -20,36 +18,30 @@ public class HttpPostSetter extends SetterOperation {
     private JCheckBox urlEncodeAll;
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String parameterName = getWhere();
-        if( parameterName.equals("") )
+        if (parameterName.equals(""))
             return input;
 
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-
-        ByteArray newValue = getWhatBytes();
-
-        if( urlEncodeAll.isSelected() || urlEncode.isSelected() )
-            newValue = urlEncode(newValue, urlEncodeAll.isSelected(), api);
-
-        ParsedHttpParameter param = getParameter(input, parameterName, HttpParameterType.BODY, api);
-
-        if( param == null ) {
-
-            if( !addIfNotPresent.isSelected() )
-                return input;
-
-            HttpRequest.httpRequest(input).withAddedParameters(HttpParameter.bodyParameter(parameterName, "dummy"));
-            param = getParameter(input, parameterName, HttpParameterType.BODY, api);
-            if( param == null )
-                // This case occurs when the HTTP request is a JSON or XML request. Burp does not
-                // support adding parameters to these and therefore the request should stay unmodified.
-                throw new IllegalArgumentException("Failure while adding the parameter. Operation cannot be used on XML or JSON.");
+        if (messageType == MessageType.REQUEST) {
+            try {
+                HttpRequest request = HttpRequest.httpRequest(input);
+                if (request.hasParameter(parameterName, HttpParameterType.BODY) || addIfNotPresent.isSelected()) {
+                    return request
+                            .withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.BODY))
+                            .toByteArray();
+                } else {
+                    return input;
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Input is not a valid request");
+            }
+        } else if (messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        } else {
+            return parseRawMessage(input);
         }
-
-        ByteArray newRequest = replaceParam(input, param, newValue);
-        return newRequest;
     }
 
     @Override

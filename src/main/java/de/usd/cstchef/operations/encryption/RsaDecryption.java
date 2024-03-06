@@ -8,6 +8,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.OperationCategory;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.encryption.CipherUtils.CipherInfo;
 import de.usd.cstchef.operations.signature.KeystoreOperation;
@@ -29,7 +30,7 @@ public class RsaDecryption extends KeystoreOperation {
         this.createMyUI();
     }
 
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         if( ! this.keyAvailable.isSelected() )
             throw new IllegalArgumentException("No private key available.");

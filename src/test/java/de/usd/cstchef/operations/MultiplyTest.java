@@ -33,7 +33,7 @@ public class MultiplyTest extends Multiply
         isFloat = false;
 
         String testValue = "22";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("220");
     }
@@ -45,7 +45,7 @@ public class MultiplyTest extends Multiply
         isFloat = true;
 
         String testValue = "2.2";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().startsWith("4.84");
     }
@@ -57,7 +57,7 @@ public class MultiplyTest extends Multiply
         isFloat = false;
 
         String testValue = "2.2";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("5");
     }

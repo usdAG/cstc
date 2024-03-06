@@ -40,7 +40,7 @@ public class DivideTest extends Divide
         isReverse = false;
 
         String testValue = "4";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("2");
     }
@@ -53,7 +53,7 @@ public class DivideTest extends Divide
         isReverse = true;
 
         String testValue = "4";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("0.5");
     }

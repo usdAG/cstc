@@ -1,46 +1,34 @@
 package de.usd.cstchef.operations.extractors;
 
-import org.bouncycastle.util.Arrays;
-
-import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP Header", category = OperationCategory.EXTRACTORS, description = "Extracts a header of a HTTP request.")
+@OperationInfos(name = "HTTP Header", category = OperationCategory.EXTRACTORS, description = "Extracts a header of a HTTP message.")
 public class HttpHeaderExtractor extends Operation {
 
     private VariableTextField headerNameField;
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
-        ByteArray headerName = headerNameField.getBytes();
+        String headerName = headerNameField.getText();
         if( headerName.length() == 0 )
-            return input;
-
-        ByteArray headerSearch = factory.createByteArray("\r\n").withAppended(headerName).withAppended(": ");
-
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-        int length = input.length();
-
-        int offset = api.utilities().byteUtils().indexOf(input.getBytes(), headerSearch.getBytes(), true, 0, length);
-
-        if( offset < 0 )
-            throw new IllegalArgumentException("Header not found.");
-
-        int valueStart = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, offset, length);
-        if( valueStart < 0 )
-            throw new IllegalArgumentException("Invalid Header format.");
-        int valueEnd = api.utilities().byteUtils().indexOf(input.getBytes(), "\r\n".getBytes(), false, valueStart, length);
-        if( valueEnd < 0 )
-            throw new IllegalArgumentException("Invalid Header format.");
-
-        ByteArray result = BurpUtils.subArray(input, valueStart + 1, valueEnd);
-        return result;
+            return ByteArray.byteArray(0);
+        if(messageType == MessageType.REQUEST){
+            return ByteArray.byteArray(HttpRequest.httpRequest(input).headerValue(headerName));
+        }
+        else if(messageType == MessageType.RESPONSE){
+            return ByteArray.byteArray(HttpResponse.httpResponse(input).headerValue(headerName));
+        }
+        else{
+            return parseRawMessage(input);
+        }
     }
 
     @Override

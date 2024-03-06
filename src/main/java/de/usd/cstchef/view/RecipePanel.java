@@ -405,7 +405,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private ByteArray doBake(ByteArray input) {
+    private ByteArray doBake(ByteArray input, MessageType messageType) {
         if (input == null || input.length() == 0) {
             return ByteArray.byteArrayOfLength(0);
         }
@@ -434,7 +434,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                     continue;
                 }
 
-                intermediateResult = op.performOperation(intermediateResult);
+                intermediateResult = op.performOperation(intermediateResult, messageType);
                 outputChanged = true;
 
                 if (op.isBreakpoint()) {
@@ -456,23 +456,21 @@ public class RecipePanel extends JPanel implements ChangeListener {
         if (BurpUtils.inBurp()) {
             MontoyaApi api = BurpUtils.getInstance().getApi();
             HttpRequest req;
+            List<HttpHeader> headers;
+            int offset;
             try {
                 req = HttpRequest.httpRequest(result);
-
+                headers = req.headers();
+                offset = req.bodyOffset();
             } catch( IllegalArgumentException e ) {
                 // In this case there is no valid HTTP request and no Content-Length update is requried.
                 return result;
             }
 
-            List<HttpHeader> headers = req.headers();
-            int offset = req.bodyOffset();
-
             if( result.length() == offset ) {
                 // In this case there is no body and we do not need to update the content length header.
                 return result;
             }
-
-            
 
             for(HttpHeader header : headers) {
                 if(header.toString().startsWith("Content-Length:")) {
@@ -496,7 +494,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray());
+                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray(), messageType);
                 HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -526,11 +524,11 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.bakeTimer.schedule(tt, threshold);
     }
 
-    public ByteArray bake(ByteArray input) {
+    public ByteArray bake(ByteArray input, MessageType messageType) {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();
-            return this.doBake(input);
+            return this.doBake(input, messageType);
         } finally {
             store.unlock();
         }

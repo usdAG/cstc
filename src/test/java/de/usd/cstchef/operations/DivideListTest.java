@@ -39,7 +39,7 @@ public class DivideListTest extends DivideList
         isFloat = false;
 
         String testValue = "8,2,4";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("1");
     }
@@ -51,7 +51,7 @@ public class DivideListTest extends DivideList
         isFloat = true;
 
         String testValue = "8,2,4,2";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("0.5");
     }
@@ -63,7 +63,7 @@ public class DivideListTest extends DivideList
         isFloat = false;
 
         String testValue = "8 2 4 0.5";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("2");
     }
@@ -75,7 +75,7 @@ public class DivideListTest extends DivideList
         isFloat = true;
 
         String testValue = "8 2 4 4 0.5";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("0.5");
     }

@@ -39,7 +39,7 @@ public class MedianTest extends Median
         isFloat = false;
 
         String testValue = "1,2,3,4,5";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("3");
     }
@@ -51,7 +51,7 @@ public class MedianTest extends Median
         isFloat = true;
 
         String testValue = "1,2,3.5,4,5";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("3.5");
     }

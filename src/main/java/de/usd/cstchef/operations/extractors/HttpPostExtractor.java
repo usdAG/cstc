@@ -8,6 +8,7 @@ import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -19,25 +20,24 @@ public class HttpPostExtractor extends Operation {
     protected VariableTextField parameter;
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String parameterName = parameter.getText();
-        if( parameterName.equals("") )
-            return input;
+        if (parameterName.equals(""))
+            return ByteArray.byteArray(0);
 
-        MontoyaApi api = BurpUtils.getInstance().getApi();
-
-        ParsedHttpParameter param = HttpRequest.httpRequest(input).parameters().stream().filter(p -> p.name().equals(parameterName)).findFirst().get();
-        if( param == null)
-            throw new IllegalArgumentException("Parameter name not found.");
-        if( param.type() != HttpParameterType.BODY )
-            throw new IllegalArgumentException("Parameter type is not POST");
-
-            int start = param.valueOffsets().startIndexInclusive();
-            int end = param.valueOffsets().endIndexExclusive();
-
-            ByteArray result = BurpUtils.subArray(input, start, end);
-            return result;
+        if (messageType == MessageType.REQUEST) {
+            try {
+                return ByteArray.byteArray(
+                        HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.BODY));
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Input is not a valid request");
+            }
+        } else if (messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        } else {
+            return parseRawMessage(input);
+        }
     }
 
     @Override

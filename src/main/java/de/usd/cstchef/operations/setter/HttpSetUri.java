@@ -7,6 +7,9 @@ import javax.swing.JCheckBox;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -29,32 +32,44 @@ public class HttpSetUri extends Operation {
     }
 
     @Override
-    protected ByteArray perform(ByteArray input) throws Exception {
-        try {
-            MontoyaApi api = BurpUtils.getInstance().getApi();
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+        if( this.uriTxt.getText().equals("") )
+            return input;
 
-            int length = input.length();
-
-            int firstMark = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, 0, length);
-            int lineMark = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, firstMark + 1, length);
-
-            int secondMark = api.utilities().byteUtils().indexOf(input.getBytes(), "?".getBytes(), false, firstMark + 1, length);
-
-            if (!this.checkbox.isSelected() || secondMark < 0 || secondMark >= lineMark) {
-                secondMark = lineMark;
+        if(messageType == MessageType.REQUEST){
+            try {
+                MontoyaApi api = BurpUtils.getInstance().getApi();
+    
+                int length = input.length();
+    
+                int firstMark = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, 0, length);
+                int lineMark = api.utilities().byteUtils().indexOf(input.getBytes(), " ".getBytes(), false, firstMark + 1, length);
+    
+                int secondMark = api.utilities().byteUtils().indexOf(input.getBytes(), "?".getBytes(), false, firstMark + 1, length);
+    
+                if (!this.checkbox.isSelected() || secondMark < 0 || secondMark >= lineMark) {
+                    secondMark = lineMark;
+                }
+    
+                ByteArray method = BurpUtils.subArray(input, 0, firstMark + 1);
+                ByteArray newUri = this.uriTxt.getBytes();
+                ByteArray rest = BurpUtils.subArray(input, secondMark, length);
+    
+                ByteArray newRequest = method.withAppended(newUri).withAppended(rest);
+    
+                return newRequest;
+    
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Provided input is not a valid http request.");
             }
-
-            ByteArray method = BurpUtils.subArray(input, 0, firstMark + 1);
-            ByteArray newUri = this.uriTxt.getBytes();
-            ByteArray rest = BurpUtils.subArray(input, secondMark, length);
-
-            ByteArray newRequest = method.withAppended(newUri).withAppended(rest);
-
-            return newRequest;
-
-        } catch (Exception e) {
+        }
+        else if(messageType == MessageType.RESPONSE){
             throw new IllegalArgumentException("Provided input is not a valid http request.");
         }
+        else{
+            return parseRawMessage(input);
+        }
+        
     }
 
 }

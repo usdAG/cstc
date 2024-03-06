@@ -37,7 +37,7 @@ public class SubtractionTest extends Subtraction
         isFloat = false;
 
         String testValue = "22";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("12");
     }
@@ -49,7 +49,7 @@ public class SubtractionTest extends Subtraction
         isFloat = true;
 
         String testValue = "2.2";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         System.out.println(result.toString());
         assert result.toString().startsWith("0.1");
@@ -62,7 +62,7 @@ public class SubtractionTest extends Subtraction
         isFloat = false;
 
         String testValue = "2.8";
-        ByteArray result = perform(factory.createByteArray(testValue));
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
         assert result.toString().equals("1");
     }
