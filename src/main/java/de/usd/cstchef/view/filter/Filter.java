@@ -16,7 +16,7 @@ public class Filter {
 
         public Filter(String s) {
             String[] pairs = s.split(":");
-            this.toolType = ToolType.valueOf(pairs[0].trim());
+            this.toolType = ToolType.valueOf(pairs[0].trim().toUpperCase());
             this.value = Integer.parseInt(pairs[1].trim());
         }
 
