@@ -10,9 +10,9 @@ import org.junit.Test;
 import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.testutils.UnitTestObjectFactory;
 
 @OperationInfos(name = "HttpBodyExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpBodyExtractorTest extends HttpBodyExtractor {
