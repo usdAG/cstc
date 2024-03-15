@@ -1,6 +1,6 @@
 package de.usd.cstchef.operations.extractors;
-import java.util.Arrays;
 
+import java.util.Arrays;
 
 import burp.BurpExtender;
 import burp.BurpUtils;
@@ -29,24 +29,18 @@ public class HttpGetExtractor extends Operation {
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String parameterName = parameter.getText();
-        if( parameterName.equals("") )
+        if (parameterName.equals(""))
             return ByteArray.byteArray(0);
 
-        if(messageType == MessageType.REQUEST){
-            try{
-                return ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL));
-            }
-            catch(Exception e){
-                throw new IllegalArgumentException("Parameter name not found.");
-            }
-        }
-        else if(messageType == MessageType.RESPONSE){
+        if (messageType == MessageType.REQUEST) {
+            return checkNull(
+                    ByteArray.byteArray(
+                            HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL)));
+        } else if (messageType == MessageType.RESPONSE) {
             throw new IllegalArgumentException("Input is not a valid HTTP Request");
-        }
-        else{
+        } else {
             return parseRawMessage(input);
         }
-        
 
     }
 

@@ -201,6 +201,12 @@ public abstract class Operation extends JPanel {
         return properties;
     }
 
+    public ByteArray checkNull(ByteArray input) throws Exception{
+        if(input == null)
+            throw new IllegalArgumentException("Parameter name not found.");
+        return input;
+    }
+
     private Object getUiValues(Component comp) {
         Object result = null;
         if (comp instanceof JPasswordField) {

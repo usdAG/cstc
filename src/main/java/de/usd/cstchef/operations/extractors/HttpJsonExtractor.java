@@ -26,11 +26,11 @@ public class HttpJsonExtractor extends Operation {
         
 
         if(messageType == MessageType.REQUEST){
-            return ByteArray.byteArray(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value());
+            return checkNull(ByteArray.byteArray(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value()));
         }
         else if(messageType == MessageType.RESPONSE){
             JsonExtractor extractor = new JsonExtractor(keyName);
-            return extractor.perform(HttpResponse.httpResponse(input).body(), messageType);
+            return checkNull(extractor.perform(HttpResponse.httpResponse(input).body(), messageType));
         }
         else{
             return parseRawMessage(input);

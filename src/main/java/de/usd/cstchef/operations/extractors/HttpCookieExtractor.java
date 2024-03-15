@@ -30,13 +30,13 @@ public class HttpCookieExtractor extends Operation {
 
         if(messageType == MessageType.REQUEST){
             HttpRequest request = HttpRequest.httpRequest(input);
-            return Utils.httpRequestCookieExtractor(request, cookieName);
+            return checkNull(Utils.httpRequestCookieExtractor(request, cookieName));
         }
         else if(messageType == MessageType.RESPONSE){
             HttpResponse response = HttpResponse.httpResponse(input);
             for(Cookie c : response.cookies()){
                 if(c.name().equals(cookieName))
-                    return ByteArray.byteArray(c.value());
+                    return checkNull(ByteArray.byteArray(c.value()));
             }
             return ByteArray.byteArray(0);
         }
