@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations;
+package de.usd.cstchef.operations.arithmetic;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,16 +6,16 @@ import org.junit.Test;
 import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.operations.arithmetic.Addition;
-import de.usd.cstchef.utils.UnitTestObjectFactory;
+import de.usd.cstchef.operations.arithmetic.Multiply;
+import de.usd.cstchef.testutils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
-public class AdditionTest extends Addition
+public class MultiplyTest extends Multiply
 {
     private String number;
     private boolean isFloat;
-    private CstcObjectFactory factory;
 
     protected double getNumber()
     {
@@ -28,7 +28,7 @@ public class AdditionTest extends Addition
     }
 
     @Test
-    public void SimpleAdditionTest() throws Exception
+    public void SimpleMultiplyTest() throws Exception
     {
         number = "10";
         isFloat = false;
@@ -36,11 +36,11 @@ public class AdditionTest extends Addition
         String testValue = "22";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert result.toString().equals("32");
+        assert result.toString().equals("220");
     }
 
     @Test
-    public void AdditionFloatTest() throws Exception
+    public void MultiplyFloatTest() throws Exception
     {
         number = "2.2";
         isFloat = true;
@@ -48,11 +48,11 @@ public class AdditionTest extends Addition
         String testValue = "2.2";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert result.toString().equals("4.4");
+        assert result.toString().startsWith("4.84");
     }
 
     @Test
-    public void AdditionFloatRoundTest() throws Exception
+    public void MultiplyRoundTest() throws Exception
     {
         number = "2.2";
         isFloat = false;
@@ -60,7 +60,7 @@ public class AdditionTest extends Addition
         String testValue = "2.2";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert result.toString().equals("4");
+        assert result.toString().equals("5");
     }
 
     @Before

@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations;
+package de.usd.cstchef.operations.utils;
 
 import java.util.HashMap;
 
@@ -8,8 +8,10 @@ import org.junit.Test;
 import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Utils.MessageType;
+import de.usd.cstchef.operations.Operation;
+import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
-import de.usd.cstchef.utils.UnitTestObjectFactory;
+import de.usd.cstchef.testutils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class MessageParsingTest extends Operation

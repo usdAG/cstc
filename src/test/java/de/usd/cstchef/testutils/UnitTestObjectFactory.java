@@ -1,4 +1,4 @@
-package de.usd.cstchef.utils;
+package de.usd.cstchef.testutils;
 
 import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
