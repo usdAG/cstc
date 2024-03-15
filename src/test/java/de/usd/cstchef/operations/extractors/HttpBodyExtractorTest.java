@@ -23,7 +23,7 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
     public void extractionTest() throws Exception
     {
         for(String res : inputs.keySet()){
-            assertEquals(perform(ByteArray.byteArray(res), MessageType.RESPONSE), inputs.get(res));
+            assertEquals(perform(factory.createByteArray(res), MessageType.RESPONSE), inputs.get(res));
         }
     }
 
