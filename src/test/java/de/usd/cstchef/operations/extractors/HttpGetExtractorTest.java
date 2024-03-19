@@ -17,8 +17,8 @@ import de.usd.cstchef.utils.UnitTestObjectFactory;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HttpCookieExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
-public class HttpCookieExtractorTest extends HttpCookieExtractor {
+@OperationInfos(name = "HttpGetExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
+public class HttpGetExtractorTest extends HttpGetExtractor {
 
     // HashMap<Input String, Pair<Output String, throwsException>>
     HashMap<String, Pair<String, Boolean>> inputs = new HashMap<>();
@@ -46,23 +46,24 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         this.factory = factory;
         super.factory = factory;
 
-        // cookie1
-        String reqIn1 = "GET / HTTP/2\nHeader1: value1\nCookie: cookie1=value1; cookie2=value2\n\n";
+        // param1
+        String reqIn1 = "GET /?param1=value1&param2=value2 HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
         String reqOut1 = "value1";
         Pair <String, Boolean> reqPair1 = new MutablePair(reqOut1, false);
 
-        // cookie2
-        String reqIn2 = "GET / HTTP/2\nHeader1: value1\nCookie: cookie1=value1; cookie2=value2\n\n";
+        // param2
+        String reqIn2 = "GET /?param1=value1&param2=value2 HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
         String reqOut2 = "value2";
         Pair <String, Boolean> reqPair2 = new MutablePair(reqOut2, false);
 
-        // Exception
-        String reqIn3 = "GET / HTTP/2\nHeader1: value1\nCookie: cookie1=value1; cookie2=value2\n\n";
+        // param3 - Exception
+        String reqIn3 = "GET /?param1=value1&param2=value2 HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
         String reqOut3 = "";
         Pair <String, Boolean> reqPair3 = new MutablePair(reqOut3, true);
 
         inputs.put(reqIn1, reqPair1);
         inputs.put(reqIn2, reqPair2);
         inputs.put(reqIn3, reqPair3);
+        
     }
 }

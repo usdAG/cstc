@@ -40,12 +40,35 @@ public class MessageParsingTest extends Operation
         this.factory = factory;
         super.factory = factory;
 
-        correctInputs.put("GET / HTTP/2", MessageType.REQUEST);
+        correctInputs.put("GET / HTTP/1.1", MessageType.REQUEST);
+        correctInputs.put("POST /asd HTTP/2", MessageType.REQUEST);
+        correctInputs.put("HEAD / HTTP/2", MessageType.REQUEST);
+        correctInputs.put("PUT /new.html HTTP/2", MessageType.REQUEST);
+        correctInputs.put("DELETE /old.html HTTP/2", MessageType.REQUEST);
+        correctInputs.put("CONNECT /www.example.com HTTP/2", MessageType.REQUEST); // CONNECT requests without leading slash?
+        correctInputs.put("OPTIONS /dir/index.html HTTP/2", MessageType.REQUEST);
+        correctInputs.put("TRACE /reflect HTTP/2", MessageType.REQUEST);
+        correctInputs.put("PATCH /file.txt HTTP/2", MessageType.REQUEST);
+
+        correctInputs.put("HTTP/1.1 200 Ok", MessageType.RESPONSE);
         correctInputs.put("HTTP/2 301 Moved Permanently", MessageType.RESPONSE);
 
-        wrongInputs.put("abcdefgh", MessageType.RESPONSE);
+        wrongInputs.put("ABC / HTTP/2", MessageType.REQUEST);
+        wrongInputs.put("GET abc HTTP/2", MessageType.REQUEST);
+        wrongInputs.put("POST / HTT/2", MessageType.REQUEST);
+        wrongInputs.put("OPTIONS / HTTP2", MessageType.REQUEST);
+        wrongInputs.put("GET / HTTP/", MessageType.REQUEST);
+        wrongInputs.put("GET / HTTP/1.", MessageType.REQUEST);
+        wrongInputs.put("HTTP/2 200 Ok", MessageType.REQUEST);
+
+        wrongInputs.put("HTTP/2", MessageType.RESPONSE);
+        wrongInputs.put("HTT/2 301 Moved Permanently", MessageType.RESPONSE);
+        wrongInputs.put("HTTP2 301 Moved Permanently", MessageType.RESPONSE);
+        wrongInputs.put("HTTP/1. 301 Moved Permanently", MessageType.RESPONSE);
+        wrongInputs.put("HTTP/ 301 Moved Permanently", MessageType.RESPONSE);
+        wrongInputs.put("HTTP/2 30 Moved Permanently", MessageType.RESPONSE);
         wrongInputs.put("GET / HTTP/2", MessageType.RESPONSE);
-        wrongInputs.put("HTTP/2 301 Moved Permanently", MessageType.REQUEST);
+
     }
 
     @Override

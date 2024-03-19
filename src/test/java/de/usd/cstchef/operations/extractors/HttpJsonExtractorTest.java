@@ -17,8 +17,8 @@ import de.usd.cstchef.utils.UnitTestObjectFactory;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HttpCookieExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
-public class HttpCookieExtractorTest extends HttpCookieExtractor {
+@OperationInfos(name = "HttpJsonExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
+public class HttpJsonExtractorTest extends HttpJsonExtractor {
 
     // HashMap<Input String, Pair<Output String, throwsException>>
     HashMap<String, Pair<String, Boolean>> inputs = new HashMap<>();
@@ -46,18 +46,18 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         this.factory = factory;
         super.factory = factory;
 
-        // cookie1
-        String reqIn1 = "GET / HTTP/2\nHeader1: value1\nCookie: cookie1=value1; cookie2=value2\n\n";
+        // param1
+        String reqIn1 = "POST / HTTP/2\nHeader1: value1\nContent-Type: application/json\n\n{\"param1\": \"value1\", \"param2\": \"value2\"}\n\n";
         String reqOut1 = "value1";
         Pair <String, Boolean> reqPair1 = new MutablePair(reqOut1, false);
 
-        // cookie2
-        String reqIn2 = "GET / HTTP/2\nHeader1: value1\nCookie: cookie1=value1; cookie2=value2\n\n";
+        // SESSION
+        String reqIn2 = "POST / HTTP/2\nHeader1: value1\nContent-Type: application/json\n\n{\"param1\": \"value1\", \"param2\": \"value2\"}\n\n";
         String reqOut2 = "value2";
         Pair <String, Boolean> reqPair2 = new MutablePair(reqOut2, false);
 
-        // Exception
-        String reqIn3 = "GET / HTTP/2\nHeader1: value1\nCookie: cookie1=value1; cookie2=value2\n\n";
+        // param3 - Exception
+        String reqIn3 = "POST / HTTP/2\nHeader1: value1\nContent-Type: application/json\n\n{\"param1\": \"value1\", \"param2\": \"value2\"}\n\n";
         String reqOut3 = "";
         Pair <String, Boolean> reqPair3 = new MutablePair(reqOut3, true);
 

@@ -32,5 +32,17 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
         CstcObjectFactory factory = new UnitTestObjectFactory();
         this.factory = factory;
         super.factory = factory;
+
+        String reqIn1 = "POST / HTTP/2\nHeader1: value1\nHeader2: value2\n\nparam=value\n\n";
+        String reqOut1 = "param=value";
+        String reqIn2 = "GET / HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
+        String reqOut2 = "";
+
+        String resIn1 = "HTTP/2 200 Ok\nHeader1: value1\nHeader2: value2\n\n<!doctype html>\n<html>\n<h1>Example body</h1>\n</html>\n\n";
+        String resOut1 = "<!doctype html>\n<html>\n<h1>Example body</h1>\n</html>";
+
+        inputs.put(reqIn1, reqOut1);
+        inputs.put(reqIn2, reqOut2);
+        inputs.put(resIn1, resOut1);
     }
 }
