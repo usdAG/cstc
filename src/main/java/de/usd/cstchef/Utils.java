@@ -75,6 +75,7 @@ import de.usd.cstchef.operations.encryption.DesDecryption;
 import de.usd.cstchef.operations.encryption.DesEncryption;
 import de.usd.cstchef.operations.encryption.RsaDecryption;
 import de.usd.cstchef.operations.encryption.RsaEncryption;
+import de.usd.cstchef.operations.encryption.SM4Encryption;
 import de.usd.cstchef.operations.extractors.HttpBodyExtractor;
 import de.usd.cstchef.operations.extractors.HttpCookieExtractor;
 import de.usd.cstchef.operations.extractors.HttpGetExtractor;
@@ -302,7 +303,7 @@ public class Utils {
                 Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
                 RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class,
                 Replace.class,
-                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM3.class, RegexMatch.class,
+                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM3.class, SM4Encryption.class, RegexMatch.class,
                 SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
                 StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
                 Subtraction.class,
