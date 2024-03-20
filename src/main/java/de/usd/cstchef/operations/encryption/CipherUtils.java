@@ -44,8 +44,7 @@ public class CipherUtils {
         // Add info for SM4
         CipherInfo info = new CipherInfo();
         info.setModes(new String[]{"ECB", "CBC", "CTR", "OFB", "CFB"});
-        // TODO: Test modes and add paddings
-        info.setPaddings(new String[]{"PKCS7"});
+        info.setPaddings(new String[]{"NOPADDING", "PKCS5PADDING"});
         algos.put("SM4", info);
     }
 

@@ -50,7 +50,7 @@ public abstract class CryptOperation extends Operation {
         IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
         Cipher cipher;
         if(algorithm.equals("SM4")){
-             cipher = Cipher.getInstance(algorithm, BouncyCastleProvider.PROVIDER_NAME);
+             cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding), BouncyCastleProvider.PROVIDER_NAME);
         }
         else{
             cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
