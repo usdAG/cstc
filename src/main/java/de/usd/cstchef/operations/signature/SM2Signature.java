@@ -12,8 +12,8 @@ import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "RSA Signature", category = OperationCategory.SIGNATURE, description = "Create an RSA signature")
-public class RsaSignature extends KeystoreOperation {
+@OperationInfos(name = "SM2 Signature", category = OperationCategory.SIGNATURE, description = "Create a SM2 signature")
+public class SM2Signature extends KeystoreOperation {
 
     private static String[] inOutModes = new String[] { "Raw", "Hex", "Base64" };
 
@@ -21,13 +21,12 @@ public class RsaSignature extends KeystoreOperation {
     protected JComboBox<String> inputMode;
     protected JComboBox<String> outputMode;
 
-    public RsaSignature() {
+    public SM2Signature() {
         super();
         this.createMyUI();
     }
 
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-
         if( !this.keyAvailable.isSelected() )
             throw new IllegalArgumentException("No private key available.");
 
@@ -59,7 +58,7 @@ public class RsaSignature extends KeystoreOperation {
         super.createMyUI();
         SignatureUtils utils = SignatureUtils.getInstance();
 
-        this.algos = new JComboBox<>(utils.getAlgos("RSA"));
+        this.algos = new JComboBox<>(utils.getAlgos("SM2"));
         this.addUIElement("Padding", this.algos);
 
         this.inputMode = new JComboBox<>(inOutModes);

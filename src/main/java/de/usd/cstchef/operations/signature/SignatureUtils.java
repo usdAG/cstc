@@ -35,8 +35,9 @@ public class SignatureUtils {
     public String[] getAlgos() {
         return algos.toArray(new String[0]);
     }
-    public String[] getRsaAlgos() {
-        List<String> rsaAlgos = algos.stream().filter(p -> p.contains("RSA")).collect(Collectors.toList());
+    public String[] getAlgos(String s) {
+        List<String> rsaAlgos = algos.stream().filter(p -> p.contains(s)).collect(Collectors.toList());
         return rsaAlgos.toArray(new String[0]);
     }
+    
 }
