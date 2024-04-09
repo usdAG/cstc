@@ -75,6 +75,8 @@ import de.usd.cstchef.operations.encryption.DesDecryption;
 import de.usd.cstchef.operations.encryption.DesEncryption;
 import de.usd.cstchef.operations.encryption.RsaDecryption;
 import de.usd.cstchef.operations.encryption.RsaEncryption;
+import de.usd.cstchef.operations.encryption.SM4Decryption;
+import de.usd.cstchef.operations.encryption.SM4Encryption;
 import de.usd.cstchef.operations.extractors.HttpBodyExtractor;
 import de.usd.cstchef.operations.extractors.HttpCookieExtractor;
 import de.usd.cstchef.operations.extractors.HttpGetExtractor;
@@ -99,6 +101,7 @@ import de.usd.cstchef.operations.hashing.RIPEMD;
 import de.usd.cstchef.operations.hashing.SHA1;
 import de.usd.cstchef.operations.hashing.SHA2;
 import de.usd.cstchef.operations.hashing.SHA3;
+import de.usd.cstchef.operations.hashing.SM3;
 import de.usd.cstchef.operations.hashing.Skein;
 import de.usd.cstchef.operations.hashing.Tiger;
 import de.usd.cstchef.operations.hashing.Whirlpool;
@@ -120,6 +123,7 @@ import de.usd.cstchef.operations.setter.LineSetter;
 import de.usd.cstchef.operations.signature.JWTDecode;
 import de.usd.cstchef.operations.signature.JWTSign;
 import de.usd.cstchef.operations.signature.RsaSignature;
+import de.usd.cstchef.operations.signature.SM2Signature;
 import de.usd.cstchef.operations.signature.SoapMultiSignature;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
@@ -300,7 +304,7 @@ public class Utils {
                 Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
                 RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class,
                 Replace.class,
-                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
+                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM2Signature.class, SM3.class, SM4Encryption.class, SM4Decryption.class, RegexMatch.class,
                 SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
                 StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
                 Subtraction.class,
