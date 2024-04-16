@@ -273,7 +273,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         operationLines.add(dummyPanel, gbc); // this is the magic!11!!
 
         for (int i = operationSteps; i > 0; i--) {
-            RecipeStepPanel opPanel = new RecipeStepPanel(String.valueOf(i), this);
+            RecipeStepPanel opPanel = new RecipeStepPanel("Lane " + String.valueOf(i), this);
             operationLines.add(opPanel, co, 0);
 
             JPanel panel = opPanel.getOperationsPanel();

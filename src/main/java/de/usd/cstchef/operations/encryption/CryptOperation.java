@@ -1,5 +1,7 @@
 package de.usd.cstchef.operations.encryption;
 
+import java.security.Security;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -9,6 +11,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 import burp.api.montoya.core.ByteArray;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
 import de.usd.cstchef.operations.Operation;
@@ -16,6 +19,10 @@ import de.usd.cstchef.operations.encryption.CipherUtils.CipherInfo;
 import de.usd.cstchef.view.ui.FormatTextField;
 
 public abstract class CryptOperation extends Operation {
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
 
     private static String[] inOutModes = new String[] { "Raw", "Hex", "Base64" };
 
@@ -41,7 +48,13 @@ public abstract class CryptOperation extends Operation {
 
         SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
         IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
-        Cipher cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
+        Cipher cipher;
+        if(algorithm.equals("SM4")){
+             cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding), BouncyCastleProvider.PROVIDER_NAME);
+        }
+        else{
+            cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
+        }
 
         if( mode.equals("ECB") ) {
             cipher.init(cipherMode, secretKeySpec);
