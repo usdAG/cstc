@@ -33,9 +33,7 @@ public class HttpGetExtractor extends Operation {
             return ByteArray.byteArray(0);
 
         if (messageType == MessageType.REQUEST) {
-            return checkNull(
-                    ByteArray.byteArray(
-                            HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL)));
+            return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL)));
         } else if (messageType == MessageType.RESPONSE) {
             throw new IllegalArgumentException("Input is not a valid HTTP Request");
         } else {

@@ -51,7 +51,7 @@ public class JsonExtractor extends Operation {
         } else if( resultClass == Integer.class || resultClass == Float.class || resultClass == Double.class ) {
             return  factory.createByteArray((String)result);
         } else if( resultClass == Boolean.class ) {
-            return  checkNull(factory.createByteArray((String)result));
+            return  factory.createByteArray(checkNull((String)result));
         }
 
         throw new IllegalArgumentException("JSON data of unknown type.");

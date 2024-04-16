@@ -36,7 +36,7 @@ public class HttpCookieExtractor extends Operation {
             HttpResponse response = HttpResponse.httpResponse(input);
             for(Cookie c : response.cookies()){
                 if(c.name().equals(cookieName))
-                    return checkNull(ByteArray.byteArray(c.value()));
+                    return ByteArray.byteArray(checkNull(c.value()));
             }
             return ByteArray.byteArray(0);
         }

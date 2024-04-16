@@ -196,7 +196,7 @@ public class Utils {
                 return separateCookie[1];
             }
         }
-        return new String();
+        return null;
     }
 
     public static HttpRequest addCookieToHttpRequest(HttpRequest request, Cookie cookie){

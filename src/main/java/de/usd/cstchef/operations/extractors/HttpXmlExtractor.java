@@ -35,8 +35,8 @@ public class HttpXmlExtractor extends Operation {
 
         if (messageType == MessageType.REQUEST) {
             try {
-                return checkNull(ByteArray
-                        .byteArray(HttpRequest.httpRequest(input).parameterValue(keyName, HttpParameterType.XML)));
+                return ByteArray
+                        .byteArray(checkNull(HttpRequest.httpRequest(input).parameterValue(keyName, HttpParameterType.XML)));
             } catch (Exception e) {
                 throw new IllegalArgumentException("Input is not a valid request");
             }
@@ -45,7 +45,7 @@ public class HttpXmlExtractor extends Operation {
             Document doc = builder.parse(new ByteArrayInputStream(HttpResponse.httpResponse(input).bodyToString().getBytes()));
             doc.getDocumentElement().normalize();
             NodeList nodeList = doc.getElementsByTagName(keyName);
-            return checkNull(ByteArray.byteArray(nodeList.item(0).getTextContent()));
+            return ByteArray.byteArray(checkNull(nodeList.item(0).getTextContent()));
         } else {
             return parseRawMessage(input);
         }
