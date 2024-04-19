@@ -80,6 +80,7 @@ import de.usd.cstchef.operations.hashing.SHA2;
 import de.usd.cstchef.operations.hashing.SHA3;
 import de.usd.cstchef.operations.hashing.Skein;
 import de.usd.cstchef.operations.hashing.Tiger;
+import de.usd.cstchef.operations.hashing.Luhn;
 import de.usd.cstchef.operations.hashing.Whirlpool;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
@@ -228,7 +229,7 @@ public class Utils {
             Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
             ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
             Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-            Xor.class, SoapMultiSignature.class
+            Xor.class, SoapMultiSignature.class, Luhn.class
         };
     }
 
