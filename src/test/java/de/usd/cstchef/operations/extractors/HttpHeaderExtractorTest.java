@@ -1,12 +1,12 @@
 package de.usd.cstchef.operations.extractors;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.util.HashMap;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.MutablePair; //
+import org.javatuples.Triplet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,22 +20,24 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HttpHeaderExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpHeaderExtractorTest extends HttpHeaderExtractor {
 
-    // HashMap<Input String, Pair<Output String, throwsException>>
-    HashMap<String, Pair<String, Boolean>> inputs = new HashMap<>();
+    // HashMap<Input, Triplet<expectedOutput, headerName, throwsException>>
+    HashMap<String, Triplet<String, String, Boolean>> inputs = new HashMap<>();
 
     @Test
     public void extractionTest() throws Exception {
         for (String inp : inputs.keySet()) {
-            Pair<String, Boolean> res = inputs.get(inp);
+            Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
-            ByteArray outputArray = factory.createByteArray(res.getLeft());
+            ByteArray outputArray = factory.createByteArray(res.getValue0());
             MessageType messageType = parseMessageType(inputArray);
-            if (res.getRight()) {
+            this.headerNameField.setText(res.getValue1());
+            if (res.getValue2()) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
                 assertEquals("Parameter name not found.", exception.getMessage());
             }
             else{
-                assertEquals(perform(inputArray, messageType), outputArray);
+                //assertEquals(perform(inputArray, messageType), outputArray);
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
             }
         }
     }
@@ -47,22 +49,71 @@ public class HttpHeaderExtractorTest extends HttpHeaderExtractor {
         super.factory = factory;
 
         // Header1
-        String reqIn1 = "GET / HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
+        //String reqIn1 = "GET / HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
+        String reqIn1 = """
+                GET / HTTP/2
+                Header1: value1
+                Header2: value2
+
+                a
+                """;
         String reqOut1 = "value1";
-        Pair <String, Boolean> reqPair1 = new MutablePair(reqOut1, false);
+        String reqHeader1 = "Header1";
+        Triplet<String, String, Boolean> reqTriplet1 = new Triplet<String, String, Boolean>(reqOut1, reqHeader1, false);
 
         // Header2
-        String reqIn2 = "GET / HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
+        String reqIn2 = """
+                GET / HTTP/2
+                Header1: value1
+                Header2: value2
+
+                b
+                """;
         String reqOut2 = "value2";
-        Pair <String, Boolean> reqPair2 = new MutablePair(reqOut2, false);
+        String reqHeader2 = "Header2";
+        Triplet<String, String, Boolean> reqTriplet2 = new Triplet<String, String, Boolean>(reqOut2, reqHeader2, false);
 
         // Header3 - Exception
-        String reqIn3 = "GET / HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
-        String reqOut3 = "";
-        Pair <String, Boolean> reqPair3 = new MutablePair(reqOut3, true);
+        String reqIn3 = """
+                GET / HTTP/2
+                Header1: value1
+                Header2: value2
 
-        inputs.put(reqIn1, reqPair1);
-        inputs.put(reqIn2, reqPair2);
-        inputs.put(reqIn3, reqPair3);
+                c
+                """;
+        String reqOut3 = "";
+        String reqHeader3 = "Header3";
+        Triplet<String, String, Boolean> reqTriplet3 = new Triplet<String, String, Boolean>(reqOut3, reqHeader3, true);
+
+        // empty headerName
+        String reqIn4 = """
+                GET / HTTP/2
+                Header1: value1
+                Header2: value2
+
+                d
+                """;
+        String reqOut4 = "";
+        String reqHeader4 = "";
+        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqOut4, reqHeader4, false);
+
+        // HTTP Response - Header2
+
+        String resIn1 = """
+                HTTP/2 200 Ok
+                Header1: value1
+                Header2: value2
+
+
+                """;
+        String resOut1 = "value2";
+        String resHeader1 = "Header2";
+        Triplet<String, String, Boolean> resTriplet1 = new Triplet<String,String,Boolean>(resOut1, resHeader1, false);
+
+        inputs.put(reqIn1, reqTriplet1);
+        inputs.put(reqIn2, reqTriplet2);
+        inputs.put(reqIn3, reqTriplet3);
+        inputs.put(reqIn4, reqTriplet4);
+        inputs.put(resIn1, resTriplet1);
     }
 }

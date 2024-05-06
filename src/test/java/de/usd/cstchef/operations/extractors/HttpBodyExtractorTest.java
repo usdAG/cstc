@@ -1,6 +1,7 @@
 package de.usd.cstchef.operations.extractors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 
 import java.util.HashMap;
 
@@ -14,6 +15,7 @@ import de.usd.cstchef.utils.UnitTestObjectFactory;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
+
 @OperationInfos(name = "HttpBodyExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpBodyExtractorTest extends HttpBodyExtractor {
 
@@ -23,7 +25,7 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
     public void extractionTest() throws Exception
     {
         for(String res : inputs.keySet()){
-            assertEquals(perform(factory.createByteArray(res), MessageType.RESPONSE), inputs.get(res));
+            assertArrayEquals(factory.createByteArray(inputs.get(res)).getBytes(), perform(factory.createByteArray(res), MessageType.RESPONSE).getBytes());
         }
     }
 
@@ -33,16 +35,59 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
         this.factory = factory;
         super.factory = factory;
 
-        String reqIn1 = "POST / HTTP/2\nHeader1: value1\nHeader2: value2\n\nparam=value\n\n";
-        String reqOut1 = "param=value";
-        String reqIn2 = "GET / HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
+        // param=value
+        String reqIn1 = """
+                POST / HTTP/2
+                Header1: value1
+                Header2: value2
+            
+                param=value
+                """;
+        String reqOut1 = """
+                param=value
+                """;
+
+        // empty body
+        String reqIn2 = """
+                GET / HTTP/2
+                Header1: value1
+                Header2: value2
+
+
+                """;
         String reqOut2 = "";
 
-        String resIn1 = "HTTP/2 200 Ok\nHeader1: value1\nHeader2: value2\n\n<!doctype html>\n<html>\n<h1>Example body</h1>\n</html>\n\n";
-        String resOut1 = "<!doctype html>\n<html>\n<h1>Example body</h1>\n</html>";
+        // HTTP Response - html body
+        String resIn1 = """
+                HTTP/2 200 Ok
+                Header1: value1
+                Header2: value2
+                
+                <!doctype html>
+                <html>
+                    <h1>Example body</h1>
+                </html>
+                """; 
+        String resOut1 = """
+            <!doctype html>
+            <html>
+                <h1>Example body</h1>
+            </html>
+                """;
+
+        // HTTP Response - empty body
+        String resIn2 = """
+                HTTP/2 200 Ok
+                Header1: value1
+
+
+                """;
+        String resOut2 = "";
+        
 
         inputs.put(reqIn1, reqOut1);
         inputs.put(reqIn2, reqOut2);
         inputs.put(resIn1, resOut1);
+        inputs.put(resIn2, resOut2);
     }
 }

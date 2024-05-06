@@ -5,8 +5,7 @@ import static org.junit.Assert.assertThrows;
 
 import java.util.HashMap;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.MutablePair; //
+import org.javatuples.Triplet;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,16 +20,17 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpJsonExtractorTest extends HttpJsonExtractor {
 
     // HashMap<Input String, Pair<Output String, throwsException>>
-    HashMap<String, Pair<String, Boolean>> inputs = new HashMap<>();
+    HashMap<String, Triplet<String, String, Boolean>> inputs = new HashMap<>();
 
     @Test
     public void extractionTest() throws Exception {
         for (String inp : inputs.keySet()) {
-            Pair<String, Boolean> res = inputs.get(inp);
+            Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
-            ByteArray outputArray = factory.createByteArray(res.getLeft());
+            ByteArray outputArray = factory.createByteArray(res.getValue0());
             MessageType messageType = parseMessageType(inputArray);
-            if (res.getRight()) {
+            this.fieldTxt.setText(res.getValue1());
+            if (res.getValue2()) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
                 assertEquals("Parameter name not found.", exception.getMessage());
             }
@@ -49,20 +49,23 @@ public class HttpJsonExtractorTest extends HttpJsonExtractor {
         // param1
         String reqIn1 = "POST / HTTP/2\nHeader1: value1\nContent-Type: application/json\n\n{\"param1\": \"value1\", \"param2\": \"value2\"}\n\n";
         String reqOut1 = "value1";
-        Pair <String, Boolean> reqPair1 = new MutablePair(reqOut1, false);
+        String reqParam1 = "param1";
+        Triplet<String, String, Boolean> reqTriplet1 = new Triplet<String, String, Boolean>(reqOut1, reqParam1, false);
 
         // SESSION
         String reqIn2 = "POST / HTTP/2\nHeader1: value1\nContent-Type: application/json\n\n{\"param1\": \"value1\", \"param2\": \"value2\"}\n\n";
         String reqOut2 = "value2";
-        Pair <String, Boolean> reqPair2 = new MutablePair(reqOut2, false);
+        String reqParam2 = "param2";
+        Triplet<String, String, Boolean> reqTriplet2 = new Triplet<String, String, Boolean>(reqOut2, reqParam2, false);
 
         // param3 - Exception
         String reqIn3 = "POST / HTTP/2\nHeader1: value1\nContent-Type: application/json\n\n{\"param1\": \"value1\", \"param2\": \"value2\"}\n\n";
         String reqOut3 = "";
-        Pair <String, Boolean> reqPair3 = new MutablePair(reqOut3, true);
+        String reqParam3 = "param3";
+        Triplet<String, String, Boolean> reqTriplet3 = new Triplet<String, String, Boolean>(reqOut3, reqParam3, true);
 
-        inputs.put(reqIn1, reqPair1);
-        inputs.put(reqIn2, reqPair2);
-        inputs.put(reqIn3, reqPair3);
+        inputs.put(reqIn1, reqTriplet1);
+        inputs.put(reqIn2, reqTriplet2);
+        inputs.put(reqIn3, reqTriplet3);
     }
 }
