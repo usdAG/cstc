@@ -18,7 +18,7 @@ public class JsonExtractor extends Operation {
     private static JsonProvider provider;
 
     //TODO should this be a VariableTextField?
-    private JTextField fieldTxt;
+    protected JTextField fieldTxt;
 
     public JsonExtractor(){
         this(new String());

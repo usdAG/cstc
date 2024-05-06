@@ -17,10 +17,10 @@ public class HttpBodyExtractor extends Operation {
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         if(messageType == MessageType.REQUEST){
-            return HttpRequest.httpRequest(input).body();
+            return factory.getHttpRequestBody(input);
         }
         else if(messageType == MessageType.RESPONSE){
-            return HttpResponse.httpResponse(input).body();
+            return factory.getHttpResponseBody(input);
         }
         else{
             return parseRawMessage(input);

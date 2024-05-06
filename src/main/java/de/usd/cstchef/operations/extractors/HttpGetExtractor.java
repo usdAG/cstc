@@ -30,10 +30,10 @@ public class HttpGetExtractor extends Operation {
 
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
-            return ByteArray.byteArray(0);
+            return factory.createByteArray(0);
 
         if (messageType == MessageType.REQUEST) {
-            return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.URL)));
+            return factory.createByteArray(factory.createHttpRequest(input).parameterValue(parameterName, HttpParameterType.URL));
         } else if (messageType == MessageType.RESPONSE) {
             throw new IllegalArgumentException("Input is not a valid HTTP Request");
         } else {
