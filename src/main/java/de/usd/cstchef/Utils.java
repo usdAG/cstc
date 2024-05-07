@@ -137,7 +137,7 @@ import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.string.Uppercase;
 import de.usd.cstchef.operations.string.Lowercase;
-import de.usd.cstchef.operations.string.Concaternate;
+import de.usd.cstchef.operations.string.Concatenate;
 import de.usd.cstchef.operations.utils.Counter;
 import de.usd.cstchef.operations.utils.GetVariable;
 import de.usd.cstchef.operations.utils.NoOperation;
@@ -313,7 +313,7 @@ public class Utils {
                 TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
                 UrlDecode.class, UrlEncode.class,
                 Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-                Xor.class, SoapMultiSignature.class, Concaternate.class
+                Xor.class, SoapMultiSignature.class, Concatenate.class
         };
     }
 
