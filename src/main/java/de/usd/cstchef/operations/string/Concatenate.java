@@ -10,7 +10,7 @@ import de.usd.cstchef.view.ui.VariableTextArea;
 import de.usd.cstchef.view.ui.VariableTextField;
 
 
-@OperationInfos(name = "Concatenate", category = OperationCategory.STRING, description = "Concatenate multiple string values or variables. Separate multiple strings or variables with ';'.")
+@OperationInfos(name = "Concatenate", category = OperationCategory.STRING, description = "Concatenate CSTC Input and/or your own. \"$input\" to work with CSTC Input.")
 public class Concatenate extends Operation {
     
     protected VariableTextArea text;
@@ -40,7 +40,7 @@ public class Concatenate extends Operation {
 
     public void createUI() {
         this.text = new VariableTextArea();
-        this.addUIElement("Strings to concatenate", this.text);
+        this.addUIElement("Strings", this.text);
         this.delimiter = new VariableTextField();
         this.addUIElement("Delimiter", this.delimiter);
     }
