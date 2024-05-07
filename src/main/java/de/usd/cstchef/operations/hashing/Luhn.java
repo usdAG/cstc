@@ -1,5 +1,7 @@
 package de.usd.cstchef.operations.hashing;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -9,27 +11,27 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class Luhn extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
-        for (int i = 0; i < input.length; i++){
-            if ((input[i] < '0') || (input[i] > '9')) {
+        for (int i = 0; i < input.length(); i++){
+            if ((input.getByte(i) < '0') || (input.getByte(i) > '9')) {
                 throw new IllegalArgumentException("Luhn can only be applied to numerical values.");
             }
         }
 
         int check_digit = calculateLuhnCheckDigit(input);
-        return new byte[]{ (byte) (check_digit + '0')};
+        return factory.createByteArray((byte)check_digit + '0');
     }
 
-    private int calculateLuhnCheckDigit(byte[] input) {
+    private int calculateLuhnCheckDigit(ByteArray input) {
         int sum = 0;
         boolean doubleDigit = true;
 
-        for (int i = input.length - 1; i >= 0; i--) {
+        for (int i = input.length() - 1; i >= 0; i--) {
 
 
 
-            int digit =  Integer.valueOf(Character.toString ((char) input[i]));
+            int digit =  Integer.valueOf(Character.toString ((char)input.getByte(i)));
 
             if (doubleDigit) {
                 digit *= 2;
