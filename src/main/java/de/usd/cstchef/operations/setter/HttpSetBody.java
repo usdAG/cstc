@@ -3,8 +3,14 @@ package de.usd.cstchef.operations.setter;
 import java.util.Arrays;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IRequestInfo;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -16,18 +22,20 @@ public class HttpSetBody extends Operation {
     private FormatTextField replacementTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-        IRequestInfo requestInfo = cbs.getHelpers().analyzeRequest(input);
-        int bodyOffset = requestInfo.getBodyOffset();
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+        ByteArray replacementBody = replacementTxt.getText();
+        if( replacementBody.toString().equals("") )
+            return input;
 
-        byte[] noBody = Arrays.copyOfRange(input, 0, bodyOffset);
-        byte[] newBody = replacementTxt.getText();
-        byte[] newRequest = new byte[noBody.length + newBody.length];
-        System.arraycopy(noBody, 0, newRequest, 0, noBody.length);
-        System.arraycopy(newBody, 0, newRequest, noBody.length, newBody.length);
-
-        return newRequest;
+        if(messageType == MessageType.REQUEST){
+            return HttpRequest.httpRequest(input).withBody(replacementBody).toByteArray();
+        }
+        else if(messageType == MessageType.RESPONSE){
+            return HttpResponse.httpResponse(input).withBody(replacementBody).toByteArray();
+        }
+        else{
+            return parseRawMessage(input);
+        }
     }
 
     @Override

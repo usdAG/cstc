@@ -19,6 +19,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import burp.api.montoya.core.ByteArray;
+
 public class VariablesWindow extends JFrame {
 
     private static VariablesWindow instance;
@@ -68,14 +70,14 @@ public class VariablesWindow extends JFrame {
         this.add(scrollPane);
     }
 
-    public void refresh(HashMap<String, byte[]> variables) {
+    public void refresh(HashMap<String, ByteArray> variables) {
         DefaultTableModel model = (DefaultTableModel) this.table.getModel();
         model.setRowCount(0);
         this.emptyLbl.setVisible(variables.isEmpty());
-        SortedMap<String, byte[]> sortedMap = new TreeMap<String, byte[]>(variables);
+        SortedMap<String, ByteArray> sortedMap = new TreeMap<String, ByteArray>(variables);
 
         for (String key : sortedMap.keySet()) {
-            model.addRow(new String[] { key, new String(sortedMap.get(key)) });
+            model.addRow(new String[] { key, sortedMap.get(key).toString() });
         }
     }
 

@@ -3,9 +3,12 @@ package de.usd.cstchef.operations.extractors;
 import java.util.Arrays;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -17,26 +20,24 @@ public class HttpPostExtractor extends Operation {
     protected VariableTextField parameter;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String parameterName = parameter.getText();
-        if( parameterName.equals("") )
-            return input;
+        if (parameterName.equals(""))
+            return ByteArray.byteArray(0);
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-
-        IParameter param = helpers.getRequestParameter(input, parameterName);
-        if( param == null)
-            throw new IllegalArgumentException("Parameter name not found.");
-        if( param.getType() != IParameter.PARAM_BODY )
-            throw new IllegalArgumentException("Parameter type is not POST");
-
-        int start = param.getValueStart();
-        int end = param.getValueEnd();
-
-        byte[] result = Arrays.copyOfRange(input, start, end);
-        return result;
+        if (messageType == MessageType.REQUEST) {
+            try {
+                return checkNull(ByteArray.byteArray(
+                        HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.BODY)));
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Input is not a valid request");
+            }
+        } else if (messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        } else {
+            return parseRawMessage(input);
+        }
     }
 
     @Override

@@ -8,44 +8,22 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JCheckBox;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "JSON", category = OperationCategory.SETTER, description = "Set value of json object.")
+@OperationInfos(name = "JSON", category = OperationCategory.SETTER, description = "Set the value of a JSON object.")
 public class JsonSetter extends SetterOperation implements ActionListener {
 
     private JCheckBox addIfNotPresent;
     private VariableTextField path;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-
-        if( getWhere().equals("") )
-            return input;
-
-        DocumentContext document = JsonPath.parse(new String(input));
-
-        try {
-            document.read(getWhere());
-        } catch( Exception e ) {
-
-            if( !addIfNotPresent.isSelected() )
-                throw new IllegalArgumentException("Key not found.");
-
-            String insertPath = this.path.getText();
-            if( insertPath.equals("Insert-Path") || insertPath.equals("") )
-                insertPath = "$";
-
-            document = document.put(insertPath, getWhere(), getWhat());
-            return document.jsonString().getBytes();
-        }
-
-        document.set(getWhere(), getWhat());
-        return document.jsonString().getBytes();
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+        return Utils.jsonSetter(input, getWhere(), getWhat(), addIfNotPresent.isSelected(), path.getText());
     }
 
     @Override

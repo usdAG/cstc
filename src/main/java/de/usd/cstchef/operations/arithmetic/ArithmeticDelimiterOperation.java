@@ -3,8 +3,10 @@ package de.usd.cstchef.operations.arithmetic;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.Utils;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 
 public abstract class ArithmeticDelimiterOperation extends Operation
@@ -29,10 +31,10 @@ public abstract class ArithmeticDelimiterOperation extends Operation
     }
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception
     {
         String delimiter = getDelimiter().getValue();
-        String[] lines = new String(input).split(delimiter);
+        String[] lines = new String(input.getBytes()).split(delimiter);
 
         if (lines.length < 2)
             return input;
@@ -49,9 +51,9 @@ public abstract class ArithmeticDelimiterOperation extends Operation
         result = onFinish(result, numbers);
 
         if( !isFloat() )
-            return String.valueOf(Math.round(result)).getBytes();
+            return factory.createByteArray(String.valueOf(Math.round(result)));
 
-        return String.valueOf(result).getBytes();
+        return factory.createByteArray(String.valueOf(result));
     }
 
     protected double onFinish(double result, double[] lines)

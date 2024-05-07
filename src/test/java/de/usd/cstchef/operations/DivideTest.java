@@ -1,10 +1,14 @@
-package de.usd.cstcchecf.operations;
+package de.usd.cstchef.operations;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import burp.CstcObjectFactory;
+import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Divide;
+import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
 public class DivideTest extends Divide
@@ -36,9 +40,9 @@ public class DivideTest extends Divide
         isReverse = false;
 
         String testValue = "4";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert new String(result).equals("2");
+        assert result.toString().equals("2");
     }
 
     @Test
@@ -49,8 +53,15 @@ public class DivideTest extends Divide
         isReverse = true;
 
         String testValue = "4";
-        byte[] result = perform(testValue.getBytes());
+        ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert new String(result).equals("0.5");
+        assert result.toString().equals("0.5");
+    }
+
+    @Before
+    public void setup(){
+        CstcObjectFactory factory = new UnitTestObjectFactory();
+        this.factory = factory;
+        super.factory = factory;
     }
 }

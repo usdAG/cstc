@@ -1,9 +1,16 @@
 package burp;
 
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.view.View;
+import de.usd.cstchef.view.filter.FilterState;
+
 public class BurpUtils {
 
     private static BurpUtils instance;
-    private IBurpExtenderCallbacks callbacks;
+    private MontoyaApi api;
+    private View view;
+    private FilterState filterState;
 
     public static BurpUtils getInstance() {
         if (BurpUtils.instance == null) {
@@ -15,24 +22,45 @@ public class BurpUtils {
     private BurpUtils() {
     }
 
-    public void init(IBurpExtenderCallbacks callbacks) {
-        this.callbacks = callbacks;
+    public void init(MontoyaApi api) {
+        this.api = api;
+        this.filterState = new FilterState();
     }
 
-    public IBurpExtenderCallbacks getCallbacks() throws IllegalAccessError {
-        if (this.callbacks == null) {
+    public MontoyaApi getApi() throws IllegalAccessError {
+        if (this.api == null) {
             throw new IllegalAccessError("Only works within burpsuite");
         }
-        return callbacks;
+        return api;
+    }
+
+    public void setView(View view){
+        this.view = view;
+    }
+
+    public View getView(){
+        return view;
+    }
+
+    public FilterState getFilterState(){
+        return filterState;
+    }
+
+    public void setFilterState(FilterState state){
+        this.filterState = state;
     }
 
     public static boolean inBurp() {
         try {
-            BurpUtils.getInstance().getCallbacks();
+            BurpUtils.getInstance().getApi();
             return true;
         } catch (IllegalAccessError e) {
             return false;
         }
+    }
+
+    public static ByteArray subArray(ByteArray array, int start, int end){
+        return start == end ? ByteArray.byteArray(0) : array.subArray( start, end);
     }
 
 }
