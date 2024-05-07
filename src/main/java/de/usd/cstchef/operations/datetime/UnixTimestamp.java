@@ -2,6 +2,8 @@ package de.usd.cstchef.operations.datetime;
 
 import javax.swing.JCheckBox;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -12,7 +14,7 @@ public class UnixTimestamp extends Operation {
     private JCheckBox milliBox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         long timestamp = 0;
         if (milliBox.isSelected()) {
             timestamp = System.currentTimeMillis();
@@ -20,7 +22,7 @@ public class UnixTimestamp extends Operation {
         else {
             timestamp = System.currentTimeMillis() / 1000L;
         }
-        return String.valueOf(timestamp).getBytes();
+        return factory.createByteArray(String.valueOf(timestamp));
     }
 
     public void createUI() {

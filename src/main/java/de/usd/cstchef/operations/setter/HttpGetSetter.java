@@ -2,10 +2,11 @@ package de.usd.cstchef.operations.setter;
 
 import javax.swing.JCheckBox;
 
-import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -17,34 +18,30 @@ public class HttpGetSetter extends SetterOperation {
     private JCheckBox urlEncodeAll;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String parameterName = getWhere();
-        if( parameterName.equals("") )
+        if (parameterName.equals(""))
             return input;
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-
-        byte[] newValue = getWhatBytes();
-
-        if( urlEncodeAll.isSelected() || urlEncode.isSelected() )
-            newValue = urlEncode(newValue, urlEncodeAll.isSelected(), helpers);
-
-        IParameter param = getParameter(input, parameterName, IParameter.PARAM_URL, helpers);
-
-        if( param == null ) {
-
-            if( !addIfNotPresent.isSelected() )
-                return input;
-
-            param = helpers.buildParameter(parameterName, "dummy", IParameter.PARAM_URL);
-            input = helpers.addParameter(input, param);
-            param = getParameter(input, parameterName, IParameter.PARAM_URL, helpers);
+        if (messageType == MessageType.REQUEST) {
+            try {
+                HttpRequest request = HttpRequest.httpRequest(input);
+                if (request.hasParameter(parameterName, HttpParameterType.URL) || addIfNotPresent.isSelected()) {
+                    return request
+                            .withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.URL))
+                            .toByteArray();
+                } else {
+                    return input;
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Input is not a valid request");
+            }
+        } else if (messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        } else {
+            return parseRawMessage(input);
         }
-
-        byte[] newRequest = replaceParam(input, param, newValue);
-        return newRequest;
     }
 
     @Override

@@ -83,12 +83,6 @@ Take a look at our basic tutorial on [YouTube](https://www.youtube.com/watch?v=B
 **UPDATE:** Due to some incompatibility issues when installing *CSTC* via *BApp Store*, we had to switch to a new variable prefix.
 Variables from other *lanes* have now to be prefixed by ``$`` e.g. like ``$Outgoing_step1``.
 
-
-## Known Issues
-
-Unfortunately, the GUI of some *CSTC Operations* does not really work well together with the **dark theme** of *Burp Suite*. Therefore,
-we recommend to use a **light theme** for the best user experience.
-
 ## Feedback
 
 We gladly appreciate all feedback, bug reports and feature requests.

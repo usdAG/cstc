@@ -1,12 +1,20 @@
 package de.usd.cstchef.operations.setter;
 
+import java.util.List;
+
 import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IResponseInfo;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.Cookie;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.params.HttpParameter;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -16,68 +24,42 @@ public class HttpSetCookie extends SetterOperation {
     private JCheckBox addIfNotPresent;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
-        byte[] newValue = getWhatBytes();
-        byte[] cookieName = getWhereBytes();
-        if( cookieName.length == 0 )
+        String cookieName = getWhere();
+        String cookieValue = getWhat();
+        if (getWhat().equals(""))
             return input;
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-        int length = input.length;
-
-        byte[] cookieSearch = new byte[cookieName.length + 1];
-        System.arraycopy(cookieName, 0, cookieSearch, 0, cookieName.length);
-        System.arraycopy("=".getBytes(), 0, cookieSearch, cookieName.length, 1);
-
-        IResponseInfo resp = helpers.analyzeResponse(input);
-        boolean isRequest = (resp.getStatusCode() == 0);
-
-        String cookieHeader = "\r\nSet-Cookie: ";
-        if(isRequest)
-            cookieHeader = "\r\nCookie: ";
-
-        int offset = -1;
-        int cookieHeaderLength = cookieHeader.length();
-
-        try {
-
-            offset = helpers.indexOf(input, cookieHeader.getBytes(), false, 0, length);
-            int line_end = helpers.indexOf(input, "\r\n".getBytes(), false, offset + 2, length);
-            int start = helpers.indexOf(input, cookieSearch, true, offset, line_end);
-            int end = helpers.indexOf(input, ";".getBytes(), true, start, line_end);
-
-            if( end < 0 )
-                end = line_end;
-
-            return Utils.insertAtOffset(input, start + cookieSearch.length, end, newValue);
-
-        } catch( IllegalArgumentException e ) {
-
-            if( !addIfNotPresent.isSelected() )
-                return input;
-
-            if( (offset > 0) && isRequest ) {
-
-                byte[] value = new byte[cookieName.length + newValue.length + 3];
-                System.arraycopy(cookieName, 0, value, 0, cookieName.length);
-                System.arraycopy("=".getBytes(), 0, value, cookieName.length, 1);
-                System.arraycopy(newValue, 0, value, cookieName.length + 1, newValue.length);
-                System.arraycopy("; ".getBytes(), 0, value, cookieName.length + 1 + newValue.length, 2);
-                return Utils.insertAtOffset(input, offset + cookieHeaderLength, offset + cookieHeaderLength, value);
-
+        if (messageType == MessageType.REQUEST) {
+            HttpRequest request = HttpRequest.httpRequest(input);
+            if (!Utils.httpRequestCookieExtractor(request, cookieName).equals(ByteArray.byteArray(0))
+                    || addIfNotPresent.isSelected()) {
+                return Utils.addCookieToHttpRequest(request, new Utils.CSTCCookie(cookieName, cookieValue))
+                        .toByteArray();
             } else {
-
-                int bodyOffset = resp.getBodyOffset() - 4;
-                byte[] value = new byte[cookieName.length + newValue.length + cookieHeaderLength + 2];
-                System.arraycopy(cookieHeader.getBytes(), 0, value, 0, cookieHeaderLength);
-                System.arraycopy(cookieName, 0, value, cookieHeaderLength, cookieName.length);
-                System.arraycopy("=".getBytes(), 0, value, cookieHeaderLength + cookieName.length, 1);
-                System.arraycopy(newValue, 0, value, cookieHeaderLength + cookieName.length + 1, newValue.length);
-                System.arraycopy(";".getBytes(), 0, value, cookieHeaderLength + cookieName.length + 1 + newValue.length, 1);
-                return Utils.insertAtOffset(input, bodyOffset, bodyOffset, value);
+                return input;
             }
+        } else if (messageType == MessageType.RESPONSE) {
+            HttpResponse response = HttpResponse.httpResponse(input);
+            List<HttpHeader> headers = response.headers();
+            for (HttpHeader h : headers) {
+                if (h.name().equals("Set-Cookie")) {
+                    if (h.value().contains(cookieName)) {
+                        return response.withRemovedHeader(h)
+                                .withAddedHeader(HttpHeader.httpHeader("Set-Cookie", cookieName + "=" + cookieValue))
+                                .toByteArray();
+                    }
+                }
+            }
+            if (addIfNotPresent.isSelected()) {
+                return response.withAddedHeader(HttpHeader.httpHeader("Set-Cookie", cookieName + "=" + cookieValue))
+                        .toByteArray();
+            } else {
+                return input;
+            }
+        } else {
+            return parseRawMessage(input);
         }
     }
 

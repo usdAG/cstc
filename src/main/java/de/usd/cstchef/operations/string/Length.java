@@ -1,5 +1,7 @@
 package de.usd.cstchef.operations.string;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -8,8 +10,8 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class Length extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        return String.valueOf(input.length).getBytes();
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+        return factory.createByteArray(String.valueOf(input.length()));
     }
 
 }

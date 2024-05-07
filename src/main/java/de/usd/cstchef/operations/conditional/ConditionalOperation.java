@@ -42,10 +42,10 @@ public abstract class ConditionalOperation extends Operation {
         this.addUIElement("Expr", this.expr);
 
         this.operationSkipField = new JTextField("0");
-        this.addUIElement("Skip Operations", this.operationSkipField);
+        this.addUIElement("Skip # Operations in Current Lane", this.operationSkipField);
 
         this.laneSkipField = new JTextField("0");
-        this.addUIElement("Skip Lanes", this.laneSkipField);
+        this.addUIElement("Skip # Following Lanes", this.laneSkipField);
 
     }
 

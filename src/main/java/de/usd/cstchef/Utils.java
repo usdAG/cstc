@@ -1,22 +1,40 @@
 package de.usd.cstchef;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.CstcObjectFactory;
 import burp.Logger;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.handler.ResponseAction;
+import burp.api.montoya.http.message.Cookie;
+import burp.api.montoya.http.message.HttpHeader;
+import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.arithmetic.Addition;
 import de.usd.cstchef.operations.arithmetic.Divide;
@@ -48,6 +66,8 @@ import de.usd.cstchef.operations.dataformat.ToHex;
 import de.usd.cstchef.operations.dataformat.UrlDecode;
 import de.usd.cstchef.operations.dataformat.UrlEncode;
 import de.usd.cstchef.operations.datetime.DateTime;
+import de.usd.cstchef.operations.datetime.TimestampOffset;
+import de.usd.cstchef.operations.datetime.TimestampToDateTime;
 import de.usd.cstchef.operations.datetime.UnixTimestamp;
 import de.usd.cstchef.operations.encryption.AesDecryption;
 import de.usd.cstchef.operations.encryption.AesEncryption;
@@ -55,12 +75,15 @@ import de.usd.cstchef.operations.encryption.DesDecryption;
 import de.usd.cstchef.operations.encryption.DesEncryption;
 import de.usd.cstchef.operations.encryption.RsaDecryption;
 import de.usd.cstchef.operations.encryption.RsaEncryption;
+import de.usd.cstchef.operations.encryption.SM4Decryption;
+import de.usd.cstchef.operations.encryption.SM4Encryption;
 import de.usd.cstchef.operations.extractors.HttpBodyExtractor;
 import de.usd.cstchef.operations.extractors.HttpCookieExtractor;
 import de.usd.cstchef.operations.extractors.HttpGetExtractor;
 import de.usd.cstchef.operations.extractors.HttpHeaderExtractor;
 import de.usd.cstchef.operations.extractors.HttpJsonExtractor;
 import de.usd.cstchef.operations.extractors.HttpMethodExtractor;
+import de.usd.cstchef.operations.extractors.HttpMultipartExtractor;
 import de.usd.cstchef.operations.extractors.HttpPostExtractor;
 import de.usd.cstchef.operations.extractors.HttpUriExtractor;
 import de.usd.cstchef.operations.extractors.HttpXmlExtractor;
@@ -78,15 +101,18 @@ import de.usd.cstchef.operations.hashing.RIPEMD;
 import de.usd.cstchef.operations.hashing.SHA1;
 import de.usd.cstchef.operations.hashing.SHA2;
 import de.usd.cstchef.operations.hashing.SHA3;
+import de.usd.cstchef.operations.hashing.SM3;
 import de.usd.cstchef.operations.hashing.Skein;
 import de.usd.cstchef.operations.hashing.Tiger;
 import de.usd.cstchef.operations.hashing.Whirlpool;
+import de.usd.cstchef.operations.misc.GetRequestBuilder;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
-import de.usd.cstchef.operations.networking.HTTPRequest;
+import de.usd.cstchef.operations.networking.PlainRequest;
 import de.usd.cstchef.operations.setter.HttpGetSetter;
 import de.usd.cstchef.operations.setter.HttpHeaderSetter;
 import de.usd.cstchef.operations.setter.HttpJsonSetter;
+import de.usd.cstchef.operations.setter.HttpMultipartSetter;
 import de.usd.cstchef.operations.setter.HttpPostSetter;
 import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetCookie;
@@ -94,7 +120,10 @@ import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.HttpXmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
+import de.usd.cstchef.operations.signature.JWTDecode;
+import de.usd.cstchef.operations.signature.JWTSign;
 import de.usd.cstchef.operations.signature.RsaSignature;
+import de.usd.cstchef.operations.signature.SM2Signature;
 import de.usd.cstchef.operations.signature.SoapMultiSignature;
 import de.usd.cstchef.operations.signature.XmlFullSignature;
 import de.usd.cstchef.operations.signature.XmlMultiSignature;
@@ -109,6 +138,7 @@ import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.string.Uppercase;
 import de.usd.cstchef.operations.string.Lowercase;
 import de.usd.cstchef.operations.string.Concaternate;
+import de.usd.cstchef.operations.utils.Counter;
 import de.usd.cstchef.operations.utils.GetVariable;
 import de.usd.cstchef.operations.utils.NoOperation;
 import de.usd.cstchef.operations.utils.RandomNumber;
@@ -125,46 +155,94 @@ public class Utils {
     }
 
     public static String replaceVariables(String text) {
-        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
-        for (Entry<String, byte[]> entry : variables.entrySet()) {
+        HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
+        for (Entry<String, ByteArray> entry : variables.entrySet()) {
             // TODO this is easy, but very bad, how to do this right?
-            text = text.replace("$" + entry.getKey(), new String(entry.getValue()));
+            text = text.replace("$" + entry.getKey(), entry.getValue().toString());
         }
 
         return text;
     }
 
-    public static byte[] replaceVariablesByte(byte[] bytes) {
-        HashMap<String, byte[]> variables = VariableStore.getInstance().getVariables();
+    public static ByteArray replaceVariablesByte(ByteArray bytes) {
+        HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
+        MontoyaApi api = BurpUtils.getInstance().getApi();
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
-
-        byte[] currentKey;
-        for (Entry<String, byte[]> entry : variables.entrySet()) {
+        ByteArray currentKey;
+        for (Entry<String, ByteArray> entry : variables.entrySet()) {
 
             int offset = 0;
-            currentKey = ("$" + entry.getKey()).getBytes();
+            currentKey = ByteArray.byteArray("$" + entry.getKey());
 
-            while( offset >= 0 ) {
-                offset = helpers.indexOf(bytes, currentKey, true, offset, bytes.length);
-                if( offset >= 0 )
-                    bytes = insertAtOffset(bytes, offset, offset + currentKey.length, entry.getValue());
+            while (offset >= 0) {
+                offset = api.utilities().byteUtils().indexOf(bytes.getBytes(), currentKey.getBytes(), true, offset,
+                        bytes.length());
+                if (offset >= 0)
+                    bytes = insertAtOffset(bytes, offset, offset + currentKey.length(), entry.getValue());
             }
         }
         return bytes;
     }
 
-    public static byte[] insertAtOffset(byte[] input, int start, int end, byte[] newValue) {
-        byte[] prefix = Arrays.copyOfRange(input, 0, start);
-        byte[] rest = Arrays.copyOfRange(input, end, input.length);
+    public static ByteArray httpRequestCookieExtractor(HttpRequest request, String cookieName){
+        String cookies = request.headerValue("Cookie");
+        return ByteArray.byteArray(cookieExtractor(cookies, cookieName));
+    }
 
-        byte[] output = new byte[prefix.length + newValue.length + rest.length];
-        System.arraycopy(prefix, 0, output, 0, prefix.length);
-        System.arraycopy(newValue, 0, output, prefix.length, newValue.length);
-        System.arraycopy(rest, 0, output, prefix.length + newValue.length, rest.length);
+    private static String cookieExtractor(String cookies, String cookieName){
+        String[] splitCookies = cookies.split("\\s*;\\s*");
+        for(String sC : splitCookies){
+            String[] separateCookie = sC.split("=");
+            if(separateCookie[0].equals(cookieName)){
+                return separateCookie[1];
+            }
+        }
+        return new String();
+    }
 
+    public static HttpRequest addCookieToHttpRequest(HttpRequest request, Cookie cookie){
+        String cookies = request.headerValue("Cookie");
+        if(cookies.contains(cookie.name())){
+            cookies = cookies.replace(cookie.name() + "=" + cookieExtractor(cookies, cookie.name()), cookie.toString());
+        }
+        else{
+            cookies += "; " + cookie.toString();
+        }
+        return request.withUpdatedHeader(HttpHeader.httpHeader("Cookie", cookies));
+    }
+
+    public static ByteArray insertAtOffset(ByteArray input, int start, int end, ByteArray newValue) {
+        ByteArray prefix = BurpUtils.subArray(input, 0, start);
+        ByteArray rest = BurpUtils.subArray(input, end, input.length());
+        
+        ByteArray output = prefix.withAppended(newValue).withAppended(rest);
         return output;
+    }
+
+    public static ByteArray jsonSetter(ByteArray input, String key, String value, boolean addIfNotPresent, String path){
+        DocumentContext document = JsonPath.parse(input.toString());
+
+            try {
+                document.read(key);
+            } catch (Exception e) {
+
+                if (!addIfNotPresent)
+                    throw new IllegalArgumentException("Key not found.");
+
+                String insertPath = path;
+                if (insertPath.equals("Insert-Path") || insertPath.equals(""))
+                    insertPath = "$";
+
+                try {
+                    document = document.put(insertPath, key, value);
+                    return  ByteArray.byteArray(document.jsonString());
+                } catch (Exception ex) {
+                    throw new IllegalArgumentException("Could not parse JSON from input");
+                }
+            }
+
+            document.set(key, value);
+            return ByteArray.byteArray(document.jsonString());
     }
 
     public static Class<? extends Operation>[] getOperationsBurp() {
@@ -209,32 +287,86 @@ public class Utils {
     @SuppressWarnings("unchecked")
     public static Class<? extends Operation>[] getOperationsDev() {
         return new Class[] {
-            Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
-            Blake.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
-            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
-            GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
-            HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
-            HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
-            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class,
-            HttpPostExtractor.class, HttpPostSetter.class, HTTPRequest.class, HttpSetBody.class,
-            HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
-            HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
-            JsonExtractor.class, JsonSetter.class, Length.class, LineExtractor.class,
-            LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
-            Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
-            RandomNumber.class, RandomUUID.class ,ReadFile.class, RegexExtractor.class, Reverse.class, Replace.class,
-            RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RegexMatch.class,
-            SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
-            StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class, Subtraction.class,
-            Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
-            ToBase64.class, ToHex.class, UnixTimestamp.class, UrlDecode.class, UrlEncode.class,
-            Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-            Xor.class, SoapMultiSignature.class, Concaternate.class
+                Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
+                Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+                Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
+                GetRequestBuilder.class,
+                GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
+                HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
+                HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
+                HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
+                HttpMultipartSetter.class,
+                HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
+                HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
+                HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
+                JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class,
+                LineExtractor.class,
+                LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
+                Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
+                RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class,
+                Replace.class,
+                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM2Signature.class, SM3.class, SM4Encryption.class, SM4Decryption.class, RegexMatch.class,
+                SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
+                StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
+                Subtraction.class,
+                Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
+                TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
+                UrlDecode.class, UrlEncode.class,
+                Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
+                Xor.class, SoapMultiSignature.class, Concaternate.class
         };
     }
 
     public static Class<? extends Operation>[] getOperations() {
         return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+    }
+
+    public enum MessageType {
+        REQUEST,
+        RESPONSE,
+        RAW
+    }
+    
+    public static class CSTCCookie implements Cookie{
+        private String name;
+        private String value;
+
+        public CSTCCookie(String cookieName, String cookieValue){
+            this.name = cookieName;
+            this.value = cookieValue;
+        }
+
+        @Override
+        public String name() {
+            return name;
+        }
+
+        @Override
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public String domain() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'domain'");
+        }
+
+        @Override
+        public String path() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'path'");
+        }
+
+        @Override
+        public Optional<ZonedDateTime> expiration() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'expiration'");
+        }
+
+        public String toString(){
+            return name() + "=" + value();
+        }
     }
 
 }

@@ -1,13 +1,12 @@
 package de.usd.cstchef.operations.extractors;
 
-import java.util.Arrays;
-
 import javax.swing.JTextField;
 
-import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
-import burp.IParameter;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -18,26 +17,24 @@ public class HttpJsonExtractor extends Operation {
     private JTextField fieldTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String keyName = fieldTxt.getText();
         if( keyName.equals("") )
-            return input;
+            return ByteArray.byteArray(0);
 
-        IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = callbacks.getHelpers();
+        
 
-        IParameter param = helpers.getRequestParameter(input, keyName);
-        if( param == null)
-            throw new IllegalArgumentException("Key not found.");
-        if( param.getType() != IParameter.PARAM_JSON )
-            throw new IllegalArgumentException("Parameter type is not JSON");
-
-        int start = param.getValueStart();
-        int end = param.getValueEnd();
-
-        byte[] result = Arrays.copyOfRange(input, start, end);
-        return result;
+        if(messageType == MessageType.REQUEST){
+            return checkNull(ByteArray.byteArray(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value()));
+        }
+        else if(messageType == MessageType.RESPONSE){
+            JsonExtractor extractor = new JsonExtractor(keyName);
+            return checkNull(extractor.perform(HttpResponse.httpResponse(input).body(), messageType));
+        }
+        else{
+            return parseRawMessage(input);
+        }
     }
 
     @Override

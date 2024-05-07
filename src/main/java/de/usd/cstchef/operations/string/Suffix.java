@@ -2,6 +2,8 @@ package de.usd.cstchef.operations.string;
 
 import java.io.ByteArrayOutputStream;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -13,12 +15,12 @@ public class Suffix extends Operation {
     private FormatTextField  suffixTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(input);
-        out.write(suffixTxt.getText());
+        out.write(input.getBytes());
+        out.write(suffixTxt.getText().getBytes());
 
-        return out.toByteArray();
+        return factory.createByteArray(out.toByteArray());
     }
 
     @Override
