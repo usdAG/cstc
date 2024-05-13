@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations;
+package de.usd.cstchef.operations.arithmetic;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,12 +7,13 @@ import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.operations.arithmetic.Median;
+import de.usd.cstchef.operations.arithmetic.MultiplyList;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
-public class MedianTest extends Median
+public class MultiplyListTest extends MultiplyList
 {
     private String delimiter;
     private boolean isFloat;
@@ -33,27 +34,52 @@ public class MedianTest extends Median
     }
 
     @Test
-    public void CommaMedianTest() throws Exception
+    public void CommaMultiplyTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = false;
 
-        String testValue = "1,2,3,4,5";
+        String testValue = "1,2,3,4,5,6";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert result.toString().equals("3");
+        assert result.toString().equals("720");
     }
 
     @Test
-    public void CommaMedianFloatTest() throws Exception
+    public void CommaMultiplyFloatTest() throws Exception
     {
         delimiter = "Comma";
         isFloat = true;
 
-        String testValue = "1,2,3.5,4,5";
+        String testValue = "3,0.5,0.5";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert result.toString().equals("3.5");
+        assert result.toString().equals("0.75");
+    }
+
+    @Test
+    public void SpaceMultiplyTest() throws Exception
+    {
+        delimiter = "Space";
+        isFloat = false;
+
+        String testValue = "1 2 3 4 5 6";
+        ByteArray result = perform(factory.createByteArray(testValue), null);
+
+        System.out.println(result.toString());
+        assert result.toString().equals("720");
+    }
+
+    @Test
+    public void SpaceMultiplyFloatTest() throws Exception
+    {
+        delimiter = "Space";
+        isFloat = true;
+
+        String testValue = "3 0.5 0.5";
+        ByteArray result = perform(factory.createByteArray(testValue), null);
+
+        assert result.toString().equals("0.75");
     }
 
     @Before

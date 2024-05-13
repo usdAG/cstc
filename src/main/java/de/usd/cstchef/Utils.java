@@ -27,6 +27,7 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 
 import burp.BurpUtils;
+import burp.BurpObjectFactory;
 import burp.CstcObjectFactory;
 import burp.Logger;
 import burp.api.montoya.MontoyaApi;
@@ -148,6 +149,8 @@ import de.usd.cstchef.view.View;
 
 public class Utils {
 
+    public static CstcObjectFactory factory = new BurpObjectFactory();
+
     public static double parseNumber(String in) {
         // TODO hex values??
         return Double.valueOf(in);
@@ -185,10 +188,11 @@ public class Utils {
 
     public static ByteArray httpRequestCookieExtractor(HttpRequest request, String cookieName){
         String cookies = request.headerValue("Cookie");
-        return ByteArray.byteArray(cookieExtractor(cookies, cookieName));
+        //return ByteArray.byteArray(cookieExtractor(cookies, cookieName));
+        return factory.createByteArray(cookieExtractor(cookies, cookieName));
     }
 
-    private static String cookieExtractor(String cookies, String cookieName){
+    private static String cookieExtractor(String cookies, String cookieName) {
         String[] splitCookies = cookies.split("\\s*;\\s*");
         for(String sC : splitCookies){
             String[] separateCookie = sC.split("=");
@@ -196,7 +200,7 @@ public class Utils {
                 return separateCookie[1];
             }
         }
-        return new String();
+        throw new IllegalArgumentException("Parameter name not found.");
     }
 
     public static HttpRequest addCookieToHttpRequest(HttpRequest request, Cookie cookie){

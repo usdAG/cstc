@@ -1,4 +1,4 @@
-package de.usd.cstchef.operations;
+package de.usd.cstchef.operations.arithmetic;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,6 +7,7 @@ import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Sum;
 import de.usd.cstchef.utils.UnitTestObjectFactory;

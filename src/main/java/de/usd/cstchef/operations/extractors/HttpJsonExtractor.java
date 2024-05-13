@@ -14,23 +14,24 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HTTP JSON", category = OperationCategory.EXTRACTORS, description = "Get a JSON value from HTTP message.")
 public class HttpJsonExtractor extends Operation {
 
-    private JTextField fieldTxt;
+    protected JTextField fieldTxt;
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String keyName = fieldTxt.getText();
         if( keyName.equals("") )
-            return ByteArray.byteArray(0);
-
-        
+            //return ByteArray.byteArray(0);
+            return factory.createByteArray(0);
 
         if(messageType == MessageType.REQUEST){
-            return checkNull(ByteArray.byteArray(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value()));
+            //return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value()));
+            return factory.createByteArray(checkNull(factory.createHttpRequest(input).parameter(keyName, HttpParameterType.JSON).value()));
         }
         else if(messageType == MessageType.RESPONSE){
             JsonExtractor extractor = new JsonExtractor(keyName);
-            return checkNull(extractor.perform(HttpResponse.httpResponse(input).body(), messageType));
+            //return checkNull(extractor.perform(HttpResponse.httpResponse(input).body(), messageType));
+            return checkNull(extractor.perform(factory.createHttpResponse(input).body(), messageType));
         }
         else{
             return parseRawMessage(input);

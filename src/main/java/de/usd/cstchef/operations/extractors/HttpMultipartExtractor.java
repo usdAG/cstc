@@ -19,11 +19,13 @@ public class HttpMultipartExtractor extends Operation {
 
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
-            return ByteArray.byteArray(0);
+            //return ByteArray.byteArray(0);
+            return factory.createByteArray(0);
 
         if (messageType == MessageType.REQUEST) {
             try{
-                return checkNull(ByteArray.byteArray(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.BODY)));
+                //return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).parameterValue(parameterName, HttpParameterType.BODY)));
+                return factory.createByteArray(checkNull(factory.createHttpRequest(input).parameterValue(parameterName, HttpParameterType.BODY)));
             }
             catch(Exception e){
                 throw new IllegalArgumentException("Input is not a valid request");

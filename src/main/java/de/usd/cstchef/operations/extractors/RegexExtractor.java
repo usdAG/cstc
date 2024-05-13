@@ -18,8 +18,8 @@ public class RegexExtractor extends Operation {
     private static String LIST_MATCHES = "List matches";
     private static String LIST_GROUPS = "List capture groups";
 
-    private VariableTextField regexTxt;
-    private JComboBox<String> outputBox;
+    protected VariableTextField regexTxt;
+    protected JComboBox<String> outputBox;
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {

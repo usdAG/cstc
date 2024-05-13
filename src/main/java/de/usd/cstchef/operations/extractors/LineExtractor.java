@@ -16,8 +16,8 @@ import de.usd.cstchef.view.ui.VariableTextField;
 @OperationInfos(name = "Line Extractor", category = OperationCategory.EXTRACTORS, description = "Extracts the specified line number.")
 public class LineExtractor extends Operation {
 
-    private VariableTextField lineNumberField;
-    private JComboBox<String> formatBox;
+    protected VariableTextField lineNumberField;
+    protected JComboBox<String> formatBox;
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {

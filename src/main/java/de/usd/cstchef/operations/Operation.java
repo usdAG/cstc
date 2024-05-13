@@ -201,7 +201,7 @@ public abstract class Operation extends JPanel {
         return properties;
     }
 
-    public ByteArray checkNull(ByteArray input) throws Exception{
+    public <T> T checkNull(T input) throws Exception{
         if(input == null)
             throw new IllegalArgumentException("Parameter name not found.");
         return input;

@@ -12,19 +12,22 @@ import de.usd.cstchef.view.ui.VariableTextField;
 @OperationInfos(name = "HTTP Header", category = OperationCategory.EXTRACTORS, description = "Extracts a header of a HTTP message.")
 public class HttpHeaderExtractor extends Operation {
 
-    private VariableTextField headerNameField;
+    protected VariableTextField headerNameField;
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         String headerName = headerNameField.getText();
         if( headerName.length() == 0 )
-            return ByteArray.byteArray(0);
+            //return ByteArray.byteArray(0);
+            return factory.createByteArray(0);
         if(messageType == MessageType.REQUEST){
-            return checkNull(ByteArray.byteArray(HttpRequest.httpRequest(input).headerValue(headerName)));
+            //return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).headerValue(headerName)));
+            return factory.createByteArray(checkNull(factory.createHttpRequest(input).headerValue(headerName)));
         }
         else if(messageType == MessageType.RESPONSE){
-            return checkNull(ByteArray.byteArray(HttpResponse.httpResponse(input).headerValue(headerName)));
+            //return ByteArray.byteArray(checkNull(HttpResponse.httpResponse(input).headerValue(headerName)));
+            return factory.createByteArray(checkNull(factory.createHttpResponse(input).headerValue(headerName)));
         }
         else{
             return parseRawMessage(input);
