@@ -60,7 +60,7 @@ public class SplitAndSelect extends Operation {
     @Override
     public void createUI() {
         this.delim = new VariableTextField();
-        this.addUIElement("Delimmiter", this.delim);
+        this.addUIElement("Delimiter", this.delim);
         this.item = new VariableTextField();
         this.addUIElement("Item number", this.item);
     }
