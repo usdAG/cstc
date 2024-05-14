@@ -138,6 +138,7 @@ import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.string.Uppercase;
 import de.usd.cstchef.operations.string.Lowercase;
+import de.usd.cstchef.operations.string.Concatenate;
 import de.usd.cstchef.operations.utils.Counter;
 import de.usd.cstchef.operations.utils.GetVariable;
 import de.usd.cstchef.operations.utils.NoOperation;
@@ -287,33 +288,33 @@ public class Utils {
     @SuppressWarnings("unchecked")
     public static Class<? extends Operation>[] getOperationsDev() {
         return new Class[] {
-            Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
-            Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
-            Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
-            GetRequestBuilder.class,
-            GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
-            HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
-            HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
-            HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
-            HttpMultipartSetter.class,
-            HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
-            HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
-            HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
-            JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class,
-            LineExtractor.class,
-            LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
-            Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
-            RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class,
-            Replace.class,
-            RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM2Signature.class, SM3.class, SM4Encryption.class, SM4Decryption.class, RegexMatch.class,
-            SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
-            StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
-            Subtraction.class,
-            Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
-            TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
-            UrlDecode.class, UrlEncode.class,
-            Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-            Xor.class, SoapMultiSignature.class, Luhn.class
+                Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
+                Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+                Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
+                GetRequestBuilder.class,
+                GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
+                HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
+                HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
+                HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
+                HttpMultipartSetter.class,
+                HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
+                HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
+                HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
+                JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class,
+                LineExtractor.class,
+                LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
+                Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class,
+                RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class,
+                Replace.class,
+                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM2Signature.class, SM3.class, SM4Encryption.class, SM4Decryption.class, RegexMatch.class,
+                SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
+                StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
+                Subtraction.class,
+                Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
+                TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
+                UrlDecode.class, UrlEncode.class,
+                Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
+                Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class
         };
     }
 
