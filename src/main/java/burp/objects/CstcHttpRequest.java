@@ -15,6 +15,7 @@ import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.requests.HttpTransformation;
+import de.usd.cstchef.operations.extractors.JsonExtractor;
 
 public class CstcHttpRequest implements HttpRequest {
 
