@@ -24,13 +24,11 @@ public class HttpJsonExtractor extends Operation {
             //return ByteArray.byteArray(0);
             return factory.createByteArray(0);
 
+        JsonExtractor extractor = new JsonExtractor(keyName);
         if(messageType == MessageType.REQUEST){
-            //return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).parameter(keyName, HttpParameterType.JSON).value()));
-            return factory.createByteArray(checkNull(factory.createHttpRequest(input).parameter(keyName, HttpParameterType.JSON).value()));
+            return checkNull(extractor.perform(factory.createHttpRequest(input).body(), messageType));
         }
         else if(messageType == MessageType.RESPONSE){
-            JsonExtractor extractor = new JsonExtractor(keyName);
-            //return checkNull(extractor.perform(HttpResponse.httpResponse(input).body(), messageType));
             return checkNull(extractor.perform(factory.createHttpResponse(input).body(), messageType));
         }
         else{
