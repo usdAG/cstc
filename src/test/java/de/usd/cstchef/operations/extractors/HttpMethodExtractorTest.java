@@ -35,7 +35,6 @@ public class HttpMethodExtractorTest extends HttpMethodExtractor {
                 assertEquals("Input is not a valid HTTP Request", exception.getMessage());
             }
             else{
-                //assertEquals(perform(inputArray, messageType), outputArray);
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
             }
         }

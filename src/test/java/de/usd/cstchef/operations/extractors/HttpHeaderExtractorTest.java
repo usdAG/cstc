@@ -49,7 +49,6 @@ public class HttpHeaderExtractorTest extends HttpHeaderExtractor {
         super.factory = factory;
 
         // Header1
-        //String reqIn1 = "GET / HTTP/2\nHeader1: value1\nHeader2: value2\n\n";
         String reqIn1 = """
                 GET / HTTP/2
                 Header1: value1
@@ -98,7 +97,6 @@ public class HttpHeaderExtractorTest extends HttpHeaderExtractor {
         Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqOut4, reqHeader4, false);
 
         // HTTP Response - Header2
-
         String resIn1 = """
                 HTTP/2 200 Ok
                 Header1: value1

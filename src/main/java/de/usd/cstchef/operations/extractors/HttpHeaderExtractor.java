@@ -19,14 +19,11 @@ public class HttpHeaderExtractor extends Operation {
 
         String headerName = headerNameField.getText();
         if( headerName.length() == 0 )
-            //return ByteArray.byteArray(0);
             return factory.createByteArray(0);
         if(messageType == MessageType.REQUEST){
-            //return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).headerValue(headerName)));
             return factory.createByteArray(checkNull(factory.createHttpRequest(input).headerValue(headerName)));
         }
         else if(messageType == MessageType.RESPONSE){
-            //return ByteArray.byteArray(checkNull(HttpResponse.httpResponse(input).headerValue(headerName)));
             return factory.createByteArray(checkNull(factory.createHttpResponse(input).headerValue(headerName)));
         }
         else{

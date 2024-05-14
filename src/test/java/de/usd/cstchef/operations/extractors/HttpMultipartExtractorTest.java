@@ -20,7 +20,7 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HttpMultipartExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpMultipartExtractorTest extends HttpMultipartExtractor {
 
-    // HashMap<Input String, Pair<Output String, throwsException>>
+    // HashMap<Input, Triplet<expectedOutput, parameter, throwsException>>
     HashMap<String, Triplet<String, String, Boolean>> inputs = new HashMap<>();
 
     @Test
@@ -42,7 +42,6 @@ public class HttpMultipartExtractorTest extends HttpMultipartExtractor {
                 }
             }
             else{
-                //assertEquals(perform(inputArray, messageType), outputArray);
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
             }
         }

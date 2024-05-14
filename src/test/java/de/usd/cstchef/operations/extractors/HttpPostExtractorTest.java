@@ -6,7 +6,6 @@ import static org.junit.Assert.assertThrows;
 
 import java.util.HashMap;
 
-import org.javatuples.Quartet;
 import org.javatuples.Triplet;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +21,7 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HttpPostExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpPostExtractorTest extends HttpPostExtractor {
 
-    // HashMap<Input String, Pair<Output String, throwsException>>
+    // HashMap<Input String, Triplet<expectedOutput, parameter, throwsException>>
     HashMap<String, Triplet<String, String, Boolean>> inputs = new HashMap<>();
 
     @Test
@@ -44,7 +43,6 @@ public class HttpPostExtractorTest extends HttpPostExtractor {
                 }
             }
             else{
-                //assertEquals(perform(inputArray, messageType), outputArray);
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
             }
         }
@@ -80,7 +78,7 @@ public class HttpPostExtractorTest extends HttpPostExtractor {
         String reqParam2 = "";
         Triplet<String, String,  Boolean> reqTriplet2 = new Triplet<String, String, Boolean>(reqOut2, reqParam2, false);
 
-        // messageType == REQUEST && param incorrect
+        // param not found
         String reqIn3 = """
             POST / HTTP/2
             Header1: c
@@ -92,7 +90,7 @@ public class HttpPostExtractorTest extends HttpPostExtractor {
         String reqParam3 = "parameter3";
         Triplet<String, String, Boolean> reqTriplet3 = new Triplet<String, String, Boolean>(reqOut3, reqParam3, true);
 
-        // messageType == RESPONSE
+        // HTTP Response
         String resIn1 = """
                 HTTP/2 200 Ok
                 Header1: value1

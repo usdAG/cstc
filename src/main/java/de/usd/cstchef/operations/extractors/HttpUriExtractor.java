@@ -35,12 +35,8 @@ public class HttpUriExtractor extends Operation {
             try {
                 String url = factory.createHttpRequest(input).url();
                 if (!checkbox.isSelected()) {
-                    //HttpRequest request = HttpRequest.httpRequest(input);
-                    //String url = request.url();
-                    //return ByteArray.byteArray(url.split("\\?")[0]);
                     return factory.createByteArray(url.split("\\?")[0]);
                 } else {
-                    //return ByteArray.byteArray(HttpRequest.httpRequest(input).url());
                     return factory.createByteArray(url);
                 }
             } catch (Exception e) {

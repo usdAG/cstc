@@ -119,7 +119,7 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         String resCookie2 = "cookie2";
         Triplet<String, String, Boolean> resTriplet2 = new Triplet<String,String,Boolean>(resOut2, resCookie2, false);
 
-        // Exception ---- what if we have multiple set-cookie headers?
+        // Exception
         String resIn3 = """
                 HTTP/2 200 Ok
                 Header1: c

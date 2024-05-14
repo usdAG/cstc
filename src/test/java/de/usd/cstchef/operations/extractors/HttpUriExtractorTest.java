@@ -21,7 +21,7 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HttpUriExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpUriExtractorTest extends HttpUriExtractor {
 
-    // HashMap<Input, Triplet<Output, withOrWithoutParams, throwsException>>
+    // HashMap<Input, Triplet<expectedOutput, withOrWithoutParams, throwsException>>
     HashMap<String, Triplet<String, Boolean, Boolean>> inputs = new HashMap<>();
 
     @Test
@@ -43,7 +43,6 @@ public class HttpUriExtractorTest extends HttpUriExtractor {
                 }
             }
             else{
-                //assertEquals(perform(inputArray, messageType), outputArray);
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
             }
         }

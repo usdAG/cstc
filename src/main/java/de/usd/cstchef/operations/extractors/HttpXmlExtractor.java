@@ -31,23 +31,19 @@ public class HttpXmlExtractor extends Operation {
 
         String keyName = fieldTxt.getText();
         if (keyName.equals(""))
-            //return ByteArray.byteArray(0);
             return factory.createByteArray(0);
 
         if (messageType == MessageType.REQUEST) {
             try {
-                //return ByteArray.byteArray(checkNull(HttpRequest.httpRequest(input).parameterValue(keyName, HttpParameterType.XML)));
                 return factory.createByteArray(checkNull(factory.createHttpRequest(input).parameterValue(keyName, HttpParameterType.XML)));
             } catch (Exception e) {
                 throw new IllegalArgumentException("Input is not a valid request");
             }
         } else if (messageType == MessageType.RESPONSE) {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            //Document doc = builder.parse(new ByteArrayInputStream(HttpResponse.httpResponse(input).bodyToString().getBytes()));
             Document doc = builder.parse(new ByteArrayInputStream(factory.createHttpResponse(input).bodyToString().getBytes()));
             doc.getDocumentElement().normalize();
             NodeList nodeList = doc.getElementsByTagName(keyName);
-            //return ByteArray.byteArray(checkNull(nodeList.item(0).getTextContent()));
             try {
                 return factory.createByteArray(checkNull(nodeList.item(0).getTextContent()));
             } catch (NullPointerException e) {

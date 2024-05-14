@@ -16,7 +16,6 @@ public class HttpMethodExtractor extends Operation {
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         if(messageType == MessageType.REQUEST){
             try{
-                //return ByteArray.byteArray(HttpRequest.httpRequest(input).method());
                 return factory.createByteArray(factory.createHttpRequest(input).method());
             }
             catch(Exception e){

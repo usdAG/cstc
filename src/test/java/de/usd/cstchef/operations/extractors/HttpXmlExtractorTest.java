@@ -21,7 +21,7 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HttpXmlExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpXmlExtractorTest extends HttpXmlExtractor {
 
-    // HashMap<Input, Triplet<Output, keyName, throwsException>>
+    // HashMap<Input, Triplet<expectedOutput, keyName, throwsException>>
     HashMap<String, Triplet<String, String, Boolean>> inputs = new HashMap<>();
 
     @Test
@@ -37,7 +37,6 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                 assertEquals("Input is not a valid request", exception.getMessage());
             }
             else{
-                //assertEquals(outputArray, perform(inputArray, messageType));
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
             }
         }
@@ -49,7 +48,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         this.factory = factory;
         super.factory = factory;
 
-        // outer tag (messageType == REQUEST && param correct)
+        // outer tag (HTTP Request && param correct)
         String reqIn1 = """
                 GET / HTTP/2
                 Header1: a
@@ -67,7 +66,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         String reqTag1 = "Tag1";
         Triplet<String, String, Boolean> reqTriplet1 = new Triplet<String, String, Boolean>(reqOut1, reqTag1, false);
 
-        // inner tag (messageType == REQUEST && param correct)
+        // inner tag (HTTP Request && param correct)
         String reqIn2 = """
                 GET / HTTP/2
                 Header1: b
@@ -86,7 +85,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         Triplet<String, String, Boolean> reqTriplet2 = new Triplet<String, String, Boolean>(reqOut2, reqTag2, false);
 
 
-        // outer tag (messageType == RESPONSE && param correct)
+        // HTTP Request && param correct)
         String resIn1 = """
                 POST /echo/post/xml HTTP/1.1
                 Host: reqbin.com
@@ -106,7 +105,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         String resTag1 = "Tag1";
         Triplet<String, String, Boolean> resTriplet1 = new Triplet<String, String, Boolean>(resOut1, resTag1, false);
 
-        // inner tag (messageTYPE == RESPONSE && param correct
+        // HTTP Response && param correct
         String resIn2 = """
                 HTTP/2 200 Ok
                 Header1: b
@@ -125,7 +124,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         Triplet<String, String, Boolean> resTriplet2 = new Triplet<String, String, Boolean>(resOut2, resTag2, false);
         
         
-        // messageType == REQUEST && param empty
+        // HTTP Request && param empty
         String reqIn3 = """
                 GET / HTTP/2
                 Header1: c
@@ -143,7 +142,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         String reqTag3 = "";
         Triplet<String, String,  Boolean> reqTriplet3 = new Triplet<String, String, Boolean>(reqOut3, reqTag3, false);
 
-        // messageType == RESPONSE && param empty
+        // HTTP Response && param empty
         String resIn3 = """
                 GET / HTTP/2
                 Header1: c
@@ -161,7 +160,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         String resTag3 = "";
         Triplet<String, String, Boolean> resTriplet3 = new Triplet<String, String, Boolean>(resOut3, resTag3, false);
 
-        // messageTYPE == REQUEST && param incorrect
+        // HTTP Request && param incorrect
         String reqIn4 = """
                 GET / HTTP/2
                 Header1: a
@@ -179,7 +178,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         String reqTag4 = "ImaginaryTag";
         Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String, String, Boolean>(reqOut4, reqTag4, true);
 
-        // messageType == RESPONSE && param incorrect
+        // HTTP Response && param incorrect
         String resIn4 = """
                 HTTP/2 200 Ok
                 Header1: b
