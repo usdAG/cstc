@@ -38,7 +38,7 @@ Note here that the menu for sending the HTTP request to the CSTC can also be cal
 
 <img src="media/introduction/fig05-example_1_response.png" width="75%" height="75%">
 
-Now the appropriate recipe must be created. In this case we use two lanes **(1)**: In the first, we extract the body of the HTTP response, decode it and store it in a variable named ```body```. In the second lane, we replace the body of the original HTTP response with the body we have manipulated and stored in the variable. We also add a suitable Content-Type header so that Burpsuite knows how to display the data in pretty print. We see the result on the right **(2)**. We finally instruct the CSTC to apply this recipe to all incoming responses in the Repeater tab **(3)**.
+Now the appropriate recipe must be created. In this case we use two lanes **(1)**: In the first, we extract the body of the HTTP response, decode it and store it in a variable named ```body```. In the second lane, we replace the body of the original HTTP response with the body we have manipulated and stored in the variable. We also add a suitable Content-Type Header so that Burp knows how to display the data in pretty print. We see the result on the right **(2)**. We finally instruct the CSTC to apply this recipe to all incoming responses in the Repeater tab **(3)**.
 
 <img src="media/introduction/fig06-example_1_poc.png" width="75%" height="75%">
 
@@ -89,4 +89,4 @@ In the Intruder tab we now mark the parameter **(1)** to be tested and select th
 
 <img src="media/introduction/fig16-scan_result.png" width="75%" height="75%">
 
-Using the CSTC recipe for outgoing requests, the Burp Scanner was able to confirm the SQLi as the CSTC transforms all requests containing payloads dynamically by applying the defined recipe shown above. This shows that the good integration of the CSTC can also be chained with other Extensions or builtin functions of BurpSuite.
+Using the CSTC recipe for outgoing requests, the Burp Scanner was able to confirm the SQLi as the CSTC transforms all requests containing payloads dynamically by applying the defined recipe shown above. This shows that the good integration of the CSTC can also be chained with other Extensions or builtin functions of Burp Suite.

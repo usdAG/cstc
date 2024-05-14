@@ -104,6 +104,7 @@ import de.usd.cstchef.operations.hashing.SHA3;
 import de.usd.cstchef.operations.hashing.SM3;
 import de.usd.cstchef.operations.hashing.Skein;
 import de.usd.cstchef.operations.hashing.Tiger;
+import de.usd.cstchef.operations.hashing.Luhn;
 import de.usd.cstchef.operations.hashing.Whirlpool;
 import de.usd.cstchef.operations.misc.GetRequestBuilder;
 import de.usd.cstchef.operations.misc.ReadFile;
@@ -313,7 +314,7 @@ public class Utils {
                 TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
                 UrlDecode.class, UrlEncode.class,
                 Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-                Xor.class, SoapMultiSignature.class, Concatenate.class
+                Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class
         };
     }
 
