@@ -1,24 +1,22 @@
-package de.usd.cstchef.operations;
+package de.usd.cstchef.operations.arithmetic;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import burp.BurpUtils;
 import burp.CstcObjectFactory;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.internal.MontoyaObjectFactory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.arithmetic.Addition;
-import de.usd.cstchef.operations.arithmetic.Subtraction;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
 
 @OperationInfos(name = "Test", category = OperationCategory.ARITHMETIC, description = "Test class")
-public class SubtractionTest extends Subtraction
+public class AdditionTest extends Addition
 {
     private String number;
     private boolean isFloat;
+    private CstcObjectFactory factory;
 
     protected double getNumber()
     {
@@ -31,7 +29,7 @@ public class SubtractionTest extends Subtraction
     }
 
     @Test
-    public void SimpleSubtraction() throws Exception
+    public void SimpleAdditionTest() throws Exception
     {
         number = "10";
         isFloat = false;
@@ -39,32 +37,31 @@ public class SubtractionTest extends Subtraction
         String testValue = "22";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert result.toString().equals("12");
+        assert result.toString().equals("32");
     }
 
     @Test
-    public void SubtractionFloatTest() throws Exception
+    public void AdditionFloatTest() throws Exception
     {
-        number = "2.1";
+        number = "2.2";
         isFloat = true;
 
         String testValue = "2.2";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        System.out.println(result.toString());
-        assert result.toString().startsWith("0.1");
+        assert result.toString().equals("4.4");
     }
 
     @Test
-    public void SubractionRoundTest() throws Exception
+    public void AdditionFloatRoundTest() throws Exception
     {
         number = "2.2";
         isFloat = false;
 
-        String testValue = "2.8";
+        String testValue = "2.2";
         ByteArray result = perform(factory.createByteArray(testValue), null);
 
-        assert result.toString().equals("1");
+        assert result.toString().equals("4");
     }
 
     @Before

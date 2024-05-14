@@ -1,5 +1,7 @@
 package de.usd.cstchef.operations.extractors;
 
+import java.util.LinkedHashMap;
+
 import javax.swing.JTextField;
 
 import com.jayway.jsonpath.Configuration;
@@ -18,7 +20,7 @@ public class JsonExtractor extends Operation {
     private static JsonProvider provider;
 
     //TODO should this be a VariableTextField?
-    private JTextField fieldTxt;
+    protected JTextField fieldTxt;
 
     public JsonExtractor(){
         this(new String());
@@ -36,25 +38,12 @@ public class JsonExtractor extends Operation {
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
         if( fieldTxt.getText().equals("") )
-            return ByteArray.byteArray(0);
+            return factory.createByteArray(0);
 
         Object document = provider.parse(input.toString());
         Object result = JsonPath.read(document, fieldTxt.getText());
 
-        if( result == null )
-            result = "null";
-
-        Class<? extends Object> resultClass = result.getClass();
-
-        if( resultClass == String.class ) {
-            return factory.createByteArray((String)result);
-        } else if( resultClass == Integer.class || resultClass == Float.class || resultClass == Double.class ) {
-            return  factory.createByteArray((String)result);
-        } else if( resultClass == Boolean.class ) {
-            return  checkNull(factory.createByteArray((String)result));
-        }
-
-        throw new IllegalArgumentException("JSON data of unknown type.");
+        return factory.createByteArray(result.toString());
     }
 
     @Override
