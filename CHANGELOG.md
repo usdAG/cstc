@@ -6,6 +6,67 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.3.1] - 2024-05-22
+
+### Added
+
+* Migrate to the new MontoyaAPI provided by Burp
+* Redesign the existing filter selection for better usability
+* Add ability to automatically save recipes in the Burp project file
+* Filter state is now persistent upon restarting Burp / CSTC
+* Add indication / warning if no filter has been selected (CSTC is inactive)
+* Refactor and redesign behavior of "HTTP Request" module and add "Send Plain Request" operation
+* Add an operation to set multipart/form-data parameters
+* Add uppercase and lowercase operations for strings
+* Add an option to URL safe encode and decode Base64 strings
+* Add operation to generate JWT signatures
+* Add operation to count executions of a specific operation / lane
+* Add support for empty IVs in the "AES" operations
+* Add an option to decide whether to append to or overwrite a file in the "File Write" operation
+* Add HTTP/2 support
+* Add operations for SM-2, SM-3, SM-4
+* Change to Java Version 17
+* Add CSTC introduction including demo
+* Add Luhn checksum operation
+* Add string concatenation operation
+
+### Changed
+
+* Fix compatibility issues with Burp's dark theme
+* Fix an issue where CSTC interferes with requests when turned off
+* Fix bugs related to loading and storing recipes
+* Fix implementation of "HTTP Request" operation which caused exceptions
+* Fix and add unit tests
+* Fix UI bugs of the operation tree on the left hand side
+* Refactor extractor and setter operations to match the new API, improve code quality and fix certain bugs (e.g. problem with multiple "Set-Cookie" headers)
+* Fix Filter selection and its application
+* Fix several issues regarding Conditionals
+* Fix Formatting tab changes crashing Repeater tab
+* Fix saving and loading Filter state inside Burp Project
+* Fix Exception handling in Operation's perform method
+* Fix CSTC lanes naming
+* Fix JSON extractor only able to extract single values
+
+
+## [1.3.0] - 2023-03-24
+
+### Added
+
+* Add Extender to the Filter Panel
+* Addition of new Operations
+  * Random Number
+  * Random UUID
+  * String Reverse
+  * String Lowercase and String Uppercase
+* Add clear button to the recipe panel
+
+### Changed
+
+* Fix bug related to insecure handling of XML input data
+* Minor UI enhancements for tiling window managers
+* Update all dependencies
+
+
 ## [1.2.1] - 2020-07-10
 
 ### Changed
