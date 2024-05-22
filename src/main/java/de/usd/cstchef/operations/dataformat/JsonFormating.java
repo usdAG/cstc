@@ -1,9 +1,6 @@
 package de.usd.cstchef.operations.dataformat;
 
-import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.utilities.Base64DecodingOptions;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +17,7 @@ public class JsonFormating extends Operation {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-			JsonNode jsonNode = objectMapper.readTree((JsonParser) input);
+			JsonNode jsonNode = objectMapper.readTree(input.toString());
 			return ByteArray.byteArray(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
 		} catch (Exception e2) {
 			return ByteArray.byteArray("JSON Parsing Error !");
