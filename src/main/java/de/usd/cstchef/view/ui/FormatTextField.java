@@ -52,7 +52,8 @@ public class FormatTextField extends JPanel implements ActionListener {
 
     public Map<String, String> getValues() {
         Map<String, String> values = new HashMap<>();
-        values.put("text", this.txtField.getText());
+        //values.put("text", this.txtField.getText());
+        values.put("text", this.txtField.getRawText());
         values.put("encoding", this.formatBox.getSelectedItem().toString());
         return values;
     }
