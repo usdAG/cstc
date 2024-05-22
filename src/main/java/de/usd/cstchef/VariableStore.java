@@ -4,11 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import burp.BurpUtils;
+import burp.api.montoya.core.ByteArray;
+
 public class VariableStore {
 
     private static VariableStore instance;
 
-    private HashMap<String, byte[]> variables = new HashMap<>();
+    private HashMap<String, ByteArray> variables = new HashMap<>();
     private ReentrantLock lock = new ReentrantLock();
 
     public static VariableStore getInstance() {
@@ -29,11 +32,11 @@ public class VariableStore {
          this.lock.unlock();
     }
 
-    public synchronized byte[] getVariable(String name) {
+    public synchronized ByteArray getVariable(String name) {
         return this.variables.get(name);
     }
 
-    public synchronized void setVariable(String key, byte[] value) {
+    public synchronized void setVariable(String key, ByteArray value) {
         this.variables.put(key, value);
     }
 
@@ -41,13 +44,12 @@ public class VariableStore {
         this.variables.remove(key);
     }
 
-    public synchronized HashMap<String, byte[]> getVariables() {
-        HashMap<String, byte[]> variablesCopy = new HashMap<>();
+    public synchronized HashMap<String, ByteArray> getVariables() {
+        HashMap<String, ByteArray> variablesCopy = new HashMap<>();
 
-        for (Map.Entry<String, byte[]> entry : this.variables.entrySet()) {
-            byte[] orig = entry.getValue();
-            byte[] newContent = new byte[orig.length];
-            System.arraycopy(orig, 0, newContent, 0, orig.length);
+        for (Map.Entry<String, ByteArray> entry : this.variables.entrySet()) {
+            ByteArray orig = entry.getValue();
+            ByteArray newContent = BurpUtils.subArray(orig, 0, orig.length());
             variablesCopy.put(entry.getKey(), newContent);
         }
         return variablesCopy;

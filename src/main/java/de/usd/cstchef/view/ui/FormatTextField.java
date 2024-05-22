@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentListener;
 import org.bouncycastle.util.encoders.Hex;
 
+import burp.api.montoya.core.ByteArray;
+
 public class FormatTextField extends JPanel implements ActionListener {
 
     public VariableTextField txtField;
@@ -25,7 +27,7 @@ public class FormatTextField extends JPanel implements ActionListener {
         this.setLayout(new BorderLayout());
         this.setBackground(new Color(0, 0, 0, 0));
         this.txtField = new VariableTextField();
-        this.formatBox = new JComboBox<>(new String[] {"Raw", "UTF-8", "Hex", "Latin1", "Base64"});
+        this.formatBox = new JComboBox<>(new String[] { "Raw", "UTF-8", "Hex", "Latin1", "Base64" });
         this.formatBox.addActionListener(this);
 
         Box box = Box.createHorizontalBox();
@@ -36,9 +38,22 @@ public class FormatTextField extends JPanel implements ActionListener {
         this.add(box);
     }
 
+    public void addOption(String option) {
+        this.formatBox.addItem(option);
+    }
+
+    public void setDefault(String option) {
+        for (int i = 0; i < this.formatBox.getItemCount(); i++) {
+            if (this.formatBox.getItemAt(i).equals(option)) {
+                this.formatBox.setSelectedItem(this.formatBox.getItemAt(i));
+            }
+        }
+    }
+
     public Map<String, String> getValues() {
         Map<String, String> values = new HashMap<>();
-        values.put("text", this.txtField.getText());
+        //values.put("text", this.txtField.getText());
+        values.put("text", this.txtField.getRawText());
         values.put("encoding", this.formatBox.getSelectedItem().toString());
         return values;
     }
@@ -50,27 +65,30 @@ public class FormatTextField extends JPanel implements ActionListener {
         this.formatBox.setSelectedItem(encoding);
     }
 
-    public byte[] getText() throws UnsupportedEncodingException {
+    public ByteArray getText() throws UnsupportedEncodingException {
 
-        byte[] raw = this.txtField.getBytes();
-        byte[] result = null;
+        ByteArray raw = this.txtField.getBytes();
+        ByteArray result = null;
 
         switch ((String) this.formatBox.getSelectedItem()) {
-        case "Raw":
-            result = raw;
-            break;
-        case "Hex":
-            result = Hex.decode(raw);
-            break;
-        case "Base64":
-            result = Base64.getDecoder().decode(raw);
-            break;
-        case "Latin1":
-            result = this.txtField.getText().getBytes("ISO-8859-1");
-            break;
-        case "UTF-8":
-            result = this.txtField.getText().getBytes("UTF-8");
-            break;
+            case "Raw":
+                result = raw;
+                break;
+            case "Hex":
+                result = ByteArray.byteArray(Hex.decode(raw.getBytes()));
+                break;
+            case "Base64":
+                result = ByteArray.byteArray(Base64.getDecoder().decode(raw.getBytes()));
+                break;
+            case "Latin1":
+                result = ByteArray.byteArray(this.txtField.getText().getBytes("ISO-8859-1"));
+                break;
+            case "UTF-8":
+                result = ByteArray.byteArray(this.txtField.getText().getBytes("UTF-8"));
+                break;
+            case "Empty":
+                result = ByteArray.byteArray(16);
+                break;
         }
         return result;
     }
@@ -84,6 +102,12 @@ public class FormatTextField extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (this.docListener != null) {
             this.docListener.changedUpdate(null);
+        }
+        if (this.formatBox.getSelectedItem().equals("Empty")) {
+            this.txtField.setEnabled(false);
+            this.txtField.setDisabledTextColor(Color.GRAY);
+        } else {
+            this.txtField.setEnabled(true);
         }
     }
 

@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -19,7 +21,7 @@ public class ReadFile extends Operation implements ActionListener {
     private VariableTextField fileNameTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         String path = fileNameTxt.getText();
 
         File file = new File(path);
@@ -28,7 +30,7 @@ public class ReadFile extends Operation implements ActionListener {
         fis.read(data);
         fis.close();
 
-        return data;
+        return factory.createByteArray(data);
     }
 
     public void createUI() {

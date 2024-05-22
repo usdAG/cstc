@@ -1,12 +1,17 @@
 package de.usd.cstchef.operations.extractors;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.params.HttpParameterType;
+import burp.api.montoya.http.message.params.ParsedHttpParameter;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -14,7 +19,7 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HTTP URI", category = OperationCategory.EXTRACTORS, description = "Extracts the URI of a HTTP request.")
 public class HttpUriExtractor extends Operation {
 
-    private JCheckBox checkbox;
+    protected JCheckBox checkbox;
 
     @Override
     public void createUI() {
@@ -24,27 +29,23 @@ public class HttpUriExtractor extends Operation {
     }
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        try {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
-            IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-            IExtensionHelpers helpers = callbacks.getHelpers();
-            int length = input.length;
-
-            int firstMark = helpers.indexOf(input, " ".getBytes(), false, 0, length);
-            int lineMark = helpers.indexOf(input, " ".getBytes(), false, firstMark + 1, length);
-
-            int secondMark = helpers.indexOf(input, "?".getBytes(), false, firstMark + 1, length);
-
-            if( this.checkbox.isSelected() || secondMark < 0 || secondMark >= lineMark) {
-                secondMark = lineMark;
+        if (messageType == MessageType.REQUEST) {
+            try {
+                String url = factory.createHttpRequest(input).url();
+                if (!checkbox.isSelected()) {
+                    return factory.createByteArray(url.split("\\?")[0]);
+                } else {
+                    return factory.createByteArray(url);
+                }
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Input is not a valid request");
             }
-
-            byte[] result = Arrays.copyOfRange(input, firstMark + 1, secondMark);
-            return result;
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Provided input is not a valid http request.");
+        } else if (messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        } else {
+            return parseRawMessage(input);
         }
     }
 }

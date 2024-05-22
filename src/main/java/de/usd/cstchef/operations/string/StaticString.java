@@ -1,5 +1,7 @@
 package de.usd.cstchef.operations.string;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -11,7 +13,7 @@ public class StaticString extends Operation {
     private VariableTextArea stringTxt;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
         return this.stringTxt.getBytes();
     }
 

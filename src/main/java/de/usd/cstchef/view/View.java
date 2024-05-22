@@ -10,25 +10,34 @@ import javax.swing.WindowConstants;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import burp.BurpUtils;
+import de.usd.cstchef.Utils.MessageType;
+import de.usd.cstchef.view.filter.FilterState;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
+
 public class View extends JPanel {
 
     private RecipePanel incomingRecipePanel;
     private RecipePanel outgoingRecipePanel;
     private RecipePanel formatRecipePanel;
 
-    public View() {
+    public View(){
+        this(new FilterState());
+    }
+
+    public View(FilterState state) {
         Security.addProvider(new BouncyCastleProvider());
 
         this.setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        incomingRecipePanel = new RecipePanel("Incomming", false);
-        outgoingRecipePanel = new RecipePanel("Outgoing", true);
-        formatRecipePanel = new RecipePanel("Formatting", true);
+        incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING, MessageType.RESPONSE);
+        outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING, MessageType.REQUEST);
+        formatRecipePanel = new RecipePanel(BurpOperation.FORMAT, MessageType.RAW);
 
         tabbedPane.addTab("Outgoing Requests", null, outgoingRecipePanel, "Outgoing requests from the browser, the repeater or another tool.");
         tabbedPane.addTab("Incoming Responses", null, incomingRecipePanel, "Responses from the server.");
-        tabbedPane.addTab("Formating", null, formatRecipePanel, "Formating for messages.");
+        tabbedPane.addTab("Formatting", null, formatRecipePanel, "Formatting for messages.");
         this.add(tabbedPane);
     }
 
@@ -53,5 +62,19 @@ public class View extends JPanel {
         frame.setSize(800, 600);
         frame.setVisible(true);
 //        frame.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+    }
+
+    public void updateInactiveWarnings() {
+        incomingRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()){
+            if(b == true)
+                incomingRecipePanel.hideInactiveWarning();
+        }
+
+        outgoingRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()){
+            if(b == true)
+                outgoingRecipePanel.hideInactiveWarning();
+        }
     }
 }

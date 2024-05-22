@@ -1,10 +1,10 @@
 package de.usd.cstchef.operations.extractors;
 
-import org.bouncycastle.util.Arrays;
 
-import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+
+import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -13,19 +13,20 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpMethodExtractor extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        try {
-            IBurpExtenderCallbacks callbacks = BurpUtils.getInstance().getCallbacks();
-            IExtensionHelpers helpers = callbacks.getHelpers();
-            int length = input.length;
-
-            int methodEnd = helpers.indexOf(input, " ".getBytes(), false, 0, length);
-            byte[] result = Arrays.copyOfRange(input, 0, methodEnd);
-
-            return result;
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Provided input is not a valid http request.");
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+        if(messageType == MessageType.REQUEST){
+            try{
+                return factory.createByteArray(factory.createHttpRequest(input).method());
+            }
+            catch(Exception e){
+                throw new IllegalArgumentException("Input is not a valid request");
+            }
+        }
+        else if(messageType == MessageType.RESPONSE){
+            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+        }
+        else{
+            return parseRawMessage(input);
         }
     }
 }

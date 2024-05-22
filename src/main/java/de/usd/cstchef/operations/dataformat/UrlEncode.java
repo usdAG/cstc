@@ -6,9 +6,11 @@ import javax.swing.JCheckBox;
 
 import org.bouncycastle.util.encoders.Hex;
 
+import burp.BurpExtender;
 import burp.BurpUtils;
-import burp.IBurpExtenderCallbacks;
-import burp.IExtensionHelpers;
+import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -19,27 +21,27 @@ public class UrlEncode extends Operation {
     private JCheckBox checkbox;
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-        IBurpExtenderCallbacks cbs = BurpUtils.getInstance().getCallbacks();
-        IExtensionHelpers helpers = cbs.getHelpers();
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
-        byte[] result = null;
+        ByteArray result = null;
+        MontoyaApi api = BurpUtils.getInstance().getApi();
         if( checkbox.isSelected() ) {
 
-            byte[] delimiter = "%".getBytes();
+            ByteArray delimiter = factory.createByteArray("%");
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            out.write(delimiter);
+            out.write(delimiter.getBytes());
 
-            for (int i = 0; i < input.length - 1; i++) {
-                out.write(Hex.encode(new byte[] { input[i] }));
-                out.write(delimiter);
+            for (int i = 0; i < input.length() - 1; i++) {
+                out.write(Hex.encode( new byte[] { input.getByte(i) }));
+                out.write(delimiter.getBytes());
             }
 
-            out.write(Hex.encode(new byte[] { input[input.length - 1] }));
-            result = out.toByteArray();
+            out.write(Hex.encode(new byte[] { input.getByte(input.length() - 1) }));
+            result = factory.createByteArray(out.toByteArray());
 
         } else {
-            result = helpers.urlEncode(input);
+            //TODO: double conversion!
+            result = api.utilities().urlUtils().encode(input);
         }
 
         return result;

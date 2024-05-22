@@ -78,7 +78,7 @@ public abstract class XmlSignature extends KeystoreOperation {
       ArrayList<Reference> referenceList = new ArrayList<Reference>();
       if( referenceFields != null && referenceFields.size() > 0)  {
         for( FormatTextField field : referenceFields ) {
-          String referenceString = new String(field.getText());
+          String referenceString = field.getText().toString();
           Reference ref = signatureFac.newReference("#" + referenceString, signatureFac.newDigestMethod(digestMethods.get(digMethod), null), Collections.singletonList (signatureFac.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null)), null, null);
           referenceList.add(ref);
         }
@@ -91,7 +91,7 @@ public abstract class XmlSignature extends KeystoreOperation {
 
 
     protected void validateIdAttributes(Document doc) throws Exception {
-      String idAttribute = new String(idIdentifier.getText());
+      String idAttribute = idIdentifier.getText().toString();
       if( idAttribute == null || idAttribute.isEmpty() ) {
         return;
       }

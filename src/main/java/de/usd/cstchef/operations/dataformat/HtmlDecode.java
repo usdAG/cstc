@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.text.StringEscapeUtils;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -12,11 +14,8 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HtmlDecode extends Operation {
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
-
-        String tmp = new String(input, StandardCharsets.ISO_8859_1);
-        tmp = StringEscapeUtils.unescapeHtml4(tmp);
-        return tmp.getBytes(StandardCharsets.ISO_8859_1);
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+        return factory.createByteArray(StringEscapeUtils.unescapeHtml4(input.toString()));
     }
 
 }

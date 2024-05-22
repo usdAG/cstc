@@ -1,5 +1,7 @@
 package de.usd.cstchef.operations.byteoperation;
 
+import burp.api.montoya.core.ByteArray;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.view.ui.FormatTextField;
 
@@ -13,20 +15,20 @@ public abstract class ByteKeyOperation extends Operation  {
     }
 
     @Override
-    protected byte[] perform(byte[] input) throws Exception {
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
-        byte[] result = new byte[input.length];
-        byte[] key = this.inputTxt.getText();
+        ByteArray result = factory.createByteArray(input.length());
+        ByteArray key = this.inputTxt.getText();
 
-        if (key.length == 0) {
+        if (key.length() == 0) {
             return input;
         }
 
         int keyCounter = 0;
-        for (int i = 0; i < input.length; i++) {
-            byte var = key[keyCounter];
-            keyCounter = (keyCounter + 1) % key.length;
-            result[i] = calculate(input[i], var);
+        for (int i = 0; i < input.length(); i++) {
+            byte var = key.getByte(keyCounter);
+            keyCounter = (keyCounter + 1) % key.length();
+            result.setByte(i, calculate(input.getByte(i), var));
         }
 
         return result;
