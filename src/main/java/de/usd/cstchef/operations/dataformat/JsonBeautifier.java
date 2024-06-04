@@ -8,15 +8,15 @@ import de.usd.cstchef.Utils;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 
-@Operation.OperationInfos(name = "Pretty JSON", category = OperationCategory.DATAFORMAT, description = "Format JSON Data.")
-public class FormatJSON extends Operation {
+@Operation.OperationInfos(name = "JSON Beautifier", category = OperationCategory.DATAFORMAT, description = "Format JSON Data.")
+public class JsonBeautifier extends Operation {
 	@Override
 	protected ByteArray perform(ByteArray input, Utils.MessageType messageType) throws Exception {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			objectMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
 			JsonNode jsonNode = objectMapper.readTree(input.toString());
-			return ByteArray.byteArray(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
+			return factory.createByteArray(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonNode));
 		} catch (Exception e2) {
 			return input;
 		}
