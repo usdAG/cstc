@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -28,6 +29,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JSpinner;
@@ -68,6 +70,7 @@ public abstract class Operation extends JPanel {
     private static ImageIcon disableIcon = new ImageIcon(Operation.class.getResource("/disable.png"));
     private static ImageIcon removeIcon = new ImageIcon(Operation.class.getResource("/remove.png"));
     private static ImageIcon helpIcon = new ImageIcon(Operation.class.getResource("/help.png"));
+    private static ImageIcon commentIcon = new ImageIcon(Operation.class.getResource("/comment.png"));
 
     private NotifyChangeListener notifyChangeListener;
 
@@ -122,6 +125,15 @@ public abstract class Operation extends JPanel {
         removeBtn.setToolTipText("Remove");
         JButton helpBtn = createIconButton(Operation.helpIcon);
         helpBtn.setToolTipText(opInfos.description());
+        
+        JButton commentButton = createIconButton(commentIcon);
+        commentButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String comment = JOptionPane.showInputDialog("Edit comment:", commentButton.getToolTipText());
+                commentButton.setToolTipText(comment);
+            }
+        });
+        
 
         disableBtn.addActionListener(new ActionListener() {
             @Override
@@ -162,6 +174,8 @@ public abstract class Operation extends JPanel {
         header.add(titleLbl);
         header.add(Box.createHorizontalStrut(6));
         header.add(helpBtn);
+        header.add(Box.createHorizontalStrut(3));
+        header.add(commentButton);
         header.add(Box.createHorizontalGlue());
         header.add(disableBtn);
         header.add(Box.createHorizontalStrut(3));
