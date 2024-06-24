@@ -371,6 +371,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 Class<Operation> cls = (Class<Operation>) Class.forName(operation);
                 // check if it is an operation
                 Operation op = cls.newInstance();
+                op.setComment(operationNode.get("comment").textValue());
                 op.load(parameters);
                 op.setDisabled(!operationNode.get("is_enabled").asBoolean());
                 RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
@@ -392,6 +393,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 ObjectNode operationNode = mapper.createObjectNode();
                 operationNode.put("operation", op.getClass().getName());
                 operationsNode.add(operationNode);
+                operationNode.put("comment", op.getComment());
                 operationNode.putPOJO("parameters", op.getState());
                 operationNode.putPOJO("is_enabled", !op.isDisabled());
             }
