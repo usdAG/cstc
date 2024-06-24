@@ -9,6 +9,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.EOFException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -71,6 +73,7 @@ public abstract class Operation extends JPanel {
     private static ImageIcon removeIcon = new ImageIcon(Operation.class.getResource("/remove.png"));
     private static ImageIcon helpIcon = new ImageIcon(Operation.class.getResource("/help.png"));
     private static ImageIcon commentIcon = new ImageIcon(Operation.class.getResource("/comment.png"));
+    private static ImageIcon noCommentIcon = new ImageIcon(Operation.class.getResource("/no-comment.png"));
 
     private NotifyChangeListener notifyChangeListener;
 
@@ -82,6 +85,9 @@ public abstract class Operation extends JPanel {
     private JTextArea errorArea;
     private Box contentBox;
     private Map<String, Component> uiElements;
+
+    private String comment;
+    private JButton commentButton;
 
     private int operationSkip = 0;
     private int laneSkip = 0;
@@ -126,11 +132,15 @@ public abstract class Operation extends JPanel {
         JButton helpBtn = createIconButton(Operation.helpIcon);
         helpBtn.setToolTipText(opInfos.description());
         
-        JButton commentButton = createIconButton(commentIcon);
+        commentButton = createIconButton(noCommentIcon);
         commentButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                commentButton.setToolTipText(getComment());
                 String comment = JOptionPane.showInputDialog("Edit comment:", commentButton.getToolTipText());
                 commentButton.setToolTipText(comment);
+                setComment(comment);
+                ImageIcon newIcon = comment.isEmpty() ? Operation.noCommentIcon : Operation.commentIcon;
+                commentButton.setIcon(newIcon);
             }
         });
         
@@ -201,6 +211,18 @@ public abstract class Operation extends JPanel {
 
         this.createUI();
         this.refreshColors();
+    }
+
+    public String getComment() {
+        return this.comment;
+    }
+
+    public void setComment(String comment) {
+        if(comment != null) {
+            this.comment = comment;
+            commentButton.setIcon(Operation.commentIcon);
+            commentButton.setToolTipText(comment);
+        }
     }
 
     public Map<String, Object> getState() {
