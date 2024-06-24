@@ -83,6 +83,12 @@ Take a look at our basic tutorial on [YouTube](https://www.youtube.com/watch?v=B
 **UPDATE:** Due to some incompatibility issues when installing *CSTC* via *BApp Store*, we had to switch to a new variable prefix.
 Variables from other *lanes* have now to be prefixed by ``$`` e.g. like ``$Outgoing_step1``.
 
+## FAQ
+
+### How does the CSTC interact with other Extensions?
+
+At this point we can only refer to the general documentation. Requests and responses pass through the extensions in the order that they are listed, from top to bottom (as described [here](https://portswigger.net/burp/documentation/desktop/extensions/managing-extensions)).
+
 ## Feedback
 
 We gladly appreciate all feedback, bug reports and feature requests.
