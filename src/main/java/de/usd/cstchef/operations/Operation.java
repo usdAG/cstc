@@ -87,7 +87,7 @@ public abstract class Operation extends JPanel {
     private Map<String, Component> uiElements;
 
     private String comment;
-    private JButton commentButton;
+    private JButton commentBtn;
 
     private int operationSkip = 0;
     private int laneSkip = 0;
@@ -131,16 +131,16 @@ public abstract class Operation extends JPanel {
         removeBtn.setToolTipText("Remove");
         JButton helpBtn = createIconButton(Operation.helpIcon);
         helpBtn.setToolTipText(opInfos.description());
-        
-        commentButton = createIconButton(noCommentIcon);
-        commentButton.addActionListener(new ActionListener() {
+        commentBtn = createIconButton(noCommentIcon);
+
+        commentBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                commentButton.setToolTipText(getComment());
-                String comment = JOptionPane.showInputDialog("Edit comment:", commentButton.getToolTipText());
-                commentButton.setToolTipText(comment);
+                commentBtn.setToolTipText(getComment());
+                String comment = JOptionPane.showInputDialog("Edit comment:", commentBtn.getToolTipText());
+                commentBtn.setToolTipText(comment);
                 setComment(comment);
                 ImageIcon newIcon = comment.isEmpty() ? Operation.noCommentIcon : Operation.commentIcon;
-                commentButton.setIcon(newIcon);
+                commentBtn.setIcon(newIcon);
             }
         });
         
@@ -185,7 +185,7 @@ public abstract class Operation extends JPanel {
         header.add(Box.createHorizontalStrut(6));
         header.add(helpBtn);
         header.add(Box.createHorizontalStrut(3));
-        header.add(commentButton);
+        header.add(commentBtn);
         header.add(Box.createHorizontalGlue());
         header.add(disableBtn);
         header.add(Box.createHorizontalStrut(3));
@@ -220,8 +220,8 @@ public abstract class Operation extends JPanel {
     public void setComment(String comment) {
         if(comment != null) {
             this.comment = comment;
-            commentButton.setIcon(Operation.commentIcon);
-            commentButton.setToolTipText(comment);
+            commentBtn.setIcon(Operation.commentIcon);
+            commentBtn.setToolTipText(comment);
         }
     }
 
