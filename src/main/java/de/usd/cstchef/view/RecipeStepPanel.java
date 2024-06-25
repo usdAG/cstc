@@ -6,11 +6,18 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -27,6 +34,7 @@ public class RecipeStepPanel extends JPanel {
     private JPanel operationsLine;
     private GridBagConstraints addContraints;
     private ChangeListener changeListener;
+    private JTextField contentTextField;
 
     public RecipeStepPanel(String title, ChangeListener changelistener) {
         this.changeListener = changelistener;
@@ -41,10 +49,18 @@ public class RecipeStepPanel extends JPanel {
         CompoundBorder border = new CompoundBorder(lineBorder, margin);
         headerBox.setBorder(border);
 
-        JTextField contentTextField = new JTextField();
+        contentTextField = new JTextField();
         contentTextField.setBorder(null);
         contentTextField.setBackground(new Color(0, 0, 0, 0));
         contentTextField.setText(title);
+        contentTextField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String newTitle = JOptionPane.showInputDialog("Edit title:", getTitle());
+                contentTextField.setText(newTitle.length() <= 50 ? newTitle : getTitle());
+                setTitle(newTitle); // lane name should be leq 50 chars
+            }
+        });
         headerBox.add(contentTextField);
 
         this.add(headerBox, BorderLayout.NORTH);
@@ -124,4 +140,12 @@ public class RecipeStepPanel extends JPanel {
 		operationsLine.repaint();
 		this.changeListener.stateChanged(new ChangeEvent(this));
 	}
+
+    public String getTitle() {
+        return contentTextField.getText();
+    }
+
+    public void setTitle(String title) {
+        contentTextField.setText(title);
+    }
 }
