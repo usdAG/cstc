@@ -364,18 +364,22 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 throw new IOException("wrong data format");
             }
 
-            for (int i = 0; i < operationNodes.size(); i++) {
+            RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
+            panel.setTitle(operationNodes.get(0).get("lane_title").asText());
+
+            for (int i = 1; i < operationNodes.size(); i++) {
                 JsonNode operationNode = operationNodes.get(i);
                 String operation = operationNode.get("operation").asText();
                 Map<String, Object> parameters =  mapper.convertValue(operationNode.get("parameters"), Map.class);
                 Class<Operation> cls = (Class<Operation>) Class.forName(operation);
                 // check if it is an operation
                 Operation op = cls.newInstance();
-                op.setComment(operationNode.get("comment").textValue());
+                op.setComment(operationNode.get("comment").textValue() == null ? "" : operationNode.get("comment").textValue());
                 op.load(parameters);
                 op.setDisabled(!operationNode.get("is_enabled").asBoolean());
-                RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
-                panel.addComponent(op, i);
+                //RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
+                panel.addComponent(op, i-1);
+                //panel.setTitle((String.valueOf(i)));
             }
         }
     }
@@ -388,6 +392,11 @@ public class RecipePanel extends JPanel implements ChangeListener {
             ArrayNode operationsNode = mapper.createArrayNode();
 
             RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
+
+            ObjectNode laneTitleNode = mapper.createObjectNode();
+            laneTitleNode.put("lane_title", stepPanel.getTitle());
+            operationsNode.add(laneTitleNode);
+
             List<Operation> operations = stepPanel.getOperations();
             for (Operation op : operations) {
                 ObjectNode operationNode = mapper.createObjectNode();
