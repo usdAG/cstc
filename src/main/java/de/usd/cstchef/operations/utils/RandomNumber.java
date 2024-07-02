@@ -89,10 +89,6 @@ public class RandomNumber extends Operation {
         this.textFieldMaximum.setText("9999");
         this.addUIElement("Maximum Number", this.textFieldMaximum);
 
-        // use a separator
-        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-        this.addUIElement(null, separator);
-
         // fields for formatting: Integer digits
         this.textFieldFormatMinIntDigits = new JTextField();
         this.textFieldFormatMinIntDigits.setText("1");
