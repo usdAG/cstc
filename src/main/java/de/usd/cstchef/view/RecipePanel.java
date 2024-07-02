@@ -12,11 +12,13 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -350,10 +352,23 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void restoreState(String jsonState) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        // TODO do we want to remove all existing operations before loading here?
-        this.clear(); // Yes!
+        this.clear();
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode stepNodes = mapper.readTree(jsonState);
+        JsonNode rootNode = mapper.readTree(jsonState);
+        JsonNode stepNodes;
+        JsonNode versionNode;
+
+        // check if "version" ObjectNode is there (since 1.3.2)
+        if(rootNode.get(0) != null && rootNode.get(0).get("version") == null) {
+            // recipes saved by CSTC <= 1.3.1
+            stepNodes = rootNode;
+        }
+        else {
+            // currently 1.3.2
+            versionNode = rootNode.get(0);
+            stepNodes = rootNode.get(1);
+        }
+
         if (!stepNodes.isArray()) {
             throw new IOException("wrong data format");
         }
@@ -365,27 +380,52 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
 
             RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
-            panel.setTitle(operationNodes.get(0).get("lane_title").asText());
 
-            for (int i = 1; i < operationNodes.size(); i++) {
+            /*  two types of ObjectNodes for every RecipeStepPanel:
+                Lane information (always at index 0, if set) and the Operations
+
+                If there's a lane ObjectNode we need to tell the inner loop to begin at index 1.
+                The inner loop iterates over the Operations
+            */
+            int index = 0;
+            if(operationNodes.get(0) != null) {
+                if(operationNodes.get(0).get("lane_title") != null) {
+                    index = 1;
+                    panel.setTitle(operationNodes.get(0).get("lane_title").asText());
+                }
+                if(operationNodes.get(0).get("lane_comment") != null) {
+                    index = 1;
+                    panel.setComment(operationNodes.get(0).get("lane_comment").asText());
+                }
+            }
+
+            for (int i = index; i < operationNodes.size(); i++) {
                 JsonNode operationNode = operationNodes.get(i);
                 String operation = operationNode.get("operation").asText();
                 Map<String, Object> parameters =  mapper.convertValue(operationNode.get("parameters"), Map.class);
                 Class<Operation> cls = (Class<Operation>) Class.forName(operation);
+
                 // check if it is an operation
                 Operation op = cls.newInstance();
-                op.setComment(operationNode.get("comment").textValue() == null ? "" : operationNode.get("comment").textValue());
                 op.load(parameters);
                 op.setDisabled(!operationNode.get("is_enabled").asBoolean());
-                //RecipeStepPanel panel = (RecipeStepPanel) this.operationLines.getComponent(step);
-                panel.addComponent(op, i-1);
-                //panel.setTitle((String.valueOf(i)));
+
+                // check if "comment" attribute is set (since 1.3.2)
+                if(operationNode.get("comment") != null) {
+                    if(operationNode.get("comment").asText() != "null") {
+                        op.setComment(operationNode.get("comment").asText());
+                    }
+                }
+                // depending on if lane name is set we may start the loop at index 1, but want to add the first component at index 0
+                panel.addComponent(op, index == 1 ? i-1 : 0);
             }
         }
     }
 
     private String getStateAsJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        ArrayNode rootNode = mapper.createArrayNode();
+        ObjectNode versionNode = mapper.createObjectNode();
         ArrayNode stepsNode = mapper.createArrayNode();
 
         for (int step = 0; step < this.operationSteps; step++) {
@@ -393,22 +433,53 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
             RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
 
-            ObjectNode laneTitleNode = mapper.createObjectNode();
-            laneTitleNode.put("lane_title", stepPanel.getTitle());
-            operationsNode.add(laneTitleNode);
+            // save lane name in case it differs from the default
+            int laneNumber = step + 1;
+            boolean laneNodeCreated = false;
+            if(!stepPanel.getTitle().equals("Lane " + laneNumber)) {
+                laneNodeCreated = true;
+                ObjectNode laneNode = mapper.createObjectNode();
+                laneNode.put("lane_title", stepPanel.getTitle());
+                // save comment in same node in case it is set
+                if(stepPanel.getComment() != null) {
+                    laneNode.put("lane_comment", stepPanel.getComment());
+                }
+                operationsNode.add(laneNode);
+            }
+
+            // save comment in case it's not already
+            if(!laneNodeCreated && stepPanel.getComment() != null) {
+                ObjectNode laneNode = mapper.createObjectNode();
+                laneNode.put("lane_comment", stepPanel.getComment());
+                operationsNode.add(laneNode);
+            }
 
             List<Operation> operations = stepPanel.getOperations();
             for (Operation op : operations) {
                 ObjectNode operationNode = mapper.createObjectNode();
                 operationNode.put("operation", op.getClass().getName());
                 operationsNode.add(operationNode);
-                operationNode.put("comment", op.getComment());
                 operationNode.putPOJO("parameters", op.getState());
                 operationNode.putPOJO("is_enabled", !op.isDisabled());
+                // "comment":null if empty
+                operationNode.put("comment", op.getComment());
             }
             stepsNode.add(operationsNode);
         }
-        return mapper.writeValueAsString(stepsNode);
+
+        /*  maven performs a substitution at compile time in "/res/version.properties"
+            with the version from pom.xml and here it reads from this file
+        */
+        Properties properties = new Properties();
+        properties.load(RecipePanel.class.getResourceAsStream("/version.properties"));
+        String version = properties.getProperty("version");
+
+        versionNode.put("version", version);
+
+        rootNode.add(versionNode);
+        rootNode.add(stepsNode);
+
+        return mapper.writeValueAsString(rootNode);
     }
 
     private void save(File file) throws IOException {
@@ -598,6 +669,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private void clear() {
         for (int step = 0; step < this.operationSteps; step++) {
             RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
+            int laneIndex = step + 1;
+            stepPanel.setTitle("Lane " + laneIndex);
+            stepPanel.clearComment();
             stepPanel.clearOperations();
         }
     }
