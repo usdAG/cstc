@@ -201,6 +201,7 @@ public class RecipeStepPanel extends JPanel {
     }
 
     public void clearComment() {
+        this.comment = "";
         commentBtn.setToolTipText("");
         commentBtn.setIcon(RecipeStepPanel.noCommentIcon);
     }
