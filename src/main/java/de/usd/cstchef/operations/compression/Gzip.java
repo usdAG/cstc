@@ -45,6 +45,7 @@ public class Gzip extends Operation {
     {
         Integer[] compressionLevel = {1, 2, 3, 4, 5, 6, 7, 8, 9};
         this.compressionLevelBox = new JComboBox<>(compressionLevel);
+        this.compressionLevelBox.setSelectedIndex(5);
         this.addUIElement("Compression Level", this.compressionLevelBox);
     }
 
