@@ -441,14 +441,14 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 ObjectNode laneNode = mapper.createObjectNode();
                 laneNode.put("lane_title", stepPanel.getTitle());
                 // save comment in same node in case it is set
-                if(stepPanel.getComment() != null) {
+                if(!stepPanel.getComment().equals("")) {
                     laneNode.put("lane_comment", stepPanel.getComment());
                 }
                 operationsNode.add(laneNode);
             }
 
             // save comment in case it's not already
-            if(!laneNodeCreated && stepPanel.getComment() != null) {
+            if(!laneNodeCreated && !stepPanel.getComment().equals("")) {
                 ObjectNode laneNode = mapper.createObjectNode();
                 laneNode.put("lane_comment", stepPanel.getComment());
                 operationsNode.add(laneNode);
