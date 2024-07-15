@@ -417,7 +417,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                     }
                 }
                 // depending on if lane name is set we may start the loop at index 1, but want to add the first component at index 0
-                panel.addComponent(op, index == 1 ? i-1 : 0);
+                panel.addComponent(op, index == 1 ? i-1 : i);
             }
         }
     }
