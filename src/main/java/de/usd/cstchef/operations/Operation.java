@@ -73,7 +73,7 @@ public abstract class Operation extends JPanel {
     private static ImageIcon removeIcon = new ImageIcon(Operation.class.getResource("/remove.png"));
     private static ImageIcon helpIcon = new ImageIcon(Operation.class.getResource("/help.png"));
     private static ImageIcon commentIcon = new ImageIcon(Operation.class.getResource("/comment.png"));
-    private static ImageIcon noCommentIcon = new ImageIcon(Operation.class.getResource("/no-comment.png"));
+    private static ImageIcon noCommentIcon = new ImageIcon(Operation.class.getResource("/no_comment.png"));
 
     private NotifyChangeListener notifyChangeListener;
 

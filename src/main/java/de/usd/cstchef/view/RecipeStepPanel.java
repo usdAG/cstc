@@ -43,7 +43,7 @@ public class RecipeStepPanel extends JPanel {
     private JButton commentBtn;
 
     private static ImageIcon commentIcon = new ImageIcon(Operation.class.getResource("/comment.png"));
-    private static ImageIcon noCommentIcon = new ImageIcon(Operation.class.getResource("/no-comment.png"));
+    private static ImageIcon noCommentIcon = new ImageIcon(Operation.class.getResource("/no_comment.png"));
 
     public RecipeStepPanel(String title, ChangeListener changelistener) {
         this.changeListener = changelistener;
