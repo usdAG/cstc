@@ -59,6 +59,7 @@ import de.usd.cstchef.operations.conditional.RegexMatch;
 import de.usd.cstchef.operations.conditional.StringContains;
 import de.usd.cstchef.operations.conditional.StringMatch;
 import de.usd.cstchef.operations.dataformat.FromBase64;
+import de.usd.cstchef.operations.dataformat.JsonBeautifier;
 import de.usd.cstchef.operations.dataformat.FromHex;
 import de.usd.cstchef.operations.dataformat.HtmlDecode;
 import de.usd.cstchef.operations.dataformat.HtmlEncode;
@@ -217,8 +218,11 @@ public class Utils {
     }
 
     public static ByteArray insertAtOffset(ByteArray input, int start, int end, ByteArray newValue) {
-        ByteArray prefix = BurpUtils.subArray(input, 0, start);
-        ByteArray rest = BurpUtils.subArray(input, end, input.length());
+        ByteArray prefix = input.subArray(0, start);
+        ByteArray rest = input.subArray(0, 0);
+        if(end < input.length()) {
+            rest = input.subArray(end, input.length());
+        }
         
         ByteArray output = prefix.withAppended(newValue).withAppended(rest);
         return output;
@@ -318,7 +322,7 @@ public class Utils {
                 TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
                 UrlDecode.class, UrlEncode.class,
                 Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-                Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class
+                Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class, JsonBeautifier.class
         };
     }
 

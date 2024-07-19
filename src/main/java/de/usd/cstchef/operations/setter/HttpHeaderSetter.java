@@ -40,11 +40,16 @@ public class HttpHeaderSetter extends SetterOperation {
         }
         else if(messageType == MessageType.RESPONSE){
             HttpResponse response = HttpResponse.httpResponse(input);
-            if(response.hasHeader(headerName) || addIfNotPresent.isSelected()){
-                return response.withAddedHeader(HttpHeader.httpHeader(headerName, newValue)).toByteArray();
+            if(response.hasHeader(headerName)) {
+                return response.withUpdatedHeader(HttpHeader.httpHeader(headerName, newValue)).toByteArray();
             }
-            else{
-                return input;
+            else {
+                if(addIfNotPresent.isSelected()) {
+                    return response.withAddedHeader(HttpHeader.httpHeader(headerName, newValue)).toByteArray();
+                }
+                else {
+                    return input;
+                }
             }
         }
         else{

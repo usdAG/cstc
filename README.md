@@ -83,6 +83,15 @@ Take a look at our basic tutorial on [YouTube](https://www.youtube.com/watch?v=B
 **UPDATE:** Due to some incompatibility issues when installing *CSTC* via *BApp Store*, we had to switch to a new variable prefix.
 Variables from other *lanes* have now to be prefixed by ``$`` e.g. like ``$Outgoing_step1``.
 
+## FAQ
+
+### How does the CSTC interact with other Extensions?
+
+Requests and responses pass through the extensions in the order that they are listed, from top to bottom (as described [here](https://portswigger.net/burp/documentation/desktop/extensions/managing-extensions)).
+Depending on the extensions in use, it may make sense to adjust the position of the CSTC. If you want to process a request manipulated by the CSTC in another extension,
+the CSTC should be positioned above this extension. Conversely, the CSTC should be positioned below an extension if the CSTC is to work with the response processed by the extension in question.
+Currently the Burp Montoya API doesn't offer a way to change this order automatically, therefore the CSTC cannot influence the interaction with other extensions itself.
+
 ## Feedback
 
 We gladly appreciate all feedback, bug reports and feature requests.

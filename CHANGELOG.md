@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.3.2] - 2024-07-16
+
+### Added
+
+* Add operation JSON Beautifier
+* Add Sequencer filter option
+* Add GZIP operation option to set the compression level
+* Add comment function to operations and recipe lanes
+* Add editable lane names
+
+### Changed
+
+* Fix the emergence of null bytes when using variables
+* Fix GUI issues with using the operation Drag-and-Drop
+* Change the saved recipe structure and add CSTC version, operation comments, lane comments and lane names
+* Refactor operation button icons
+
+
 ## [1.3.1] - 2024-05-22
 
 ### Added

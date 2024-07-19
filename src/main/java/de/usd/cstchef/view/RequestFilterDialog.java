@@ -36,7 +36,7 @@ public class RequestFilterDialog extends JPanel {
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new GridLayout(7, 0));
         labelPanel.add(new JLabel(""));
-        List<String> labels = Arrays.asList("Proxy", "Repeater", "Scanner", "Intruder", "Extender");
+        List<String> labels = Arrays.asList("Proxy", "Repeater", "Scanner", "Intruder", "Extender", "Sequencer");
         for (String label : labels) {
             labelPanel.add(new JLabel(label));
         }
@@ -51,13 +51,11 @@ public class RequestFilterDialog extends JPanel {
     private JPanel createPanel(BurpOperation operation) {
         if (BurpUtils.getInstance().getFilterState().getFilterMask(operation).isEmpty()) {
             BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.PROXY, ToolType.PROXY.ordinal()), false);
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.REPEATER, ToolType.REPEATER.ordinal()),
-                    false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.REPEATER, ToolType.REPEATER.ordinal()), false);
             BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.SCANNER, ToolType.SCANNER.ordinal()), false);
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.INTRUDER, ToolType.INTRUDER.ordinal()),
-                    false);
-            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.EXTENSIONS, ToolType.EXTENSIONS.ordinal()),
-                    false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.INTRUDER, ToolType.INTRUDER.ordinal()), false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.EXTENSIONS, ToolType.EXTENSIONS.ordinal()), false);
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.SEQUENCER, ToolType.SEQUENCER.ordinal()), false);
         }
 
         JPanel panel = new JPanel();

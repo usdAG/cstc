@@ -3,14 +3,24 @@ package de.usd.cstchef.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -27,6 +37,13 @@ public class RecipeStepPanel extends JPanel {
     private JPanel operationsLine;
     private GridBagConstraints addContraints;
     private ChangeListener changeListener;
+    private JTextField contentTextField;
+
+    private String comment;
+    private JButton commentBtn;
+
+    private static ImageIcon commentIcon = new ImageIcon(Operation.class.getResource("/comment.png"));
+    private static ImageIcon noCommentIcon = new ImageIcon(Operation.class.getResource("/no_comment.png"));
 
     public RecipeStepPanel(String title, ChangeListener changelistener) {
         this.changeListener = changelistener;
@@ -41,11 +58,38 @@ public class RecipeStepPanel extends JPanel {
         CompoundBorder border = new CompoundBorder(lineBorder, margin);
         headerBox.setBorder(border);
 
-        JTextField contentTextField = new JTextField();
+        contentTextField = new JTextField();
         contentTextField.setBorder(null);
         contentTextField.setBackground(new Color(0, 0, 0, 0));
         contentTextField.setText(title);
+        contentTextField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                String newTitle = JOptionPane.showInputDialog("Edit title:", getTitle());
+                contentTextField.setText(newTitle.length() <= 50 ? newTitle : getTitle());
+                setTitle(newTitle.length() <= 50 ? newTitle : getTitle()); // lane name should be leq 50 chars
+            }
+        });
         headerBox.add(contentTextField);
+
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(0, 0, 0, 0)); // transparent
+
+        commentBtn = createIconButton(noCommentIcon);
+
+        commentBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                commentBtn.setToolTipText(getComment());
+                String comment = JOptionPane.showInputDialog("Edit comment:", commentBtn.getToolTipText());
+                commentBtn.setToolTipText(comment);
+                setComment(comment);
+                ImageIcon newIcon = comment.isEmpty() ? RecipeStepPanel.noCommentIcon : RecipeStepPanel.commentIcon;
+                commentBtn.setIcon(newIcon);
+            }
+        });
+
+        panel.add(commentBtn);
+        headerBox.add(panel);
 
         this.add(headerBox, BorderLayout.NORTH);
 
@@ -124,4 +168,41 @@ public class RecipeStepPanel extends JPanel {
 		operationsLine.repaint();
 		this.changeListener.stateChanged(new ChangeEvent(this));
 	}
+
+    public String getTitle() {
+        return contentTextField.getText();
+    }
+
+    public void setTitle(String title) {
+        contentTextField.setText(title);
+    }
+
+    private JButton createIconButton(ImageIcon icon) {
+        JButton btn = new JButton();
+        btn.setBorder(BorderFactory.createEmptyBorder());
+        btn.setIcon(icon);
+        btn.setContentAreaFilled(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setAlignmentX(Component.RIGHT_ALIGNMENT);
+
+        return btn;
+    }
+
+    public String getComment() {
+        return this.comment;
+    }
+
+    public void setComment(String comment) {
+        if(comment != null) {
+            this.comment = comment;
+            commentBtn.setIcon(RecipeStepPanel.commentIcon);
+            commentBtn.setToolTipText(comment);
+        }
+    }
+
+    public void clearComment() {
+        this.comment = "";
+        commentBtn.setToolTipText("");
+        commentBtn.setIcon(RecipeStepPanel.noCommentIcon);
+    }
 }
