@@ -1,6 +1,7 @@
 package burp;
 
 import burp.api.montoya.MontoyaApi;
+import burp.api.montoya.core.ToolType;
 import burp.api.montoya.ui.editor.extension.EditorCreationContext;
 import burp.api.montoya.ui.editor.extension.ExtensionProvidedHttpRequestEditor;
 import burp.api.montoya.ui.editor.extension.HttpRequestEditorProvider;
@@ -17,6 +18,11 @@ class MyHttpRequestEditorProvider implements HttpRequestEditorProvider
     @Override
     public ExtensionProvidedHttpRequestEditor provideHttpRequestEditor(EditorCreationContext creationContext)
     {
-        return new MyExtensionProvidedHttpRequestEditor(creationContext, view);
+        if(creationContext.toolSource().isFromTool(ToolType.REPEATER)) {
+            return new MyExtensionProvidedHttpRequestEditor(creationContext, view);
+        }
+        else {
+            return null;
+        }
     }
 }
