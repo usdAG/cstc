@@ -25,16 +25,9 @@ public class MyExtensionProvidedHttpRequestEditor implements ExtensionProvidedHt
 
     MyExtensionProvidedHttpRequestEditor(EditorCreationContext creationContext, View view)
     {
-        if(creationContext.toolSource().isFromTool(ToolType.REPEATER)) {
-            this.api = BurpUtils.getInstance().getApi();
-            this.view = view;
-            requestEditor = api.userInterface().createRawEditor(EditorOptions.READ_ONLY);
-        }
-        else {
-            this.api = null;
-            this.view = null;
-            this.requestEditor = null;
-        }
+        this.api = BurpUtils.getInstance().getApi();
+        this.view = view;
+        requestEditor = api.userInterface().createRawEditor(EditorOptions.READ_ONLY);
     }
 
     @Override
