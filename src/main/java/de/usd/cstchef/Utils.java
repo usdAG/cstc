@@ -149,6 +149,7 @@ import de.usd.cstchef.operations.utils.RandomUUID;
 import de.usd.cstchef.operations.utils.SetIfEmpty;
 import de.usd.cstchef.operations.utils.StoreVariable;
 import de.usd.cstchef.view.View;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class Utils {
 
@@ -294,7 +295,7 @@ public class Utils {
 
     // TODO reflection does not work in Burp Suite
     @SuppressWarnings("unchecked")
-    public static Class<? extends Operation>[] getOperationsDev() {
+    public static Class<? extends Operation>[] getOperationsDevOutgoingFormatting() {
         return new Class[] {
                 Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
                 Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
@@ -326,8 +327,39 @@ public class Utils {
         };
     }
 
-    public static Class<? extends Operation>[] getOperations() {
-        return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+    // TODO reflection does not work in Burp Suite
+    @SuppressWarnings("unchecked")
+    public static Class<? extends Operation>[] getOperationsDevIncoming() {
+        return new Class[] {
+                Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
+                Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+                Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, GetRequestBuilder.class,
+                GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class, HttpBodyExtractor.class, 
+                HttpCookieExtractor.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpJsonExtractor.class,
+                HttpJsonSetter.class, HttpMultipartExtractor.class, HttpMultipartSetter.class, PlainRequest.class,
+                HttpSetBody.class, HttpSetCookie.class, HttpXmlExtractor.class, HttpXmlSetter.class, HtmlEncode.class,
+                HtmlDecode.class, Inflate.class, JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class,
+                Length.class, LineExtractor.class, LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
+                Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class, RandomNumber.class,
+                RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class, Replace.class,
+                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM2Signature.class, SM3.class,
+                SM4Encryption.class, SM4Decryption.class, RegexMatch.class, SetIfEmpty.class, SHA1.class, SHA2.class,
+                SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class, StoreVariable.class, Sub.class, Substring.class,
+                Uppercase.class, Lowercase.class, Subtraction.class, Suffix.class, Sum.class, StringContains.class,
+                StringMatch.class, Tiger.class, TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class,
+                UnixTimestamp.class, UrlDecode.class, UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class,
+                XmlMultiSignature.class, Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class, JsonBeautifier.class
+        };
+    }
+
+    public static Class<? extends Operation>[] getOperations(BurpOperation operation) {
+        //return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+        if(operation == BurpOperation.INCOMING) {
+            return getOperationsDevIncoming();
+        }
+        else {
+            return getOperationsDevOutgoingFormatting();
+        }
     }
 
     public enum MessageType {

@@ -119,7 +119,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
         JTextField searchText = new JTextField();
         searchTreePanel.add(searchText, BorderLayout.PAGE_START);
 
-        OperationsTree operationsTree = new OperationsTree();
+        // pass the operation parameter so that separate operation trees can be defined for incoming/outgoing/formatting
+        OperationsTree operationsTree = new OperationsTree(operation);
         operationsTree.setRootVisible(false);
         searchTreePanel.add(new JScrollPane(operationsTree));
         searchText.getDocument().addDocumentListener(new DocumentListener() {
