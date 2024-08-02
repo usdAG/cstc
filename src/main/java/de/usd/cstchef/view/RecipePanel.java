@@ -180,6 +180,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         });
 
         JButton bakeButton = new JButton("Bake");
+        bakeButton.setEnabled(!autoBake);
         activeOperationsPanel.addActionComponent(bakeButton);
         bakeButton.addActionListener(new ActionListener() {
             @Override
@@ -232,6 +233,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 autoBake = bakeCheckBox.isSelected();
+                bakeButton.setEnabled(!autoBake);
                 bake(false);
             }
         });
