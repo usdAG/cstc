@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.type.PlaceholderForType;
 
 import burp.BurpExtender;
 import burp.BurpUtils;
@@ -65,6 +66,8 @@ import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.view.filter.FilterState;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
+import de.usd.cstchef.view.ui.PlaceholderTextField;
+import de.usd.cstchef.view.ui.TextChangedListener;
 
 public class RecipePanel extends JPanel implements ChangeListener {
 
@@ -116,27 +119,19 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         JPanel searchTreePanel = new JPanel();
         searchTreePanel.setLayout(new BorderLayout());
-        JTextField searchText = new JTextField();
+        PlaceholderTextField searchText = new PlaceholderTextField("Search");
         searchTreePanel.add(searchText, BorderLayout.PAGE_START);
 
         OperationsTree operationsTree = new OperationsTree();
         operationsTree.setRootVisible(false);
         searchTreePanel.add(new JScrollPane(operationsTree));
-        searchText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                operationsTree.search(searchText.getText());
-            }
+        searchText.addTextChangedListener(new TextChangedListener() {
 
             @Override
-            public void insertUpdate(DocumentEvent e) {
+            public void textChanged() {
                 operationsTree.search(searchText.getText());
             }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                operationsTree.search(searchText.getText());
-            }
+            
         });
 
         // create operations panel
