@@ -48,7 +48,7 @@ public class RecipeStepPanel extends JPanel {
     public RecipeStepPanel(String title, ChangeListener changelistener) {
         this.changeListener = changelistener;
         this.setLayout(new BorderLayout());
-        this.setPreferredSize(new Dimension(300, 0));
+        this.setPreferredSize(new Dimension(350, 0));
 
         // header
         Box headerBox = Box.createHorizontalBox();

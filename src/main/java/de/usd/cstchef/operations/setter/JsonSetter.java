@@ -15,7 +15,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "JSON", category = OperationCategory.SETTER, description = "Set the value of a JSON object.")
+@OperationInfos(name = "Set JSON", category = OperationCategory.SETTER, description = "Set the value of a JSON object.")
 public class JsonSetter extends SetterOperation implements ActionListener {
 
     private JCheckBox addIfNotPresent;

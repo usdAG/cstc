@@ -18,7 +18,7 @@ import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HTTP Cookie", category = OperationCategory.SETTER, description = "Set a HTTP cookie to the specified value.")
+@OperationInfos(name = "Set HTTP Cookie", category = OperationCategory.SETTER, description = "Set a HTTP cookie to the specified value.")
 public class HttpSetCookie extends SetterOperation {
 
     private JCheckBox addIfNotPresent;

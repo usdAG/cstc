@@ -25,7 +25,7 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP JSON", category = OperationCategory.SETTER, description = "Set a JSON parameter to the specified value.")
+@OperationInfos(name = "Set HTTP JSON", category = OperationCategory.SETTER, description = "Set a JSON parameter to the specified value.")
 public class HttpJsonSetter extends SetterOperation {
 
     private JCheckBox addIfNotPresent;

@@ -14,7 +14,7 @@ import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "JSON", category = OperationCategory.EXTRACTORS, description = "Extracts values of JSON objects.")
+@OperationInfos(name = "Get JSON", category = OperationCategory.EXTRACTORS, description = "Extracts values of JSON objects.")
 public class JsonExtractor extends Operation {
 
     private static JsonProvider provider;

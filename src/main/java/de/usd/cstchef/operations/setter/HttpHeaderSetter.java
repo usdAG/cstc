@@ -16,7 +16,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
 
-@OperationInfos(name = "HTTP Header", category = OperationCategory.SETTER, description = "Set a HTTP header to the specified value.")
+@OperationInfos(name = "Set HTTP Header", category = OperationCategory.SETTER, description = "Set a HTTP header to the specified value.")
 public class HttpHeaderSetter extends SetterOperation {
 
     private JCheckBox addIfNotPresent;

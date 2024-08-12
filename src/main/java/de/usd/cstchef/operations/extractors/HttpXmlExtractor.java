@@ -21,7 +21,7 @@ import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "HTTP XML", category = OperationCategory.EXTRACTORS, description = "Extract the first occurrence of a XML value from HTTP message.")
+@OperationInfos(name = "Get HTTP XML", category = OperationCategory.EXTRACTORS, description = "Extract the first occurrence of a XML value from HTTP message.")
 public class HttpXmlExtractor extends Operation {
 
     protected JTextField fieldTxt;
