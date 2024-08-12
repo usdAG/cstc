@@ -25,6 +25,7 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,6 +35,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -133,6 +135,26 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
             
         });
+        JPanel btnContainer = new JPanel();
+        JButton expandAll = new JButton("+");
+        expandAll.setToolTipText("Expand all operations");
+        expandAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                operationsTree.expandAll();
+            }            
+        });
+        JButton collapseAll = new JButton("-");
+        collapseAll.setToolTipText("Collapse all operations");
+        collapseAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                operationsTree.collapseAll();
+            }            
+        });
+        btnContainer.add(expandAll);
+        btnContainer.add(collapseAll);
+        searchTreePanel.add(btnContainer, BorderLayout.PAGE_END);
 
         // create operations panel
         JPanel operationsPanel = new LayoutPanel("Operations");
