@@ -163,6 +163,20 @@ public class OperationsTree extends JTree {
         this.expandPath(path);
     }
 
+    public void expandAll(){
+        for(int i = 0; i < this.getRowCount(); i++){
+            TreePath path = this.getPathForRow(i);
+            this.expandAll(path);
+        }
+    }
+
+    public void collapseAll(){
+        for(int i = 0; i < this.getRowCount(); i++){
+            TreePath path = this.getPathForRow(i);
+            this.collapsePath(path);
+        }
+    }
+
     public class CustomTreeUI extends BasicTreeUI {
         @Override
         protected boolean shouldPaintExpandControl(javax.swing.tree.TreePath path, int row, boolean isExpanded,

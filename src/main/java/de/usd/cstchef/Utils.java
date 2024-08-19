@@ -136,6 +136,8 @@ import de.usd.cstchef.operations.string.Replace;
 import de.usd.cstchef.operations.string.Reverse;
 import de.usd.cstchef.operations.string.SplitAndSelect;
 import de.usd.cstchef.operations.string.StaticString;
+import de.usd.cstchef.operations.string.Strip;
+import de.usd.cstchef.operations.string.RemoveWhitespace;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.string.Uppercase;
@@ -319,7 +321,7 @@ public class Utils {
                 SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
                 StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
                 Subtraction.class,
-                Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
+                Suffix.class, Sum.class, StringContains.class, StringMatch.class, Strip.class, RemoveWhitespace.class, Tiger.class,
                 TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
                 UrlDecode.class, UrlEncode.class,
                 Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,

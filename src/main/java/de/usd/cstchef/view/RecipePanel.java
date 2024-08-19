@@ -25,6 +25,7 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,6 +35,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -43,6 +45,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.type.PlaceholderForType;
 
 import burp.BurpExtender;
 import burp.BurpUtils;
@@ -65,6 +68,8 @@ import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.view.filter.FilterState;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
+import de.usd.cstchef.view.ui.PlaceholderTextField;
+import de.usd.cstchef.view.ui.TextChangedListener;
 
 public class RecipePanel extends JPanel implements ChangeListener {
 
@@ -116,29 +121,41 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         JPanel searchTreePanel = new JPanel();
         searchTreePanel.setLayout(new BorderLayout());
-        JTextField searchText = new JTextField();
+        PlaceholderTextField searchText = new PlaceholderTextField("Search");
         searchTreePanel.add(searchText, BorderLayout.PAGE_START);
 
         // pass the operation parameter so that separate operation trees can be defined for incoming/outgoing/formatting
         OperationsTree operationsTree = new OperationsTree(operation);
         operationsTree.setRootVisible(false);
         searchTreePanel.add(new JScrollPane(operationsTree));
-        searchText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                operationsTree.search(searchText.getText());
-            }
+        searchText.addTextChangedListener(new TextChangedListener() {
 
             @Override
-            public void insertUpdate(DocumentEvent e) {
+            public void textChanged() {
                 operationsTree.search(searchText.getText());
             }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                operationsTree.search(searchText.getText());
-            }
+            
         });
+        JPanel btnContainer = new JPanel();
+        JButton expandAll = new JButton("+");
+        expandAll.setToolTipText("Expand all operations");
+        expandAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                operationsTree.expandAll();
+            }            
+        });
+        JButton collapseAll = new JButton("-");
+        collapseAll.setToolTipText("Collapse all operations");
+        collapseAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                operationsTree.collapseAll();
+            }            
+        });
+        btnContainer.add(expandAll);
+        btnContainer.add(collapseAll);
+        searchTreePanel.add(btnContainer, BorderLayout.PAGE_END);
 
         // create operations panel
         JPanel operationsPanel = new LayoutPanel("Operations");
@@ -181,6 +198,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         });
 
         JButton bakeButton = new JButton("Bake");
+        bakeButton.setEnabled(!autoBake);
         activeOperationsPanel.addActionComponent(bakeButton);
         bakeButton.addActionListener(new ActionListener() {
             @Override
@@ -233,6 +251,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 autoBake = bakeCheckBox.isSelected();
+                bakeButton.setEnabled(!autoBake);
                 bake(false);
             }
         });

@@ -29,7 +29,7 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "HTTP XML", category = OperationCategory.SETTER, description = "Set a XML parameter to the specified value.")
+@OperationInfos(name = "Set HTTP XML", category = OperationCategory.SETTER, description = "Set a XML parameter to the specified value.")
 public class HttpXmlSetter extends SetterOperation {
 
     @Override
