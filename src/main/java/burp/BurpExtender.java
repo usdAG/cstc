@@ -26,6 +26,8 @@ public class BurpExtender implements BurpExtension {
         api.http().registerHttpHandler(new CstcHttpHandler(view));
         api.userInterface().registerSuiteTab(extensionName, view);
         api.userInterface().registerHttpRequestEditorProvider(new MyHttpRequestEditorProvider(view));
+        api.userInterface().registerHttpRequestEditorProvider(new MyHttpRequestEditorProviderFormatting(view));
+        api.userInterface().registerHttpResponseEditorProvider(new MyHttpResponseEditorProviderFormatting(view));
 
         if (!api.burpSuite().version().edition().equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
             PersistedObject persistence = api.persistence().extensionData();
