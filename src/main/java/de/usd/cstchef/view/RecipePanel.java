@@ -168,6 +168,33 @@ public class RecipePanel extends JPanel implements ChangeListener {
         // create active operations (middle) panel
         LayoutPanel activeOperationsPanel = new LayoutPanel("Recipe");
 
+        // button to add lanes
+        JButton addLaneButton = new JButton("Plus");
+        activeOperationsPanel.addActionComponent(addLaneButton);
+        addLaneButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(operationSteps < 100) {
+                    increaseLaneNumber(1);
+                }
+            }
+            
+        });
+
+        // button to remove lanes
+        JButton removeLaneButton = new JButton("Minus");
+        activeOperationsPanel.addActionComponent(removeLaneButton);
+        removeLaneButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(operationSteps > 1) {
+                    decreaseLaneNumber(1);
+                }
+            }
+            
+        });
 
         inactiveWarning = new JLabel(this.operation.toString() + " Operations currently inactive!");
         inactiveWarning.setForeground(Color.RED);
@@ -328,6 +355,37 @@ public class RecipePanel extends JPanel implements ChangeListener {
         startAutoBakeTimer();
     }
 
+    private void increaseLaneNumber(int number) {
+        this.operationSteps += number;
+
+        GridBagConstraints co = new GridBagConstraints();
+        co.gridheight = GridBagConstraints.REMAINDER;
+        co.weighty = 1;
+        co.fill = GridBagConstraints.VERTICAL;
+
+        for(int i = 0; i < number; i++) {
+            RecipeStepPanel opPanel = new RecipeStepPanel("Lane " + String.valueOf(operationSteps - (number - i) + 1), this);
+            operationLines.add(opPanel, co, operationSteps - (number - i));
+            operationLines.revalidate();
+            operationLines.repaint();
+
+            JPanel panel = opPanel.getOperationsPanel();
+            MoveOperationMouseAdapter moma = new MoveOperationMouseAdapter(opPanel, operationLines);
+            panel.addMouseListener(moma);
+            panel.addMouseMotionListener(moma);
+        }
+    }
+
+    private void decreaseLaneNumber(int number) {
+        int index = this.operationSteps;
+        this.operationSteps -= number;
+        for(int i = 0; i < number; i++) {
+            operationLines.remove(index - 1 - i);
+            operationLines.revalidate();
+            operationLines.repaint();
+        }
+    }
+
     public void hideInactiveWarning(){
         this.inactiveWarning.setVisible(false);
     }
@@ -391,6 +449,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         if (!stepNodes.isArray()) {
             throw new IOException("wrong data format");
+        }
+
+        if(stepNodes.size() > operationSteps) {
+            increaseLaneNumber(stepNodes.size() - operationSteps);
         }
 
         for (int step = 0; step < stepNodes.size(); step++) {
@@ -687,6 +749,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     private void clear() {
+        if(this.operationSteps < 10) {
+            increaseLaneNumber(10 - this.operationSteps);
+        }
+        else if(this.operationSteps > 10) {
+            decreaseLaneNumber(this.operationSteps - 10);
+        }
+        
         for (int step = 0; step < this.operationSteps; step++) {
             RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
             int laneIndex = step + 1;
