@@ -277,6 +277,18 @@ public class CstcHttpResponse implements HttpResponse {
     }
 
     @Override
+    public HttpResponse withAddedHeaders(List<? extends HttpHeader> headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withAddedHeaders'");
+    }
+
+    @Override
+    public HttpResponse withAddedHeaders(HttpHeader... headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withAddedHeaders'");
+    }
+
+    @Override
     public HttpResponse withUpdatedHeader(HttpHeader header) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withUpdatedHeader'");
@@ -289,6 +301,18 @@ public class CstcHttpResponse implements HttpResponse {
     }
 
     @Override
+    public HttpResponse withUpdatedHeaders(List<? extends HttpHeader> headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withUpdatedHeaders'");
+    }
+
+    @Override
+    public HttpResponse withUpdatedHeaders(HttpHeader... headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withUpdatedHeaders'");
+    }
+
+    @Override
     public HttpResponse withRemovedHeader(HttpHeader header) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeader'");
@@ -298,6 +322,18 @@ public class CstcHttpResponse implements HttpResponse {
     public HttpResponse withRemovedHeader(String name) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeader'");
+    }
+
+    @Override
+    public HttpResponse withRemovedHeaders(List<? extends HttpHeader> headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeaders'");
+    }
+
+    @Override
+    public HttpResponse withRemovedHeaders(HttpHeader... headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeaders'");
     }
 
     @Override
