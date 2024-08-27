@@ -24,12 +24,13 @@ import burp.api.montoya.http.message.HttpMessage;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
+import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "Set HTTP XML", category = OperationCategory.SETTER, description = "Set a XML parameter to the specified value.\nUse XPath Syntax.")
-public class HttpXmlSetter extends SetterOperation {
+public class HttpXmlSetter extends Operation {
 
     private VariableTextField path;
     private VariableTextField value;
@@ -117,7 +118,7 @@ public class HttpXmlSetter extends SetterOperation {
 
         this.addUIElement("Path", this.path);
         this.addUIElement("Value", this.value);
-        this.addUIElement(null, this.addIfNotPresent);
+        this.addUIElement(null, this.addIfNotPresent, "checkbox1");
     }
 
 }
