@@ -23,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -94,6 +95,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private JLabel inactiveWarning;
 
+    private static ImageIcon expandIcon = new ImageIcon(Operation.class.getResource("/expand_all.png"));
+    private static ImageIcon collapseIcon = new ImageIcon(Operation.class.getResource("/collapse_all.png"));
+
     public RecipePanel(BurpOperation operation, MessageType messageType) {
 
         this.operation = operation;
@@ -137,7 +141,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
             
         });
         JPanel btnContainer = new JPanel();
-        JButton expandAll = new JButton("+");
+        JButton expandAll = new JButton();
+        expandAll.setIcon(expandIcon);
         expandAll.setToolTipText("Expand all operations");
         expandAll.addActionListener(new ActionListener() {
             @Override
@@ -145,7 +150,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 operationsTree.expandAll();
             }            
         });
-        JButton collapseAll = new JButton("-");
+        JButton collapseAll = new JButton();
+        collapseAll.setIcon(collapseIcon);
         collapseAll.setToolTipText("Collapse all operations");
         collapseAll.addActionListener(new ActionListener() {
             @Override
