@@ -98,6 +98,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private static ImageIcon expandIcon = new ImageIcon(Operation.class.getResource("/expand_all.png"));
     private static ImageIcon collapseIcon = new ImageIcon(Operation.class.getResource("/collapse_all.png"));
 
+    private static ImageIcon plusIcon = new ImageIcon(Operation.class.getResource("/plus.png"));
+    private static ImageIcon minusIcon = new ImageIcon(Operation.class.getResource("/minus.png"));
+
+    private JButton addLaneButton = new JButton();
+    private JButton removeLaneButton = new JButton();
+
     public RecipePanel(BurpOperation operation, MessageType messageType) {
 
         this.operation = operation;
@@ -173,34 +179,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create active operations (middle) panel
         LayoutPanel activeOperationsPanel = new LayoutPanel("Recipe");
-
-        // button to add lanes
-        JButton addLaneButton = new JButton("Plus");
-        activeOperationsPanel.addActionComponent(addLaneButton);
-        addLaneButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(operationSteps < 100) {
-                    increaseLaneNumber(1);
-                }
-            }
-            
-        });
-
-        // button to remove lanes
-        JButton removeLaneButton = new JButton("Minus");
-        activeOperationsPanel.addActionComponent(removeLaneButton);
-        removeLaneButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if(operationSteps > 1) {
-                    decreaseLaneNumber(1);
-                }
-            }
-            
-        });
 
         inactiveWarning = new JLabel(this.operation.toString() + " Operations currently inactive!");
         inactiveWarning.setForeground(Color.RED);
@@ -327,6 +305,47 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         operationLines.add(dummyPanel, gbc); // this is the magic!11!!
 
+        JScrollPane activeOperationsScrollPane = new JScrollPane(operationLines, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        activeOperationsPanel.add(activeOperationsScrollPane);
+
+        // button to add lanes
+        addLaneButton.setIcon(plusIcon);
+
+        GridBagConstraints btnConstrainsts = new GridBagConstraints();
+        btnConstrainsts.gridheight = 1;
+        btnConstrainsts.gridwidth = 1;
+        btnConstrainsts.anchor = GridBagConstraints.NORTHEAST;
+        
+        operationLines.add(addLaneButton, btnConstrainsts, 0);
+        addLaneButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(operationSteps < 100) {
+                    increaseLaneNumber(1);
+                }
+
+                // scroll max to the right if a lane is added. invokeLater because the maximum needs to be updated in the event queue first
+                SwingUtilities.invokeLater(() -> activeOperationsScrollPane.getHorizontalScrollBar().setValue(activeOperationsScrollPane.getHorizontalScrollBar().getMaximum()));
+            }
+            
+        });
+
+        // button to remove lanes
+        removeLaneButton.setIcon(minusIcon);
+        operationLines.add(removeLaneButton, btnConstrainsts, 0);
+        removeLaneButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(operationSteps > 1) {
+                    decreaseLaneNumber(1);
+                }
+            }
+            
+        });
+
         for (int i = operationSteps; i > 0; i--) {
             RecipeStepPanel opPanel = new RecipeStepPanel("Lane " + String.valueOf(i), this);
             operationLines.add(opPanel, co, 0);
@@ -337,9 +356,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
             panel.addMouseMotionListener(moma);
         }
 
-        JScrollPane activeOperationsScrollPane = new JScrollPane(operationLines, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        activeOperationsPanel.add(activeOperationsScrollPane);
 
         JSplitPane opsInOut = new JSplitPane();
         opsInOut.setResizeWeight(0.5);
