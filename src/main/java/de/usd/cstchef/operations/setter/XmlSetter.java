@@ -3,8 +3,6 @@ package de.usd.cstchef.operations.setter;
 import javax.swing.JCheckBox;
 
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
@@ -12,8 +10,8 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "Set HTTP XML", category = OperationCategory.SETTER, description = "Set a XML parameter to the specified value.\nUse XPath Syntax.")
-public class HttpXmlSetter extends Operation {
+@OperationInfos(name = "Set XML", category = OperationCategory.SETTER, description = "Set a XML parameter to the specified value.\nUse XPath Syntax.")
+public class XmlSetter extends Operation {
 
     private VariableTextField path;
     private VariableTextField value;
@@ -29,15 +27,7 @@ public class HttpXmlSetter extends Operation {
             return input;
         }
 
-        if(messageType == MessageType.REQUEST) {
-            return HttpRequest.httpRequest(input).withBody(Utils.xmlSetter(HttpRequest.httpRequest(input).body(), p, v, addIfNotPresent.isSelected())).toByteArray();
-        }
-        else if(messageType == MessageType.RESPONSE) {
-            return HttpResponse.httpResponse(input).withBody(Utils.xmlSetter(HttpResponse.httpResponse(input).body(), p, v, addIfNotPresent.isSelected())).toByteArray();
-        }
-        else {
-            return parseRawMessage(input);
-        }
+        return Utils.xmlSetter(input, p, v, addIfNotPresent.isSelected());
     }
 
     @Override
