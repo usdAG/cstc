@@ -104,6 +104,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private JButton addLaneButton = new JButton();
     private JButton removeLaneButton = new JButton();
 
+    private JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
+    private JButton bakeButton = new JButton("Bake");
+
     public RecipePanel(BurpOperation operation, MessageType messageType) {
 
         this.operation = operation;
@@ -200,6 +203,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                             RequestFilterDialog.getInstance().getFilterMask(BurpOperation.INCOMING),
                             RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING));
                 }
+                BurpUtils.getInstance().getView().preventRaceConditionOnVariables();
                 BurpUtils.getInstance().getView().updateInactiveWarnings();
                 if (!BurpUtils.getInstance().getApi().burpSuite().version().edition()
                         .equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
@@ -208,7 +212,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        JButton bakeButton = new JButton("Bake");
         bakeButton.setEnabled(!autoBake);
         activeOperationsPanel.addActionComponent(bakeButton);
         bakeButton.addActionListener(new ActionListener() {
@@ -255,7 +258,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
         bakeCheckBox.setSelected(this.autoBake);
         activeOperationsPanel.addActionComponent(bakeCheckBox);
         bakeCheckBox.addActionListener(new ActionListener() {
@@ -376,6 +378,36 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         startAutoBakeTimer();
     }
+
+    public void disableAutobakeIfFilterActive() {
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()) {
+            if(b) {
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+            }
+        }
+
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()) {
+            if(b) {
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+            }
+        }
+    }   
 
     private void increaseLaneNumber(int number) {
         this.operationSteps += number;
