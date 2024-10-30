@@ -3,6 +3,7 @@ package de.usd.cstchef.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -127,6 +128,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
         inputText = new BurpEditorWrapper(controllerOrig, messageType, this);
         inputPanel.add(inputText.uiComponent());
 
+        /* 
+         * This is necessary to have the distribution of space in all of the three RecipePanels uniform.
+         * Request and Response Editor have different default sizes than the Raw Editor.
+        */
+        inputPanel.setPreferredSize(new Dimension(248, 0));
+        inputPanel.setMinimumSize(new Dimension(248, 0));
+
         // create output panel
         JPanel outputPanel = new LayoutPanel("Output");
         outputText = new BurpEditorWrapper(controllerMod, messageType, this);
@@ -176,6 +184,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
         JPanel operationsPanel = new LayoutPanel("Operations");
         operationsPanel.add(searchTreePanel);
         operationsPanel.setBackground(Color.WHITE);
+
+        operationsPanel.setPreferredSize(new Dimension(100, 0));
+        operationsPanel.setMinimumSize(new Dimension(100, 0));
+
         inOut.setTopComponent(inputPanel);
         inOut.setBottomComponent(outputPanel);
         inOut.setResizeWeight(0.5);
@@ -193,6 +205,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
         JButton filters = new JButton("Filter");
         if(this.operation != BurpOperation.FORMAT)
             activeOperationsPanel.addActionComponent(filters);
+        
+        activeOperationsPanel.setPreferredSize(new Dimension(393, 0));
+        activeOperationsPanel.setMinimumSize(new Dimension(393, 0));
+        
         filters.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -360,7 +376,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
 
         JSplitPane opsInOut = new JSplitPane();
-        opsInOut.setResizeWeight(0.5);
+        opsInOut.setResizeWeight(0.7);
 
         opsInOut.setLeftComponent(activeOperationsPanel);
         opsInOut.setRightComponent(inOut);
