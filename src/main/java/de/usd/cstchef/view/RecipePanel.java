@@ -401,6 +401,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
     public void disableAutobakeIfFilterActive() {
         for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()) {
             if(b) {
+                this.autoBake = false;
                 this.bakeCheckBox.setSelected(false);
                 this.bakeButton.setEnabled(true);
                 this.bakeCheckBox.setEnabled(false);
@@ -415,6 +416,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()) {
             if(b) {
+                this.autoBake = false;
                 this.bakeCheckBox.setSelected(false);
                 this.bakeButton.setEnabled(true);
                 this.bakeCheckBox.setEnabled(false);
