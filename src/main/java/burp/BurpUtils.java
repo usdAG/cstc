@@ -60,7 +60,7 @@ public class BurpUtils {
     }
 
     public static ByteArray subArray(ByteArray array, int start, int end){
-        return start == end ? ByteArray.byteArray(0) : array.subArray( start, end);
+        return start == end ? ByteArray.byteArrayOfLength(0) : array.subArray( start, end);
     }
 
 }
