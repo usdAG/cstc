@@ -140,6 +140,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
         outputText = new BurpEditorWrapper(controllerMod, messageType, this);
         outputPanel.add(outputText.uiComponent());
 
+        outputPanel.setPreferredSize(new Dimension(248, 0));
+        outputPanel.setMinimumSize(new Dimension(248, 0));
+
         JPanel searchTreePanel = new JPanel();
         searchTreePanel.setLayout(new BorderLayout());
         PlaceholderTextField searchText = new PlaceholderTextField("Search");
