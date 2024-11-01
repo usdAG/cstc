@@ -15,16 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add Xml Setter Operation
 * Add Strip Operation to remove leading or trailing whitespaces
 * Add Collapse All / Expand All buttons to Operations Tree
+* Add Remove Whitespace Operation
 
 ### Changed
 
 * Refactor Http Xml Setter Operation
 * Disable Bake button when Autobake is enabled
 * Refactor Operations Tree for Outgoing/Incoming/Formatting to not contain redundant operations
-
-### Removed
-
-* Remove Whitespace Operation
 
 ### Fixed
 
