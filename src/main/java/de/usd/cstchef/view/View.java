@@ -77,4 +77,10 @@ public class View extends JPanel {
                 outgoingRecipePanel.hideInactiveWarning();
         }
     }
+
+    public void preventRaceConditionOnVariables() {
+        incomingRecipePanel.disableAutobakeIfFilterActive();
+        outgoingRecipePanel.disableAutobakeIfFilterActive();
+        formatRecipePanel.disableAutobakeIfFilterActive();
+    }
 }

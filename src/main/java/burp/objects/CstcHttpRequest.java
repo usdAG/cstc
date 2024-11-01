@@ -3,8 +3,6 @@ package burp.objects;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.bouncycastle.util.Arrays;
-
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.core.Marker;
 import burp.api.montoya.http.HttpService;
@@ -15,7 +13,6 @@ import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.requests.HttpTransformation;
-import de.usd.cstchef.operations.extractors.JsonExtractor;
 
 public class CstcHttpRequest implements HttpRequest {
 
@@ -141,12 +138,6 @@ public class CstcHttpRequest implements HttpRequest {
     }
 
     @Override
-    public ParsedHttpParameter parameter(String name, HttpParameterType type) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'parameter'");
-    }
-
-    @Override
     public boolean isInScope() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'isInScope'");
@@ -210,6 +201,12 @@ public class CstcHttpRequest implements HttpRequest {
     public boolean hasParameters(HttpParameterType type) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'hasParameters'");
+    }
+
+    @Override
+    public ParsedHttpParameter parameter(String name, HttpParameterType type) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'parameter'");
     }
 
     @Override
@@ -405,6 +402,18 @@ public class CstcHttpRequest implements HttpRequest {
     }
 
     @Override
+    public HttpRequest withAddedHeaders(List<? extends HttpHeader> headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withAddedHeaders'");
+    }
+
+    @Override
+    public HttpRequest withAddedHeaders(HttpHeader... headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withAddedHeaders'");
+    }
+
+    @Override
     public HttpRequest withUpdatedHeader(String name, String value) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withUpdatedHeader'");
@@ -417,6 +426,18 @@ public class CstcHttpRequest implements HttpRequest {
     }
 
     @Override
+    public HttpRequest withUpdatedHeaders(List<? extends HttpHeader> headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withUpdatedHeaders'");
+    }
+
+    @Override
+    public HttpRequest withUpdatedHeaders(HttpHeader... headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withUpdatedHeaders'");
+    }
+
+    @Override
     public HttpRequest withRemovedHeader(String name) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeader'");
@@ -426,6 +447,18 @@ public class CstcHttpRequest implements HttpRequest {
     public HttpRequest withRemovedHeader(HttpHeader header) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeader'");
+    }
+
+    @Override
+    public HttpRequest withRemovedHeaders(List<? extends HttpHeader> headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeaders'");
+    }
+
+    @Override
+    public HttpRequest withRemovedHeaders(HttpHeader... headers) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'withRemovedHeaders'");
     }
 
     @Override

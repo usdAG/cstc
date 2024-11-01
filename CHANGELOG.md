@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.3.4] - 2024-11-01
+
+### Added
+
+* Add functionality to add or remove lanes
+* Add CSTC Formatting Tab to Message Editor to view Formatting output
+* Add Xml Setter Operation
+* Add Strip Operation to remove leading or trailing whitespaces
+* Add Collapse All / Expand All buttons to Operations Tree
+* Add Remove Whitespace Operation
+
+### Changed
+
+* Refactor Http Xml Setter Operation
+* Disable Bake button when Autobake is enabled
+* Refactor Operations Tree for Outgoing/Incoming/Formatting to not contain redundant operations
+
+### Fixed
+
+* Fix UI bug of shifted component layout in Formatting Tab
+* Fix appearance of Null Bytes in various operations
+* Fix possible Race Condition on stored variables with Autobake enabled and Filter active
+
+
 ## [1.3.3] - 2024-07-30
 
 ### Fixed

@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -19,6 +20,23 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -121,6 +139,7 @@ import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetCookie;
 import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.HttpXmlSetter;
+import de.usd.cstchef.operations.setter.XmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
 import de.usd.cstchef.operations.signature.JWTDecode;
@@ -136,6 +155,8 @@ import de.usd.cstchef.operations.string.Replace;
 import de.usd.cstchef.operations.string.Reverse;
 import de.usd.cstchef.operations.string.SplitAndSelect;
 import de.usd.cstchef.operations.string.StaticString;
+import de.usd.cstchef.operations.string.Strip;
+import de.usd.cstchef.operations.string.RemoveWhitespace;
 import de.usd.cstchef.operations.string.Substring;
 import de.usd.cstchef.operations.string.Suffix;
 import de.usd.cstchef.operations.string.Uppercase;
@@ -149,6 +170,7 @@ import de.usd.cstchef.operations.utils.RandomUUID;
 import de.usd.cstchef.operations.utils.SetIfEmpty;
 import de.usd.cstchef.operations.utils.StoreVariable;
 import de.usd.cstchef.view.View;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class Utils {
 
@@ -254,6 +276,75 @@ public class Utils {
             return ByteArray.byteArray(document.jsonString());
     }
 
+    public static ByteArray xmlSetter(ByteArray input, String path, String value, boolean addIfNotPresent) throws Exception {
+
+        if(path.trim().isEmpty()) {
+            return input;
+        }
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        // XXE prevention as per https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
+        doc.getDocumentElement().normalize();
+
+        Element toAdd;
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        NodeList nodeList;
+
+        Node disableEscaping = doc.createProcessingInstruction(StreamResult.PI_DISABLE_OUTPUT_ESCAPING, "&");
+        // make sure disableEscaping is always the first child of the document element so the whole doc is escaped
+        doc.getDocumentElement().getParentNode().insertBefore(disableEscaping, doc.getDocumentElement().getParentNode().getFirstChild());
+
+        try {
+            nodeList = (NodeList) xPath.compile(path).evaluate(doc, XPathConstants.NODESET);
+        }
+        catch(Exception e) {
+            throw new IllegalArgumentException("Invalid XPath Syntax.");
+        }
+
+        for(int i = 0; i < nodeList.getLength(); i++) {
+            nodeList.item(i).setTextContent(value);
+        }
+
+        if(nodeList.getLength() == 0 && addIfNotPresent) {
+            if(path.matches(".*/@[a-zA-Z0-9-_.]*")) {
+                nodeList = (NodeList) xPath.compile(path.replaceAll("/@[a-zA-Z0-9-_.]*$", "")).evaluate(doc, XPathConstants.NODESET);
+                for(int i = 0; i < nodeList.getLength(); i++) {
+                    ((Element) nodeList.item(i)).setAttribute(path.split("@")[path.split("@").length - 1], value);
+                }
+            }
+            else {
+                nodeList = (NodeList) xPath.compile(path.replaceAll("/[a-zA-Z0-9-_.]*$", "")).evaluate(doc, XPathConstants.NODESET);
+                for(int i = 0; i < nodeList.getLength(); i++) {
+                    toAdd = doc.createElement(path.split("/")[path.split("/").length - 1]);
+                    toAdd.setTextContent(value);
+                    nodeList.item(i).appendChild(toAdd);
+                }
+            }
+        }
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        // XXE prevention
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+
+        Transformer xformer = transformerFactory.newTransformer();
+        xformer.setOutputProperty(OutputKeys.INDENT, "no");
+        xformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes");
+
+        StringWriter output = new StringWriter();
+        xformer.transform(new DOMSource(doc), new StreamResult(output));
+        return ByteArray.byteArray(output.toString());
+    }
+
     public static Class<? extends Operation>[] getOperationsBurp() {
         ZipInputStream zip = null;
         List<Class<? extends Operation>> operations = new ArrayList<Class<? extends Operation>>();
@@ -294,7 +385,7 @@ public class Utils {
 
     // TODO reflection does not work in Burp Suite
     @SuppressWarnings("unchecked")
-    public static Class<? extends Operation>[] getOperationsDev() {
+    public static Class<? extends Operation>[] getOperationsDevOutgoingFormatting() {
         return new Class[] {
                 Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
                 Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
@@ -307,7 +398,7 @@ public class Utils {
                 HttpMultipartSetter.class,
                 HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
                 HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
-                HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
+                HttpXmlSetter.class, XmlSetter.class, HtmlEncode.class, HtmlDecode.class, Inflate.class,
                 JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class, Length.class,
                 LineExtractor.class,
                 LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
@@ -318,7 +409,7 @@ public class Utils {
                 SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
                 StaticString.class, StoreVariable.class, Sub.class, Substring.class, Uppercase.class, Lowercase.class,
                 Subtraction.class,
-                Suffix.class, Sum.class, StringContains.class, StringMatch.class, Tiger.class,
+                Suffix.class, Sum.class, StringContains.class, StringMatch.class, Strip.class, RemoveWhitespace.class, Tiger.class,
                 TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
                 UrlDecode.class, UrlEncode.class,
                 Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
@@ -326,8 +417,39 @@ public class Utils {
         };
     }
 
-    public static Class<? extends Operation>[] getOperations() {
-        return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+    // TODO reflection does not work in Burp Suite
+    @SuppressWarnings("unchecked")
+    public static Class<? extends Operation>[] getOperationsDevIncoming() {
+        return new Class[] {
+                Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
+                Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+                Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, GetRequestBuilder.class,
+                GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class, HttpBodyExtractor.class, 
+                HttpCookieExtractor.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpJsonExtractor.class,
+                HttpJsonSetter.class, HttpMultipartExtractor.class, HttpMultipartSetter.class, PlainRequest.class,
+                HttpSetBody.class, HttpSetCookie.class, HttpXmlExtractor.class, HttpXmlSetter.class, XmlSetter.class, HtmlEncode.class,
+                HtmlDecode.class, Inflate.class, JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class,
+                Length.class, LineExtractor.class, LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
+                Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class, RandomNumber.class,
+                RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class, Replace.class,
+                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM2Signature.class, SM3.class,
+                SM4Encryption.class, SM4Decryption.class, RegexMatch.class, SetIfEmpty.class, SHA1.class, SHA2.class,
+                SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class, StoreVariable.class, Sub.class, Substring.class,
+                Uppercase.class, Lowercase.class, Subtraction.class, Suffix.class, Sum.class, StringContains.class,
+                StringMatch.class, Tiger.class, TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class,
+                UnixTimestamp.class, UrlDecode.class, UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class,
+                XmlMultiSignature.class, Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class, JsonBeautifier.class
+        };
+    }
+
+    public static Class<? extends Operation>[] getOperations(BurpOperation operation) {
+        //return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
+        if(operation == BurpOperation.INCOMING) {
+            return getOperationsDevIncoming();
+        }
+        else {
+            return getOperationsDevOutgoingFormatting();
+        }
     }
 
     public enum MessageType {

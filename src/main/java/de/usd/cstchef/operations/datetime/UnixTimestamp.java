@@ -8,7 +8,7 @@ import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "Unix Timestamp", category = OperationCategory.DATES, description = "Returnes the current unix timestamp.")
+@OperationInfos(name = "Unix/Epoch Timestamp", category = OperationCategory.DATES, description = "Returnes the current unix/epoch timestamp.")
 public class UnixTimestamp extends Operation {
 
     private JCheckBox milliBox;

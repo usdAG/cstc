@@ -3,6 +3,7 @@ package de.usd.cstchef.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -23,8 +24,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -34,6 +37,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -43,6 +47,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.type.PlaceholderForType;
 
 import burp.BurpExtender;
 import burp.BurpUtils;
@@ -65,6 +70,8 @@ import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.view.filter.FilterState;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
+import de.usd.cstchef.view.ui.PlaceholderTextField;
+import de.usd.cstchef.view.ui.TextChangedListener;
 
 public class RecipePanel extends JPanel implements ChangeListener {
 
@@ -89,6 +96,18 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private JLabel inactiveWarning;
 
+    private static ImageIcon expandIcon = new ImageIcon(Operation.class.getResource("/expand_all.png"));
+    private static ImageIcon collapseIcon = new ImageIcon(Operation.class.getResource("/collapse_all.png"));
+
+    private static ImageIcon plusIcon = new ImageIcon(Operation.class.getResource("/plus.png"));
+    private static ImageIcon minusIcon = new ImageIcon(Operation.class.getResource("/minus.png"));
+
+    private JButton addLaneButton = new JButton();
+    private JButton removeLaneButton = new JButton();
+
+    private JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
+    private JButton bakeButton = new JButton("Bake");
+
     public RecipePanel(BurpOperation operation, MessageType messageType) {
 
         this.operation = operation;
@@ -109,47 +128,75 @@ public class RecipePanel extends JPanel implements ChangeListener {
         inputText = new BurpEditorWrapper(controllerOrig, messageType, this);
         inputPanel.add(inputText.uiComponent());
 
+        /* 
+         * This is necessary to have the distribution of space in all of the three RecipePanels uniform.
+         * Request and Response Editor have different default sizes than the Raw Editor.
+        */
+        inputPanel.setPreferredSize(new Dimension(248, 0));
+        inputPanel.setMinimumSize(new Dimension(248, 0));
+
         // create output panel
         JPanel outputPanel = new LayoutPanel("Output");
         outputText = new BurpEditorWrapper(controllerMod, messageType, this);
         outputPanel.add(outputText.uiComponent());
 
+        outputPanel.setPreferredSize(new Dimension(248, 0));
+        outputPanel.setMinimumSize(new Dimension(248, 0));
+
         JPanel searchTreePanel = new JPanel();
         searchTreePanel.setLayout(new BorderLayout());
-        JTextField searchText = new JTextField();
+        PlaceholderTextField searchText = new PlaceholderTextField("Search");
         searchTreePanel.add(searchText, BorderLayout.PAGE_START);
 
-        OperationsTree operationsTree = new OperationsTree();
+        // pass the operation parameter so that separate operation trees can be defined for incoming/outgoing/formatting
+        OperationsTree operationsTree = new OperationsTree(operation);
         operationsTree.setRootVisible(false);
         searchTreePanel.add(new JScrollPane(operationsTree));
-        searchText.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                operationsTree.search(searchText.getText());
-            }
+        searchText.addTextChangedListener(new TextChangedListener() {
 
             @Override
-            public void insertUpdate(DocumentEvent e) {
+            public void textChanged() {
                 operationsTree.search(searchText.getText());
             }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                operationsTree.search(searchText.getText());
-            }
+            
         });
+        JPanel btnContainer = new JPanel();
+        JButton expandAll = new JButton();
+        expandAll.setIcon(expandIcon);
+        expandAll.setToolTipText("Expand all operations");
+        expandAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                operationsTree.expandAll();
+            }            
+        });
+        JButton collapseAll = new JButton();
+        collapseAll.setIcon(collapseIcon);
+        collapseAll.setToolTipText("Collapse all operations");
+        collapseAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                operationsTree.collapseAll();
+            }            
+        });
+        btnContainer.add(expandAll);
+        btnContainer.add(collapseAll);
+        searchTreePanel.add(btnContainer, BorderLayout.PAGE_END);
 
         // create operations panel
         JPanel operationsPanel = new LayoutPanel("Operations");
         operationsPanel.add(searchTreePanel);
         operationsPanel.setBackground(Color.WHITE);
+
+        operationsPanel.setPreferredSize(new Dimension(100, 0));
+        operationsPanel.setMinimumSize(new Dimension(100, 0));
+
         inOut.setTopComponent(inputPanel);
         inOut.setBottomComponent(outputPanel);
         inOut.setResizeWeight(0.5);
 
         // create active operations (middle) panel
         LayoutPanel activeOperationsPanel = new LayoutPanel("Recipe");
-
 
         inactiveWarning = new JLabel(this.operation.toString() + " Operations currently inactive!");
         inactiveWarning.setForeground(Color.RED);
@@ -161,6 +208,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
         JButton filters = new JButton("Filter");
         if(this.operation != BurpOperation.FORMAT)
             activeOperationsPanel.addActionComponent(filters);
+        
+        activeOperationsPanel.setPreferredSize(new Dimension(393, 0));
+        activeOperationsPanel.setMinimumSize(new Dimension(393, 0));
+        
         filters.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -171,6 +222,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                             RequestFilterDialog.getInstance().getFilterMask(BurpOperation.INCOMING),
                             RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING));
                 }
+                BurpUtils.getInstance().getView().preventRaceConditionOnVariables();
                 BurpUtils.getInstance().getView().updateInactiveWarnings();
                 if (!BurpUtils.getInstance().getApi().burpSuite().version().edition()
                         .equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
@@ -179,7 +231,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        JButton bakeButton = new JButton("Bake");
+        bakeButton.setEnabled(!autoBake);
         activeOperationsPanel.addActionComponent(bakeButton);
         bakeButton.addActionListener(new ActionListener() {
             @Override
@@ -225,13 +277,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
         bakeCheckBox.setSelected(this.autoBake);
         activeOperationsPanel.addActionComponent(bakeCheckBox);
         bakeCheckBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 autoBake = bakeCheckBox.isSelected();
+                bakeButton.setEnabled(!autoBake);
                 bake(false);
             }
         });
@@ -274,6 +326,47 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         operationLines.add(dummyPanel, gbc); // this is the magic!11!!
 
+        JScrollPane activeOperationsScrollPane = new JScrollPane(operationLines, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        activeOperationsPanel.add(activeOperationsScrollPane);
+
+        // button to add lanes
+        addLaneButton.setIcon(plusIcon);
+
+        GridBagConstraints btnConstrainsts = new GridBagConstraints();
+        btnConstrainsts.gridheight = 1;
+        btnConstrainsts.gridwidth = 1;
+        btnConstrainsts.anchor = GridBagConstraints.NORTHEAST;
+        
+        operationLines.add(addLaneButton, btnConstrainsts, 0);
+        addLaneButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(operationSteps < 100) {
+                    increaseLaneNumber(1);
+                }
+
+                // scroll max to the right if a lane is added. invokeLater because the maximum needs to be updated in the event queue first
+                SwingUtilities.invokeLater(() -> activeOperationsScrollPane.getHorizontalScrollBar().setValue(activeOperationsScrollPane.getHorizontalScrollBar().getMaximum()));
+            }
+            
+        });
+
+        // button to remove lanes
+        removeLaneButton.setIcon(minusIcon);
+        operationLines.add(removeLaneButton, btnConstrainsts, 0);
+        removeLaneButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(operationSteps > 1) {
+                    decreaseLaneNumber(1);
+                }
+            }
+            
+        });
+
         for (int i = operationSteps; i > 0; i--) {
             RecipeStepPanel opPanel = new RecipeStepPanel("Lane " + String.valueOf(i), this);
             operationLines.add(opPanel, co, 0);
@@ -284,12 +377,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
             panel.addMouseMotionListener(moma);
         }
 
-        JScrollPane activeOperationsScrollPane = new JScrollPane(operationLines, JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        activeOperationsPanel.add(activeOperationsScrollPane);
 
         JSplitPane opsInOut = new JSplitPane();
-        opsInOut.setResizeWeight(0.5);
+        opsInOut.setResizeWeight(0.7);
 
         opsInOut.setLeftComponent(activeOperationsPanel);
         opsInOut.setRightComponent(inOut);
@@ -306,6 +396,69 @@ public class RecipePanel extends JPanel implements ChangeListener {
         operationsTree.addMouseMotionListener(dma);
 
         startAutoBakeTimer();
+    }
+
+    public void disableAutobakeIfFilterActive() {
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()) {
+            if(b) {
+                this.autoBake = false;
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+            }
+        }
+
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()) {
+            if(b) {
+                this.autoBake = false;
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+            }
+        }
+    }   
+
+    private void increaseLaneNumber(int number) {
+        this.operationSteps += number;
+
+        GridBagConstraints co = new GridBagConstraints();
+        co.gridheight = GridBagConstraints.REMAINDER;
+        co.weighty = 1;
+        co.fill = GridBagConstraints.VERTICAL;
+
+        for(int i = 0; i < number; i++) {
+            RecipeStepPanel opPanel = new RecipeStepPanel("Lane " + String.valueOf(operationSteps - (number - i) + 1), this);
+            operationLines.add(opPanel, co, operationSteps - (number - i));
+            operationLines.revalidate();
+            operationLines.repaint();
+
+            JPanel panel = opPanel.getOperationsPanel();
+            MoveOperationMouseAdapter moma = new MoveOperationMouseAdapter(opPanel, operationLines);
+            panel.addMouseListener(moma);
+            panel.addMouseMotionListener(moma);
+        }
+    }
+
+    private void decreaseLaneNumber(int number) {
+        int index = this.operationSteps;
+        this.operationSteps -= number;
+        for(int i = 0; i < number; i++) {
+            operationLines.remove(index - 1 - i);
+            operationLines.revalidate();
+            operationLines.repaint();
+        }
     }
 
     public void hideInactiveWarning(){
@@ -371,6 +524,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         if (!stepNodes.isArray()) {
             throw new IOException("wrong data format");
+        }
+
+        if(stepNodes.size() > operationSteps) {
+            increaseLaneNumber(stepNodes.size() - operationSteps);
         }
 
         for (int step = 0; step < stepNodes.size(); step++) {
@@ -667,6 +824,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     private void clear() {
+        if(this.operationSteps < 10) {
+            increaseLaneNumber(10 - this.operationSteps);
+        }
+        else if(this.operationSteps > 10) {
+            decreaseLaneNumber(this.operationSteps - 10);
+        }
+        
         for (int step = 0; step < this.operationSteps; step++) {
             RecipeStepPanel stepPanel = (RecipeStepPanel) this.operationLines.getComponent(step);
             int laneIndex = step + 1;
