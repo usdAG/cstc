@@ -130,6 +130,7 @@ import de.usd.cstchef.operations.misc.RequestBuilder;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.PlainRequest;
+import de.usd.cstchef.operations.setter.HttpHeaderRemove;
 import de.usd.cstchef.operations.setter.HttpGetSetter;
 import de.usd.cstchef.operations.setter.HttpHeaderSetter;
 import de.usd.cstchef.operations.setter.HttpJsonSetter;
@@ -393,7 +394,7 @@ public class Utils {
                 RequestBuilder.class,
                 GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
                 HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
-                HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
+                HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpHeaderRemove.class,
                 HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
                 HttpMultipartSetter.class,
                 HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
@@ -425,7 +426,7 @@ public class Utils {
                 Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
                 Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, RequestBuilder.class,
                 GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class, HttpBodyExtractor.class, 
-                HttpCookieExtractor.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpJsonExtractor.class,
+                HttpCookieExtractor.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpHeaderRemove.class, HttpJsonExtractor.class,
                 HttpJsonSetter.class, HttpMultipartExtractor.class, HttpMultipartSetter.class, PlainRequest.class,
                 HttpSetBody.class, HttpSetCookie.class, HttpXmlExtractor.class, HttpXmlSetter.class, XmlSetter.class, HtmlEncode.class,
                 HtmlDecode.class, Inflate.class, JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class,
