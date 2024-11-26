@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>net.portswigger.burp.extensions</groupId>
 			<artifactId>montoya-api</artifactId>
-			<version>2024.7</version>
+			<version>2024.11</version>
 		</dependency>
 		
 		<dependency>
