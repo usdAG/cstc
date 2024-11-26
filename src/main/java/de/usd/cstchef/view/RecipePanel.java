@@ -486,7 +486,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.controllerOrig.setHttpRequestResponse(requestResponse);
         this.controllerMod.setHttpRequestResponse(requestResponse);
 
-        this.bake(false);
     }
 
     public void setFormatMessage(HttpRequestResponse requestResponse, MessageType messageType){
