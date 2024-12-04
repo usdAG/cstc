@@ -6,31 +6,46 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import burp.api.montoya.core.ToolSource;
+import burp.api.montoya.core.ToolType;
 
 public class FilterState implements Serializable{
     @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
-    private LinkedHashMap<Filter, Boolean> incomingFilterSettings;
+    private LinkedHashMap<Filter, Boolean> incomingHttpResponseFilterSettings;
     @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
-    private LinkedHashMap<Filter, Boolean> outgoingFilterSettings;
+    private LinkedHashMap<Filter, Boolean> incomingProxyRequestFilterSettings;
+    @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
+    private LinkedHashMap<Filter, Boolean> outgoingHttpRequestFilterSettings;
+    @JsonDeserialize(keyUsing = FilterStateDeserializer.class)
+    private LinkedHashMap<Filter, Boolean> outgoingProxyResponseFilterSettings;
 
-    public FilterState(LinkedHashMap<Filter, Boolean> incomingFilterSettings,
-            LinkedHashMap<Filter, Boolean> outgoingFilterSettings) {
-        this.incomingFilterSettings = incomingFilterSettings;
-        this.outgoingFilterSettings = outgoingFilterSettings;
+    public FilterState(LinkedHashMap<Filter, Boolean> incomingHttpResponseFilterSettings,
+            LinkedHashMap<Filter, Boolean> incomingProxyRequestFilterSettings,
+            LinkedHashMap<Filter, Boolean> outgoingHttpRequestFilterSettings,
+            LinkedHashMap<Filter, Boolean> outgoingProxyResponseFilterSettings) {
+        this.incomingHttpResponseFilterSettings = incomingHttpResponseFilterSettings;
+        this.incomingProxyRequestFilterSettings = incomingProxyRequestFilterSettings;
+        this.outgoingHttpRequestFilterSettings = outgoingHttpRequestFilterSettings;
+        this.outgoingProxyResponseFilterSettings = outgoingProxyResponseFilterSettings;
     }
 
     public FilterState() {
-        this(new LinkedHashMap<Filter, Boolean>(), new LinkedHashMap<Filter, Boolean>());
+        this(new LinkedHashMap<Filter, Boolean>(), new LinkedHashMap<Filter, Boolean>(),
+                new LinkedHashMap<Filter, Boolean>(), new LinkedHashMap<Filter, Boolean>());
     }
 
     public void setFilterMask(LinkedHashMap<Filter, Boolean> filterMask, BurpOperation operation) {
         switch (operation) {
-            case INCOMING:
-                incomingFilterSettings = filterMask;
+            case INCOMING_HTTP_RESPONSE:
+                incomingHttpResponseFilterSettings = filterMask;
                 break;
-            case OUTGOING:
-                outgoingFilterSettings = filterMask;
+            case INCOMING_PROXY_REQUEST:
+                incomingProxyRequestFilterSettings = filterMask;
+                break;
+            case OUTGOING_HTTP_REQUEST:
+                outgoingHttpRequestFilterSettings = filterMask;
+                break;
+            case OUTGOING_PROXY_RESPONSE:
+                outgoingProxyResponseFilterSettings = filterMask;
                 break;
             default:
                 break;
@@ -39,30 +54,44 @@ public class FilterState implements Serializable{
 
     public LinkedHashMap<Filter, Boolean> getFilterMask(BurpOperation operation) {
         switch (operation) {
-            case INCOMING:
-                return incomingFilterSettings;
-            case OUTGOING:
-                return outgoingFilterSettings;
+            case INCOMING_HTTP_RESPONSE:
+                return incomingHttpResponseFilterSettings;
+            case INCOMING_PROXY_REQUEST:
+                return incomingProxyRequestFilterSettings;
+            case OUTGOING_HTTP_REQUEST:
+                return outgoingHttpRequestFilterSettings;
+            case OUTGOING_PROXY_RESPONSE:
+                return outgoingProxyResponseFilterSettings;
             default:
                 return new LinkedHashMap<Filter, Boolean>();
         }
     }
 
-    public void setFilterMask(LinkedHashMap<Filter, Boolean> incomingFilterMask,
-            LinkedHashMap<Filter, Boolean> outgoingFilterMask) {
-        this.incomingFilterSettings = incomingFilterMask;
-        this.outgoingFilterSettings = outgoingFilterMask;
+    public void setFilterMask(LinkedHashMap<Filter, Boolean> incomingHttpResponseFilterMask,
+            LinkedHashMap<Filter, Boolean> incomingProxyRequestFilterMask,
+            LinkedHashMap<Filter, Boolean> outgoingHttpRequestFilterMask,
+            LinkedHashMap<Filter, Boolean> outgoingProxyResponseFilterMask) {
+        this.incomingHttpResponseFilterSettings = incomingHttpResponseFilterMask;
+        this.incomingProxyRequestFilterSettings = incomingProxyRequestFilterMask;
+        this.outgoingHttpRequestFilterSettings = outgoingHttpRequestFilterMask;
+        this.outgoingProxyResponseFilterSettings = outgoingProxyResponseFilterMask;
     }
 
-    public boolean shouldProcess(BurpOperation operation, ToolSource toolSource) {
+    public boolean shouldProcess(BurpOperation operation, ToolType toolType) {
         LinkedHashMap<Filter, Boolean> filterSettings;
         int filterMask = 0;
         switch (operation) {
-            case INCOMING:
-                filterSettings = incomingFilterSettings;
+            case INCOMING_HTTP_RESPONSE:
+                filterSettings = incomingHttpResponseFilterSettings;
                 break;
-            case OUTGOING:
-                filterSettings = outgoingFilterSettings;
+            case INCOMING_PROXY_REQUEST:
+                filterSettings = incomingProxyRequestFilterSettings;
+                break;
+            case OUTGOING_HTTP_REQUEST:
+                filterSettings = outgoingHttpRequestFilterSettings;
+                break;
+            case OUTGOING_PROXY_RESPONSE:
+                filterSettings = outgoingProxyResponseFilterSettings;
                 break;
             default:
                 filterSettings = new LinkedHashMap<>();
@@ -71,42 +100,65 @@ public class FilterState implements Serializable{
 
         for (Map.Entry<Filter, Boolean> entry : filterSettings.entrySet()) {
             Filter filter = entry.getKey();
-            if(filter.getToolType().equals(toolSource.toolType())){
+            if(filter.getToolType().equals(toolType)){
                 return entry.getValue() == true;
             }
         }
         return false;
     }
 
-    public LinkedHashMap<Filter,Boolean> getIncomingFilterSettings() {
-        return this.incomingFilterSettings;
+    public LinkedHashMap<Filter,Boolean> getIncomingHttpResponseFilterSettings() {
+        return this.incomingHttpResponseFilterSettings;
     }
 
-    public void setIncomingFilterSettings(LinkedHashMap<Filter,Boolean> incomingFilterSettings) {
-        this.incomingFilterSettings = incomingFilterSettings;
+    public void setIncomingHttpResponseFilterSettings(LinkedHashMap<Filter,Boolean> incomingHttpResponseFilterSettings) {
+        this.incomingHttpResponseFilterSettings = incomingHttpResponseFilterSettings;
+    }
+    
+    public LinkedHashMap<Filter,Boolean> getIncomingProxyRequestFilterSettings() {
+        return this.incomingProxyRequestFilterSettings;
     }
 
-    public LinkedHashMap<Filter,Boolean> getOutgoingFilterSettings() {
-        return this.outgoingFilterSettings;
+    public void setIncomingProxyRequestFilterSettings(LinkedHashMap<Filter,Boolean> incomingProxyRequestFilterSettings) {
+        this.incomingProxyRequestFilterSettings = incomingProxyRequestFilterSettings;
     }
 
-    public void setOutgoingFilterSettings(LinkedHashMap<Filter,Boolean> outgoingFilterSettings) {
-        this.outgoingFilterSettings = outgoingFilterSettings;
+    public LinkedHashMap<Filter,Boolean> getOutgoingHttpRequestFilterSettings() {
+        return this.outgoingHttpRequestFilterSettings;
+    }
+
+    public void setOutgoingHttpRequestFilterSettings(LinkedHashMap<Filter,Boolean> outgoingHttpRequestFilterSettings) {
+        this.outgoingHttpRequestFilterSettings = outgoingHttpRequestFilterSettings;
+    }
+    
+    public LinkedHashMap<Filter,Boolean> getOutgoingProxyResponseFilterSettings() {
+        return this.outgoingProxyResponseFilterSettings;
+    }
+
+    public void setOutgoingProxyResponseFilterSettings(LinkedHashMap<Filter,Boolean> outgoingProxyResponseFilterSettings) {
+        this.outgoingProxyResponseFilterSettings = outgoingProxyResponseFilterSettings;
     }
 
     public String toString(){
-        return "Incoming: " + this.incomingFilterSettings.toString() + "\nOutgoing: " + this.outgoingFilterSettings.toString();
+        return "Incoming HTTP Response: " + this.incomingHttpResponseFilterSettings.toString()
+                + "\nIncoming Proxy Request: " + this.incomingProxyRequestFilterSettings.toString()
+                + "\nOutgoing HTTP Request: " + this.outgoingHttpRequestFilterSettings.toString()
+                + "\nOutgoing Proxy Response: " + this.outgoingProxyResponseFilterSettings.toString();
     }
 
     public enum BurpOperation {
-        INCOMING,
-        OUTGOING,
+        INCOMING_HTTP_RESPONSE,
+        INCOMING_PROXY_REQUEST,
+        OUTGOING_HTTP_REQUEST,
+        OUTGOING_PROXY_RESPONSE,
         FORMAT;
 
         public String toString(){
             switch(this){
-                case INCOMING: return "Incoming";
-                case OUTGOING: return "Outgoing";
+                case INCOMING_HTTP_RESPONSE: return "Incoming HTTP Response";
+                case INCOMING_PROXY_REQUEST: return "Incoming Proxy Request";
+                case OUTGOING_HTTP_REQUEST: return "Outgoing HTTP Request";
+                case OUTGOING_PROXY_RESPONSE: return "Outgoing Proxy Response";
                 case FORMAT: return "Formatting";
                 default: return "";
             }

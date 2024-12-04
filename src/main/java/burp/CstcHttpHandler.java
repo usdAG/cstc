@@ -25,9 +25,9 @@ public class CstcHttpHandler implements HttpHandler {
 
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
-        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.OUTGOING, requestToBeSent.toolSource())) {
+        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.OUTGOING_HTTP_REQUEST, requestToBeSent.toolSource().toolType())) {
             ByteArray request = requestToBeSent.toByteArray();
-            ByteArray modifiedRequest = view.getOutgoingRecipePanel().bake(request, MessageType.REQUEST);
+            ByteArray modifiedRequest = view.getOutgoingHttpRequestRecipePanel().bake(request, MessageType.REQUEST);
             return continueWith(HttpRequest.httpRequest(modifiedRequest).withService(requestToBeSent.httpService()));
         }
         else{
@@ -37,9 +37,9 @@ public class CstcHttpHandler implements HttpHandler {
 
     @Override
     public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
-        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.INCOMING, responseReceived.toolSource())) {
+        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.INCOMING_HTTP_RESPONSE, responseReceived.toolSource().toolType())) {
             ByteArray response = responseReceived.toByteArray();
-            ByteArray modifiedResponse = view.getIncomingRecipePanel().bake(response, MessageType.RESPONSE);
+            ByteArray modifiedResponse = view.getIncomingHttpResponseRecipePanel().bake(response, MessageType.RESPONSE);
             return continueWith(HttpResponse.httpResponse(modifiedResponse));
         }
         else{
