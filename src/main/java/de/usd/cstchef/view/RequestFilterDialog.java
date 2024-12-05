@@ -30,8 +30,10 @@ public class RequestFilterDialog extends JPanel {
     private RequestFilterDialog() {
         this.setLayout(new GridLayout(0, 3));
 
-        JPanel incomingPanel = createPanel(BurpOperation.INCOMING);
-        JPanel outgoingPanel = createPanel(BurpOperation.OUTGOING);
+        JPanel incomingHttpResponsePanel = createHttpPanel(BurpOperation.INCOMING_HTTP_RESPONSE);
+        JPanel incomingProxyRequestPanel = createProxyPanel(BurpOperation.INCOMING_PROXY_REQUEST);
+        JPanel outgoingHttpRequestPanel = createHttpPanel(BurpOperation.OUTGOING_HTTP_REQUEST);
+        JPanel outgoingProxyResponsePanel = createProxyPanel(BurpOperation.OUTGOING_PROXY_RESPONSE);
 
         JPanel labelPanel = new JPanel();
         labelPanel.setLayout(new GridLayout(7, 0));
@@ -43,12 +45,14 @@ public class RequestFilterDialog extends JPanel {
 
         this.removeAll();
         this.add(labelPanel);
-        this.add("Outgoing", outgoingPanel);
-        this.add("Incoming", incomingPanel);
+        this.add("Outgoing HTTP Request", outgoingHttpRequestPanel);
+        this.add("Incoming HTTP Response", incomingHttpResponsePanel);
+        this.add("Incoming Proxy Request", incomingProxyRequestPanel);
+        this.add("Outgoing Proxy Response", outgoingProxyResponsePanel);
 
     }
 
-    private JPanel createPanel(BurpOperation operation) {
+    private JPanel createHttpPanel(BurpOperation operation) {
         if (BurpUtils.getInstance().getFilterState().getFilterMask(operation).isEmpty()) {
             BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.PROXY, ToolType.PROXY.ordinal()), false);
             BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.REPEATER, ToolType.REPEATER.ordinal()), false);
@@ -60,7 +64,7 @@ public class RequestFilterDialog extends JPanel {
 
         JPanel panel = new JPanel();
         panel.add(new JLabel(operation.toString()));
-                for (Map.Entry<Filter, Boolean> entry : BurpUtils.getInstance().getFilterState().getFilterMask(operation).entrySet()) {
+        for (Map.Entry<Filter, Boolean> entry : BurpUtils.getInstance().getFilterState().getFilterMask(operation).entrySet()) {
             Filter filter = entry.getKey();
             boolean selected = entry.getValue();
 
@@ -76,6 +80,29 @@ public class RequestFilterDialog extends JPanel {
         }
 
         panel.setLayout(new GridLayout(7, 0));
+        return panel;
+    }
+    
+    private JPanel createProxyPanel(BurpOperation operation) {
+        if (BurpUtils.getInstance().getFilterState().getFilterMask(operation).isEmpty()) {
+            BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(new Filter(ToolType.PROXY, ToolType.PROXY.ordinal()), false);
+        }
+        JPanel panel = new JPanel();
+        for (Map.Entry<Filter, Boolean> entry : BurpUtils.getInstance().getFilterState().getFilterMask(operation).entrySet()) {
+            Filter filter = entry.getKey();
+            boolean selected = entry.getValue();
+
+            JCheckBox box = new JCheckBox();
+            box.setSelected(selected);
+            box.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    BurpUtils.getInstance().getFilterState().getFilterMask(operation).put(filter, box.isSelected());
+                }
+            });
+            panel.add(box);
+        }
+        panel.add(new JLabel(operation.toString()));
         return panel;
     }
 
