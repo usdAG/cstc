@@ -155,10 +155,10 @@ public class FilterState implements Serializable{
 
         public String toString(){
             switch(this){
-                case INCOMING_HTTP_RESPONSE: return "Incoming HTTP Response";
-                case INCOMING_PROXY_REQUEST: return "Incoming Proxy Request";
-                case OUTGOING_HTTP_REQUEST: return "Outgoing HTTP Request";
-                case OUTGOING_PROXY_RESPONSE: return "Outgoing Proxy Response";
+                case INCOMING_HTTP_RESPONSE: return "Incoming_HTTP_Response";
+                case INCOMING_PROXY_REQUEST: return "Incoming_Proxy_Request";
+                case OUTGOING_HTTP_REQUEST: return "Outgoing_HTTP_Request";
+                case OUTGOING_PROXY_RESPONSE: return "Outgoing_Proxy_Response";
                 case FORMAT: return "Formatting";
                 default: return "";
             }

@@ -28,7 +28,7 @@ public class CstcProxyResponseHandler implements ProxyResponseHandler {
 
     @Override
     public ProxyResponseToBeSentAction handleResponseToBeSent(InterceptedResponse interceptedResponse) {
-        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.INCOMING_HTTP_RESPONSE, ToolType.PROXY)) {
+        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.OUTGOING_PROXY_RESPONSE, ToolType.PROXY)) {
             ByteArray response = interceptedResponse.toByteArray();
             ByteArray modifiedResponse = view.getOutgoingProxyResponseRecipePanel().bake(response, MessageType.RESPONSE);
             return continueWith(HttpResponse.httpResponse(modifiedResponse));
