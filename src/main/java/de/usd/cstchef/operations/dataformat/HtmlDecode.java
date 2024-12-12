@@ -1,9 +1,6 @@
 package de.usd.cstchef.operations.dataformat;
 
-import java.nio.charset.StandardCharsets;
-
-import org.apache.commons.text.StringEscapeUtils;
-
+import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
@@ -15,7 +12,7 @@ public class HtmlDecode extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        return factory.createByteArray(StringEscapeUtils.unescapeHtml4(input.toString()));
+        return factory.createByteArray(BurpUtils.getInstance().getApi().utilities().htmlUtils().decode(input.toString()));
     }
 
 }
