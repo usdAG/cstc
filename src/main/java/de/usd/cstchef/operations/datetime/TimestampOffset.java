@@ -15,7 +15,7 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "Unix/Epoch Timestamp Offset", category = OperationCategory.DATES, description = "Returns Unix/Epoch timestamp shifted into future or past.")
+@OperationInfos(name = "Unix/Epoch time with offset", category = OperationCategory.DATES, description = "Returns the current Unix/Epoch time shifted into the past or future.")
 public class TimestampOffset extends Operation {
 
     private VariableTextField offsetTxt;
@@ -24,12 +24,21 @@ public class TimestampOffset extends Operation {
     private JCheckBox milliseconds;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {        
+    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+
+		if(offsetTxt.getText().isEmpty()) return input;
         
         String interval = (String)this.interval.getSelectedItem();
         TimeOffsets intervalEnum = TimeOffsets.getEnumObj(interval);
-        int offset = Integer.parseInt(offsetTxt.getText());
         boolean milliseconds = this.milliseconds.isSelected();
+		int offset = 0;
+
+		try {
+			offset = Integer.parseInt(offsetTxt.getText());
+		}
+		catch(Exception e) {
+			throw new IllegalArgumentException("Please provide an integer as offset.");
+		}
              
         
     	long calculatedOffset = this.getOffset(intervalEnum, offset, milliseconds);

@@ -14,7 +14,7 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "Unix/Epoch to DateTime", category = OperationCategory.DATES, description = "Returns a given Unix/Epoch timestamp formatted with the provided date time pattern.")
+@OperationInfos(name = "Unix/Epoch to DateTime", category = OperationCategory.DATES, description = "Returns the Unix/Epoch input in the specified date and time format.")
 public class TimestampToDateTime extends Operation {
 
     private VariableTextField patternTxt;    
@@ -23,6 +23,8 @@ public class TimestampToDateTime extends Operation {
     
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+
+        if(input.toString().isEmpty()) return factory.createByteArray("");
         String pattern = this.patternTxt.getText().trim();
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         
