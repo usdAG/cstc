@@ -44,7 +44,6 @@ public class CstcHttpResponse implements HttpResponse {
     @Override
     public List<Cookie> cookies() {
         List<Cookie> cookieList = new ArrayList<>();
-        String cookies = new String();
 
         byte[] responseBytes = this.httpResponse.getBytes();
         String response = new String(responseBytes);
@@ -53,14 +52,9 @@ public class CstcHttpResponse implements HttpResponse {
         for(String line : responseLines) {
             String[] header = line.split(": ");
             if(header[0].equals("Set-Cookie")) {
-                cookies = header[1];
+                String[] cookie = header[1].split("=");
+                cookieList.add(new CstcCookie(cookie[0], cookie[1]));
             }
-        }
-
-        for(String cookie : cookies.split("; ")) {
-            String[] c = cookie.split("=");
-            Cookie cc = new CstcCookie(c[0], c[1]);
-            cookieList.add(cc);
         }
 
         return cookieList;
@@ -91,6 +85,18 @@ public class CstcHttpResponse implements HttpResponse {
     }
 
     @Override
+    public String cookieValue(String name) {
+        List<Cookie> cookies = this.cookies();
+        for(Cookie c : cookies) {
+            if(c.name().equals(name)) {
+                return c.value();
+            }
+        }
+        
+        return null;
+    }
+
+    @Override
     public short statusCode() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'statusCode'");
@@ -112,12 +118,6 @@ public class CstcHttpResponse implements HttpResponse {
     public Cookie cookie(String name) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'cookie'");
-    }
-
-    @Override
-    public String cookieValue(String name) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cookieValue'");
     }
 
     @Override

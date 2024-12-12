@@ -101,7 +101,8 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         String resIn1 = """
                 HTTP/2 200 Ok
                 Header1: a
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
         String resOut1 = "value1";
@@ -112,7 +113,8 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         String resIn2 = """
                 HTTP/2 200 Ok
                 Header1: b
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
         String resOut2 = "value2";
@@ -123,18 +125,20 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         String resIn3 = """
                 HTTP/2 200 Ok
                 Header1: c
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
         String resOut3 = "";
         String resCookie3 = "cookie3";
-        Triplet<String, String, Boolean> resTriplet3 = new Triplet<String,String,Boolean>(resOut3, resCookie3, false);
+        Triplet<String, String, Boolean> resTriplet3 = new Triplet<String,String,Boolean>(resOut3, resCookie3, true);
 
         // empty cookieName
         String resIn4 = """
                 HTTP/2 200 Ok
                 Header1: d
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
         String resOut4 = "";
