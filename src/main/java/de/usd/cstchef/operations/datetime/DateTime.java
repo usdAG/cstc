@@ -10,7 +10,7 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "Date Time", category = OperationCategory.DATES, description = "Returnes the current date time formatted with the provided date time pattern.")
+@OperationInfos(name = "Date Time", category = OperationCategory.DATES, description = "Returns the current date time formatted with the provided date time pattern.")
 public class DateTime extends Operation {
 
     private VariableTextField patternTxt;

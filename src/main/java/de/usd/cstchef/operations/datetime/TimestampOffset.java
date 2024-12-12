@@ -15,7 +15,7 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "Unix/Epoch Timestamp Offset", category = OperationCategory.DATES, description = "Returns a Epoch timestamp shifted into future or past.")
+@OperationInfos(name = "Unix/Epoch Timestamp Offset", category = OperationCategory.DATES, description = "Returns Unix/Epoch timestamp shifted into future or past.")
 public class TimestampOffset extends Operation {
 
     private VariableTextField offsetTxt;
