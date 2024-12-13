@@ -13,9 +13,12 @@ public class Luhn extends Operation {
     @Override
     protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
 
+        String exceptionMessage = "Luhn can only be applied to numerical values.";
+        if(input.length() == 0) throw new IllegalArgumentException(exceptionMessage);
+
         for (int i = 0; i < input.length(); i++){
             if ((input.getByte(i) < '0') || (input.getByte(i) > '9')) {
-                throw new IllegalArgumentException("Luhn can only be applied to numerical values.");
+                throw new IllegalArgumentException(exceptionMessage);
             }
         }
 
