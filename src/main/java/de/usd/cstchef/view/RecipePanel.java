@@ -645,9 +645,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     private ByteArray doBake(ByteArray input, MessageType messageType) {
-        if (input == null || input.length() == 0) {
-            return ByteArray.byteArrayOfLength(0);
-        }
+        
         ByteArray result = input.copy();
         ByteArray intermediateResult = input;
         boolean outputChanged;
@@ -692,37 +690,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         }
 
-        if (BurpUtils.inBurp()) {
-            MontoyaApi api = BurpUtils.getInstance().getApi();
-            HttpRequest req;
-            List<HttpHeader> headers;
-            int offset;
-            try {
-                req = HttpRequest.httpRequest(result);
-                headers = req.headers();
-                offset = req.bodyOffset();
-            } catch( IllegalArgumentException e ) {
-                // In this case there is no valid HTTP request and no Content-Length update is requried.
-                return result;
-            }
-
-            if( result.length() == offset ) {
-                // In this case there is no body and we do not need to update the content length header.
-                return result;
-            }
-
-            for(HttpHeader header : headers) {
-                if(header.toString().startsWith("Content-Length:")) {
-                    HttpParameter dummy = HttpParameter.bodyParameter("dummy", "dummy");
-                    result = HttpRequest.httpRequest(result).withAddedParameters(dummy).withRemovedParameters(dummy).toByteArray();
-                    break;
-                }
-            }
-            return result;
-
-        } else {
-            return result;
-        }
+        return result;
     }
 
     private void bake(boolean spamProtection) {
