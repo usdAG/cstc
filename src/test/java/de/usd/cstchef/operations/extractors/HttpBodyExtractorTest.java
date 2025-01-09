@@ -1,10 +1,12 @@
 package de.usd.cstchef.operations.extractors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.HashMap;
 
+import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,13 +21,22 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "HttpBodyExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
 public class HttpBodyExtractorTest extends HttpBodyExtractor {
 
-    HashMap<String, String> inputs = new HashMap<String, String>();
+    HashMap<String, Pair<String, Boolean>> inputs = new HashMap<String, Pair<String, Boolean>>();
 
     @Test
     public void extractionTest() throws Exception
     {
-        for(String res : inputs.keySet()){
-            assertArrayEquals(factory.createByteArray(inputs.get(res)).getBytes(), perform(factory.createByteArray(res), MessageType.RESPONSE).getBytes());
+        for(String inp : inputs.keySet()){
+            Pair<String, Boolean> res = inputs.get(inp);
+            ByteArray inputArray = factory.createByteArray(inp);
+            MessageType messageType = parseMessageType(inputArray);
+            if(res.getValue1()) {
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
+                assertEquals(messageType == MessageType.REQUEST ? "HTTP Request has no body." : "HTTP Response has no body.", exception.getMessage());
+            }
+            else {
+                assertArrayEquals(factory.createByteArray(res.getValue0()).getBytes(), perform(inputArray, messageType).getBytes());
+            }
         }
     }
 
@@ -46,6 +57,7 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
         String reqOut1 = """
                 param=value
                 """;
+        Pair<String, Boolean> reqPair1 = new Pair<String, Boolean>(reqOut1, false);
 
         // empty body
         String reqIn2 = """
@@ -56,6 +68,7 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
 
                 """;
         String reqOut2 = "";
+        Pair<String, Boolean> reqPair2 = new Pair<String, Boolean>(reqOut2, true);
 
         // HTTP Response - html body
         String resIn1 = """
@@ -74,6 +87,7 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
                 <h1>Example body</h1>
             </html>
                 """;
+        Pair<String, Boolean> resPair1 = new Pair<String, Boolean>(resOut1, false);
 
         // HTTP Response - empty body
         String resIn2 = """
@@ -83,11 +97,12 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
 
                 """;
         String resOut2 = "";
+        Pair<String, Boolean> resPair2 = new Pair<String, Boolean>(resOut2, true);
         
 
-        inputs.put(reqIn1, reqOut1);
-        inputs.put(reqIn2, reqOut2);
-        inputs.put(resIn1, resOut1);
-        inputs.put(resIn2, resOut2);
+        inputs.put(reqIn1, reqPair1);
+        inputs.put(reqIn2, reqPair2);
+        inputs.put(resIn1, resPair1);
+        inputs.put(resIn2, resPair2);
     }
 }
