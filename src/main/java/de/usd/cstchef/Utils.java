@@ -444,7 +444,7 @@ public class Utils {
 
     public static Class<? extends Operation>[] getOperations(BurpOperation operation) {
         //return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
-        if(operation == BurpOperation.INCOMING) {
+        if(operation == BurpOperation.INCOMING_HTTP_RESPONSE) {
             return getOperationsDevIncoming();
         }
         else {

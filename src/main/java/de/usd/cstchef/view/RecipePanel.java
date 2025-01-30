@@ -219,8 +219,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (result == JOptionPane.OK_OPTION) {
                     BurpUtils.getInstance().getFilterState().setFilterMask(
-                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.INCOMING),
-                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING));
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.INCOMING_HTTP_RESPONSE),
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.INCOMING_PROXY_REQUEST),
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING_HTTP_REQUEST),
+                            RequestFilterDialog.getInstance().getFilterMask(BurpOperation.OUTGOING_PROXY_RESPONSE));
                 }
                 BurpUtils.getInstance().getView().preventRaceConditionOnVariables();
                 BurpUtils.getInstance().getView().updateInactiveWarnings();
@@ -399,7 +401,22 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void disableAutobakeIfFilterActive() {
-        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()) {
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingHttpResponseFilterSettings().values()) {
+            if(b) {
+                this.autoBake = false;
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+            }
+        }
+        
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingProxyRequestFilterSettings().values()) {
             if(b) {
                 this.autoBake = false;
                 this.bakeCheckBox.setSelected(false);
@@ -414,7 +431,22 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         }
 
-        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()) {
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingHttpRequestFilterSettings().values()) {
+            if(b) {
+                this.autoBake = false;
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+            }
+        }
+        
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingProxyResponseFilterSettings().values()) {
             if(b) {
                 this.autoBake = false;
                 this.bakeCheckBox.setSelected(false);
