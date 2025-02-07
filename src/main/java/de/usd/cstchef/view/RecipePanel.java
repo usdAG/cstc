@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -23,59 +22,42 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.type.PlaceholderForType;
 
-import burp.BurpExtender;
 import burp.BurpUtils;
 import burp.CstcMessageEditorController;
 import burp.Logger;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.BurpSuiteEdition;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.HttpHeader;
-import burp.api.montoya.http.message.HttpMessage;
 import burp.api.montoya.http.message.HttpRequestResponse;
-import burp.api.montoya.http.message.params.HttpParameter;
-import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedObject;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.view.filter.FilterState;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 import de.usd.cstchef.view.ui.PlaceholderTextField;
 import de.usd.cstchef.view.ui.TextChangedListener;
 
 public class RecipePanel extends JPanel implements ChangeListener {
-
-    private static Logger logger = Logger.getInstance();
 
     private int operationSteps = 10;
     private boolean autoBake = true;
@@ -108,11 +90,11 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
     private JButton bakeButton = new JButton("Bake");
 
-    public RecipePanel(BurpOperation operation, MessageType messageType) {
+    public RecipePanel(BurpOperation operation, MessageType messageType, String recipeName) {
 
         this.operation = operation;
         this.messageType = messageType;
-        this.recipeName = operation.toString();
+        this.recipeName = recipeName;
 
         ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
         tooltipManager.setInitialDelay(0);
@@ -396,6 +378,18 @@ public class RecipePanel extends JPanel implements ChangeListener {
         operationsTree.addMouseMotionListener(dma);
 
         startAutoBakeTimer();
+    }
+
+    public BurpOperation getOperation() {
+        return this.operation;
+    }
+
+    public String getRecipeName() {
+        return this.recipeName;
+    }
+
+    public void setRecipeName(String name) {
+        this.recipeName = name;
     }
 
     public void disableAutobakeIfFilterActive() {

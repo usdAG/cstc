@@ -9,7 +9,6 @@ import burp.api.montoya.persistence.PersistedObject;
 import de.usd.cstchef.view.RequestFilterDialog;
 import de.usd.cstchef.view.View;
 import de.usd.cstchef.view.filter.FilterState;
-import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class BurpExtender implements BurpExtension {
 
@@ -39,9 +38,10 @@ public class BurpExtender implements BurpExtension {
 
     private void restoreRecipe(PersistedObject persistence) {
         try {
-            this.view.getFormatRecipePanel().restoreState(persistence.getString(BurpOperation.FORMAT + "Recipe"));
-            this.view.getIncomingRecipePanel().restoreState(persistence.getString(BurpOperation.INCOMING + "Recipe"));
-            this.view.getOutgoingRecipePanel().restoreState(persistence.getString(BurpOperation.OUTGOING + "Recipe"));
+
+            for(int i = 0; i < View.getNumOfRecipePanels(); i++) {
+                View.getRecipePanelAtIndex(i).restoreState(persistence.getString(View.getRecipePanelAtIndex(i).getRecipeName()));
+            }
         } catch (Exception e) {
             Logger.getInstance().log(
                     "Could not restore the recipe for one or multiple panels. If this is the first time using CSTC in a project, you can ignore this message.");
