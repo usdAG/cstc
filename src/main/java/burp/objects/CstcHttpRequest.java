@@ -484,5 +484,17 @@ public class CstcHttpRequest implements HttpRequest {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withDefaultHeaders'");
     }
+
+    @Override
+    public ParsedHttpParameter parameter(String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'parameter'");
+    }
+
+    @Override
+    public String parameterValue(String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'parameterValue'");
+    }
     
 }
