@@ -90,10 +90,17 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
     private JButton bakeButton = new JButton("Bake");
 
-    public RecipePanel(BurpOperation operation, MessageType messageType, String recipeName) {
+    public RecipePanel(BurpOperation operation, String recipeName) {
 
         this.operation = operation;
-        this.messageType = messageType;
+        switch(this.operation) {
+            case OUTGOING:
+                this.messageType = MessageType.REQUEST;
+            case INCOMING:
+                this.messageType = MessageType.REQUEST;
+            case FORMAT:
+                this.messageType = MessageType.RAW;
+        }
         this.recipeName = recipeName;
 
         ToolTipManager tooltipManager = ToolTipManager.sharedInstance();

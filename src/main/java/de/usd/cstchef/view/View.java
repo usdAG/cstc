@@ -9,10 +9,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import burp.BurpExtender;
 import burp.BurpUtils;
+import burp.api.montoya.core.BurpSuiteEdition;
+import burp.api.montoya.persistence.PersistedList;
+import burp.api.montoya.persistence.PersistedObject;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.view.filter.FilterState;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
@@ -21,11 +27,11 @@ import de.usd.cstchef.view.ui.ButtonType;
 
 public class View extends JPanel {
 
-    private static ArrayList<RecipePanel> recipePanels = new ArrayList<RecipePanel>();
+    private ArrayList<RecipePanel> recipePanels = new ArrayList<RecipePanel>();
 
-    public static JTabbedPane tabbedPane = new JTabbedPane();
+    private JTabbedPane tabbedPane = new JTabbedPane();
 
-    public static String[] recipePanelNames = { "Outgoing Requests", "Incoming Responses", "Formatting" };
+    private String[] recipePanelNames = { "Outgoing Requests", "Incoming Responses", "Formatting" };
 
     public View(){
         this(new FilterState());
@@ -37,12 +43,12 @@ public class View extends JPanel {
         this.setLayout(new BorderLayout());
         //JTabbedPane tabbedPane = new JTabbedPane();
 
-        recipePanels.add(new RecipePanel(BurpOperation.OUTGOING, MessageType.RESPONSE, recipePanelNames[0]));
-        recipePanels.add(new RecipePanel(BurpOperation.INCOMING, MessageType.REQUEST, recipePanelNames[1]));
-        recipePanels.add(new RecipePanel(BurpOperation.FORMAT, MessageType.RAW, recipePanelNames[2]));
+        recipePanels.add(new RecipePanel(BurpOperation.OUTGOING, recipePanelNames[0]));
+        recipePanels.add(new RecipePanel(BurpOperation.INCOMING, recipePanelNames[1]));
+        recipePanels.add(new RecipePanel(BurpOperation.FORMAT, recipePanelNames[2]));
 
         
-        ButtonTabComponent.initPopUpMenu();
+        ButtonTabComponent.initPopUpMenu(this, tabbedPane);
 
         for(int i = 0; i < 3; i++) {
             tabbedPane.add(recipePanels.get(i).getRecipeName(), recipePanels.get(i));
@@ -59,25 +65,65 @@ public class View extends JPanel {
         this.add(tabbedPane);
     }
 
-    public static int getNumOfRecipePanels() {
+    public JTabbedPane getTabbedPane() {
+        return this.tabbedPane;
+    }
+
+    public void setupTabButtonsAfterRestore() {
+        for(int i = recipePanels.size() - 1; i >= 0; i--) {
+            if(i == recipePanels.size() - 1) {
+                if(i == 2) {
+                    initTabButton(i, ButtonType.ADD, recipePanels.get(i).getRecipeName());
+                    return;
+                }
+                else {
+                    initTabButton(i, ButtonType.CLOSEANDADD, recipePanels.get(i).getRecipeName());
+                }
+            }
+            else if(i > 2) {
+                initTabButton(i, ButtonType.CLOSE, recipePanels.get(i).getRecipeName());
+            }
+        }
+    }
+
+    public void clearRecipePanels() {
+        recipePanels.clear();
+        tabbedPane.removeAll();
+    }
+
+    public void removeRecipePanel(int i) {
+        recipePanels.remove(i);
+    }
+
+    public void addRecipePanel(RecipePanel recipePanel) {
+        recipePanels.add(recipePanel);
+        tabbedPane.add(recipePanel.getRecipeName(), recipePanel);
+
+        tabbedPane.setBackgroundAt(recipePanels.size() - 1, getColor(recipePanel.getOperation()));
+    }
+
+    public int getNumOfRecipePanels() {
         return recipePanels.size();
     }
 
-    public static RecipePanel getRecipePanelAtIndex(int n) {
+    public RecipePanel getRecipePanelAtIndex(int n) {
         return recipePanels.get(n);
     }
 
-    public static void initTabButton(int i, ButtonType buttonType, String title) {
+    public void initTabButton(int i, ButtonType buttonType, String title) {
         tabbedPane.setTabComponentAt(i,
-                 new ButtonTabComponent(tabbedPane, buttonType, title));
+                 new ButtonTabComponent(this, buttonType, title));
     }
 
-    public static Color getColor(BurpOperation operation) {
-        if(operation == BurpOperation.OUTGOING) {
+    public Color getColor(BurpOperation operation) {
+        if(operation.equals(BurpOperation.OUTGOING)) {
             return new Color(0, 255, 255, 75);
         }
-        else {
+        else if(operation.equals(BurpOperation.INCOMING)) {
             return new Color(255, 95, 31, 75);
+        }
+        else {
+            return new Color(0, 0, 0, 0);
         }
     }
 
@@ -94,12 +140,12 @@ public class View extends JPanel {
 
     public void updateInactiveWarnings() {
 
-        for(int i = 0; i < View.recipePanels.size(); i++) {
-            if(!View.recipePanels.get(i).getOperation().equals(BurpOperation.FORMAT)) {
-                View.recipePanels.get(i).showInactiveWarning();
+        for(int i = 0; i < recipePanels.size(); i++) {
+            if(!recipePanels.get(i).getOperation().equals(BurpOperation.FORMAT)) {
+                recipePanels.get(i).showInactiveWarning();
                 for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()){
                     if(b == true)
-                        View.recipePanels.get(i).hideInactiveWarning();
+                        recipePanels.get(i).hideInactiveWarning();
                 }
             }
         }
@@ -107,8 +153,20 @@ public class View extends JPanel {
 
     public void preventRaceConditionOnVariables() {
 
-        for(int i = 0; i < View.recipePanels.size(); i++) {
-            View.recipePanels.get(i).disableAutobakeIfFilterActive();
+        for(int i = 0; i < recipePanels.size(); i++) {
+            recipePanels.get(i).disableAutobakeIfFilterActive();
+        }
+    }
+
+    public void saveRecipePanelChanges() {
+        if (!BurpUtils.getInstance().getApi().burpSuite().version().edition().equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
+            PersistedObject savedState = BurpUtils.getInstance().getApi().persistence().extensionData();
+            PersistedList<String> listOfRecipePanels = PersistedList.persistedStringList();
+            for(int i = 0; i < recipePanels.size(); i++) {
+                listOfRecipePanels.add(getRecipePanelAtIndex(i).getRecipeName());
+                listOfRecipePanels.add(getRecipePanelAtIndex(i).getOperation().toString());
+            }
+            savedState.setStringList("listOfRecipePanels", listOfRecipePanels);
         }
     }
 }

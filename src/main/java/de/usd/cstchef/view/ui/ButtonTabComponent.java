@@ -17,22 +17,20 @@ import java.awt.event.*;
  * JButtons to close the tab it belongs to or add one 
  */ 
 public class ButtonTabComponent extends JPanel {
-    private static JTabbedPane pane = View.tabbedPane;
+    private View view;
+    private JTabbedPane pane;
     public static int indexOfLastComp = 2;
-    public static int counter = 0;
 
     private static JPopupMenu popup = new JPopupMenu();
     private static JMenuItem outgoingItem = new JMenuItem("Outgoing Requests");
     private static JMenuItem incomingItem = new JMenuItem("Incoming Responses");
 
 
-    public ButtonTabComponent(final JTabbedPane pane, ButtonType buttonType, String title) {
+    public ButtonTabComponent(View view, ButtonType buttonType, String title) {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        if (pane == null) {
-            throw new NullPointerException("TabbedPane is null");
-        }
-        ButtonTabComponent.pane = pane;
+        this.view = view;
+        this.pane = this.view.getTabbedPane();
         setOpaque(false);
 
         JLabel label = new JLabel(title);
@@ -41,11 +39,13 @@ public class ButtonTabComponent extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                int index = pane.indexOfTabComponent(ButtonTabComponent.this);
                 if(e.getClickCount() == 2) {
                     String newName = JOptionPane.showInputDialog("New name: ");
-                    if(!newName.strip().equals("")) {
+                    if(!newName.isBlank()) {
+                        view.getRecipePanelAtIndex(index).setRecipeName(newName);
                         label.setText(newName);
-
+                        view.saveRecipePanelChanges();
                     }
                 }
             }
@@ -75,18 +75,24 @@ public class ButtonTabComponent extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
     }
 
-    public static void initPopUpMenu() {
+    public static void updateIndexOfLastComp(int i) {
+        indexOfLastComp = i;
+    }
+
+    public static void initPopUpMenu(View view, JTabbedPane tabbedPane) {
         AbstractAction outgoingListener = new AbstractAction() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                RecipePanel newRecipePanel = new RecipePanel(BurpOperation.OUTGOING, MessageType.REQUEST, "Recipe " + indexOfLastComp + 1);
-                if(indexOfLastComp > 2) View.initTabButton(indexOfLastComp, ButtonType.CLOSE, pane.getTitleAt(indexOfLastComp));
-                else View.initTabButton(indexOfLastComp, ButtonType.NONE, pane.getTitleAt(indexOfLastComp));
+                RecipePanel newRecipePanel = new RecipePanel(BurpOperation.OUTGOING, "Recipe " + (indexOfLastComp + 2));
+                view.addRecipePanel(newRecipePanel);
+                if(indexOfLastComp > 2) view.initTabButton(indexOfLastComp, ButtonType.CLOSE, view.getRecipePanelAtIndex(indexOfLastComp).getRecipeName());
+                else view.initTabButton(indexOfLastComp, ButtonType.NONE, view.getRecipePanelAtIndex(indexOfLastComp).getRecipeName());
                 indexOfLastComp += 1;
-                pane.add("Outgoing Requests", newRecipePanel);
-                View.initTabButton(indexOfLastComp, ButtonType.CLOSEANDADD, pane.getTitleAt(indexOfLastComp));
-                pane.setBackgroundAt(indexOfLastComp, View.getColor(BurpOperation.OUTGOING));
+                tabbedPane.add(newRecipePanel.getRecipeName(), newRecipePanel);
+                view.initTabButton(indexOfLastComp, ButtonType.CLOSEANDADD, view.getRecipePanelAtIndex(indexOfLastComp).getRecipeName());
+                tabbedPane.setBackgroundAt(indexOfLastComp, view.getColor(BurpOperation.OUTGOING));
+                view.saveRecipePanelChanges();
             }
             
         };
@@ -95,13 +101,15 @@ public class ButtonTabComponent extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                RecipePanel newRecipePanel = new RecipePanel(BurpOperation.INCOMING, MessageType.RESPONSE, "Recipe " + indexOfLastComp + 1);
-                if(indexOfLastComp > 2) View.initTabButton(indexOfLastComp, ButtonType.CLOSE, pane.getTitleAt(indexOfLastComp));
-                else View.initTabButton(indexOfLastComp, ButtonType.NONE, pane.getTitleAt(indexOfLastComp));
+                RecipePanel newRecipePanel = new RecipePanel(BurpOperation.INCOMING, "Recipe " + (indexOfLastComp + 2));
+                view.addRecipePanel(newRecipePanel);
+                if(indexOfLastComp > 2) view.initTabButton(indexOfLastComp, ButtonType.CLOSE, view.getRecipePanelAtIndex(indexOfLastComp).getRecipeName());
+                else view.initTabButton(indexOfLastComp, ButtonType.NONE, view.getRecipePanelAtIndex(indexOfLastComp).getRecipeName());
                 indexOfLastComp += 1;
-                pane.add("Incoming Responses", newRecipePanel);
-                View.initTabButton(indexOfLastComp, ButtonType.CLOSEANDADD, pane.getTitleAt(indexOfLastComp));
-                pane.setBackgroundAt(indexOfLastComp, View.getColor(BurpOperation.INCOMING));
+                tabbedPane.add(newRecipePanel.getRecipeName(), newRecipePanel);
+                view.initTabButton(indexOfLastComp, ButtonType.CLOSEANDADD, view.getRecipePanelAtIndex(indexOfLastComp).getRecipeName());
+                tabbedPane.setBackgroundAt(indexOfLastComp, view.getColor(BurpOperation.INCOMING));
+                view.saveRecipePanelChanges();
             }
             
         };
@@ -132,11 +140,13 @@ public class ButtonTabComponent extends JPanel {
             
             if(i > 2) {
                 if(i == indexOfLastComp) {
-                    if(i > 3) View.initTabButton(indexOfLastComp - 1, ButtonType.CLOSEANDADD, pane.getTitleAt(indexOfLastComp - 1));
-                    else View.initTabButton(indexOfLastComp - 1, ButtonType.ADD, pane.getTitleAt(indexOfLastComp - 1));
+                    if(i > 3) view.initTabButton(indexOfLastComp - 1, ButtonType.CLOSEANDADD, view.getRecipePanelAtIndex(indexOfLastComp - 1).getRecipeName());
+                    else view.initTabButton(indexOfLastComp - 1, ButtonType.ADD, view.getRecipePanelAtIndex(indexOfLastComp - 1).getRecipeName());
                 }
                 indexOfLastComp--;
                 pane.remove(i);
+                view.removeRecipePanel(i);
+                view.saveRecipePanelChanges();
             }
         }
 

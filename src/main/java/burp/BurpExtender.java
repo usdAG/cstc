@@ -1,14 +1,21 @@
 package burp;
 
+import java.awt.TrayIcon.MessageType;
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.BurpSuiteEdition;
+import burp.api.montoya.persistence.PersistedList;
 import burp.api.montoya.persistence.PersistedObject;
+import de.usd.cstchef.view.RecipePanel;
 import de.usd.cstchef.view.RequestFilterDialog;
 import de.usd.cstchef.view.View;
 import de.usd.cstchef.view.filter.FilterState;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
+import de.usd.cstchef.view.ui.ButtonTabComponent;
 
 public class BurpExtender implements BurpExtension {
 
@@ -30,6 +37,7 @@ public class BurpExtender implements BurpExtension {
 
         if (!api.burpSuite().version().edition().equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
             PersistedObject persistence = api.persistence().extensionData();
+            restoreRecipePanels(persistence);
             restoreFilterState(persistence);
             restoreRecipe(persistence);
         }
@@ -39,8 +47,8 @@ public class BurpExtender implements BurpExtension {
     private void restoreRecipe(PersistedObject persistence) {
         try {
 
-            for(int i = 0; i < View.getNumOfRecipePanels(); i++) {
-                View.getRecipePanelAtIndex(i).restoreState(persistence.getString(View.getRecipePanelAtIndex(i).getRecipeName()));
+            for(int i = 0; i < view.getNumOfRecipePanels(); i++) {
+                view.getRecipePanelAtIndex(i).restoreState(persistence.getString(view.getRecipePanelAtIndex(i).getRecipeName()));
             }
         } catch (Exception e) {
             Logger.getInstance().log(
@@ -56,6 +64,29 @@ public class BurpExtender implements BurpExtension {
         } catch (Exception e) {
             Logger.getInstance().log(
                     "Could not restore the filter state. If this is the first time using CSTC in a project, you can ignore this message. " + e.getMessage());
+        }
+    }
+
+    private void restoreRecipePanels(PersistedObject persistence) {
+        try {
+            PersistedList<String> listOfRecipePanels = persistence.getStringList("listOfRecipePanels");
+            if(listOfRecipePanels.equals(null)) {
+                throw new NullPointerException("listOfRecipePanels is null.");
+            }
+            view.clearRecipePanels();
+            
+            for(int i = 0; i < listOfRecipePanels.size() - 1; i++) {
+                String operation = listOfRecipePanels.get(i+1);
+                BurpOperation burpOperation = operation.equals("Outgoing") ? BurpOperation.OUTGOING : operation.equals("Incoming") ? BurpOperation.INCOMING : BurpOperation.FORMAT;
+                view.addRecipePanel(new RecipePanel(burpOperation, listOfRecipePanels.get(i)));
+                i++;
+            }
+
+            ButtonTabComponent.updateIndexOfLastComp(view.getNumOfRecipePanels() - 1);
+            view.setupTabButtonsAfterRestore();
+        } catch (Exception e) {
+            Logger.getInstance().log(
+                    "Could not restore all recipe panels. If this is the first time using CSTC in a project, you can ignore this message.");
         }
     }
 }
