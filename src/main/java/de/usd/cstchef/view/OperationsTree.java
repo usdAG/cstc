@@ -21,7 +21,6 @@ import de.usd.cstchef.Utils;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
-import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class OperationsTree extends JTree {
 
@@ -29,11 +28,9 @@ public class OperationsTree extends JTree {
     private static ImageIcon nodeIcon = new ImageIcon(Operation.class.getResource("/operation.png"));
     private static ImageIcon openIcon = new ImageIcon(Operation.class.getResource("/folder_open.png"));
     private static ImageIcon closedIcon = new ImageIcon(Operation.class.getResource("/folder_closed.png"));
-    private BurpOperation operation;
 
-    public OperationsTree(BurpOperation operation) {
+    public OperationsTree() {
         super();
-        this.operation = operation;
         this.setUI(new CustomTreeUI());
         this.model = (DefaultTreeModel) this.getModel();
         this.model.setRoot(this.createTree());
@@ -127,8 +124,7 @@ public class OperationsTree extends JTree {
         }
 
         // TODO add operations to categories - reflections do not work in burp :(
-        // pass the operation parameter so that separate operation trees can be defined for incoming/outgoing/formatting
-        Class<? extends Operation>[] operations = Utils.getOperations(this.operation);
+        Class<? extends Operation>[] operations = Utils.getOperations();
         for (Class<? extends Operation> operation : operations) {
             OperationInfos operationInfos = operation.getAnnotation(OperationInfos.class);
             if (operationInfos == null) {
