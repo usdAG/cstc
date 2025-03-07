@@ -16,7 +16,10 @@ import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 import de.usd.cstchef.view.ui.VariableTextField;
+
+import static burp.api.montoya.core.ToolType.EXTENSIONS;
 
 @OperationInfos(name = "Send Plain Request", category = OperationCategory.NETWORKING, description = "Makes an request and returns the response. You can use this operation in combination with e.g. \"Static String\" to perform more complex requests.")
 public class PlainRequest extends Operation {
@@ -63,6 +66,11 @@ public class PlainRequest extends Operation {
 
         @Override
         public HttpRequestResponse call() throws Exception {
+            if(BurpUtils.getInstance().getFilterState().shouldProcess(BurpOperation.OUTGOING, EXTENSIONS)) {
+                HttpRequest requestWithCustomHeader = HttpRequest.httpRequest(service, data).withAddedHeader("X-CSTC-79301f837932346cb067c568e27369bf", "cstc");
+                return api.http().sendRequest(requestWithCustomHeader);
+            }
+
             return api.http().sendRequest(HttpRequest.httpRequest(service, data));
         }
 
