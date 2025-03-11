@@ -1,14 +1,10 @@
 package de.usd.cstchef.operations.setter;
 
-import java.util.Arrays;
-
 import javax.swing.JCheckBox;
 
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -32,9 +28,11 @@ public class HttpSetUri extends Operation {
     }
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         if( this.uriTxt.getText().equals("") )
             return input;
+
+        MessageType messageType = parseMessageType(input);
 
         if(messageType == MessageType.REQUEST){
             try {

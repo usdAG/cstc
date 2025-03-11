@@ -1,7 +1,5 @@
 package de.usd.cstchef.operations.setter;
 
-import java.util.Arrays;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
@@ -9,7 +7,6 @@ import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Utils;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -20,7 +17,7 @@ public class LineSetter extends SetterOperation {
     private JComboBox<String> formatBox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         int lineNumber;
         try {

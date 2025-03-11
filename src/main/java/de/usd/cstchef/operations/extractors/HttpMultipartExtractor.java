@@ -2,7 +2,6 @@ package de.usd.cstchef.operations.extractors;
 
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.params.HttpParameterType;
-import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -15,11 +14,13 @@ public class HttpMultipartExtractor extends Operation {
     protected VariableTextField parameter;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
             return factory.createByteArray(0);
+
+        MessageType messageType = parseMessageType(input);
 
         if (messageType == MessageType.REQUEST) {
             try{

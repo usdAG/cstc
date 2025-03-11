@@ -72,7 +72,7 @@ public class MessageParsingTest extends Operation
     }
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'perform'");
     }

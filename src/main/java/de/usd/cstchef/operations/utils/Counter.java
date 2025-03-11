@@ -1,12 +1,8 @@
 package de.usd.cstchef.operations.utils;
 
-import java.math.BigInteger;
-import java.nio.ByteBuffer;
-
 import javax.swing.JTextField;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
@@ -20,7 +16,7 @@ public class Counter extends Operation {
     private JTextField stepSizeTxt;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String varName = this.varNameTxt.getText().trim();
         long value;
         long stepSize = Long.valueOf(this.stepSizeTxt.getText());

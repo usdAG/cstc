@@ -14,7 +14,6 @@ import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HttpHeaderExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
@@ -29,15 +28,14 @@ public class HttpHeaderExtractorTest extends HttpHeaderExtractor {
             Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
             ByteArray outputArray = factory.createByteArray(res.getValue0());
-            MessageType messageType = parseMessageType(inputArray);
             this.headerNameField.setText(res.getValue1());
             if (res.getValue2()) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
                 assertEquals("Parameter name not found.", exception.getMessage());
             }
             else{
                 //assertEquals(perform(inputArray, messageType), outputArray);
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }

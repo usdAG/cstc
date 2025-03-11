@@ -12,11 +12,13 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpMultipartSetter extends SetterOperation {
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String parameterName = getWhere();
         if (parameterName.equals(""))
             return input;
+
+        MessageType messageType = parseMessageType(input);
 
         if (messageType == MessageType.REQUEST) {
             try {

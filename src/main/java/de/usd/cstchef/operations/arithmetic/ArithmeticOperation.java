@@ -4,7 +4,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextField;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 
 public abstract class ArithmeticOperation extends Operation
@@ -23,7 +22,7 @@ public abstract class ArithmeticOperation extends Operation
     }
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception
+    protected ByteArray perform(ByteArray input) throws Exception
     {
         try
         {

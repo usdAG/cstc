@@ -3,7 +3,6 @@ package de.usd.cstchef.operations.encryption;
 import javax.crypto.Cipher;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 
 public abstract class DecryptionOperation extends CryptOperation {
 
@@ -12,7 +11,7 @@ public abstract class DecryptionOperation extends CryptOperation {
     }
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         /*
          * javax.crypto.Cipher uses PKCS7 internally but names it PKCS5.

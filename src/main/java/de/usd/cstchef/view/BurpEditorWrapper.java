@@ -1,14 +1,10 @@
 package de.usd.cstchef.view;
 
 import java.awt.Component;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Optional;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import burp.BurpUtils;
 import burp.CstcMessageEditorController;
@@ -21,13 +17,13 @@ import burp.api.montoya.ui.editor.Editor;
 import burp.api.montoya.ui.editor.HttpRequestEditor;
 import burp.api.montoya.ui.editor.HttpResponseEditor;
 import burp.api.montoya.ui.editor.RawEditor;
-import de.usd.cstchef.Utils.MessageType;
+import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor, RawEditor{
 
     private boolean isModified;
     private boolean editable;
-    private MessageType messageType;
+    private BurpOperation operation;
     private MontoyaApi api;
     private boolean fallbackMode;
     private JTextArea fallbackArea;
@@ -35,16 +31,16 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     private ByteArray lastContent;
     private RecipePanel recipePanel;
 
-    public BurpEditorWrapper(CstcMessageEditorController controller, MessageType messageType, RecipePanel panel){
+    public BurpEditorWrapper(CstcMessageEditorController controller, BurpOperation operation, RecipePanel panel){
         this.api = BurpUtils.getInstance().getApi();
-        this.messageType = messageType;
+        this.operation = operation;
         this.recipePanel = panel;
         this.lastContent = ByteArray.byteArray("");
         if (BurpUtils.inBurp()) {
-            switch(messageType){
-                case REQUEST: burpEditor = api.userInterface().createHttpRequestEditor(); break;
-                case RESPONSE: burpEditor = api.userInterface().createHttpResponseEditor(); break;
-                case RAW: burpEditor = api.userInterface().createRawEditor(); break;
+            switch(operation){
+                case OUTGOING: burpEditor = api.userInterface().createHttpRequestEditor(); break;
+                case INCOMING: burpEditor = api.userInterface().createHttpResponseEditor(); break;
+                case FORMAT: burpEditor = api.userInterface().createRawEditor(); break;
                 default: break;
             }
             fallbackMode = false;
@@ -61,11 +57,11 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public ByteArray getContents() {
-        if(messageType == MessageType.RAW)
+        if(operation == BurpOperation.FORMAT)
             return ((RawEditor)burpEditor).getContents();
-        else if(messageType == MessageType.REQUEST)
+        else if(operation == BurpOperation.OUTGOING)
             return ((HttpRequestEditor)burpEditor).getRequest().toByteArray();
-        else if(messageType == MessageType.RESPONSE)
+        else if(operation == BurpOperation.INCOMING)
             return ((HttpResponseEditor)burpEditor).getResponse().toByteArray();
         else
             return ByteArray.byteArray();
@@ -74,9 +70,9 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     @Override
     public void setContents(ByteArray contents) {
         this.lastContent = contents;
-        if(messageType == MessageType.REQUEST)
+        if(operation == BurpOperation.OUTGOING)
             ((HttpRequestEditor)burpEditor).setRequest(HttpRequest.httpRequest(contents));
-        else if(messageType == MessageType.RESPONSE)
+        else if(operation == BurpOperation.INCOMING)
             ((HttpResponseEditor)burpEditor).setResponse(HttpResponse.httpResponse(contents));
         else
             ((RawEditor)burpEditor).setContents(contents);
@@ -84,7 +80,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public HttpResponse getResponse() {
-        if(messageType != MessageType.RESPONSE){
+        if(operation != BurpOperation.INCOMING){
             return null;
         }
         HttpResponse result;
@@ -104,7 +100,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public HttpRequest getRequest() {
-        if(messageType != MessageType.REQUEST){
+        if(operation != BurpOperation.OUTGOING){
             return null;
         }
         HttpRequest result;

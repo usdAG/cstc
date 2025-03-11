@@ -1,20 +1,7 @@
 package de.usd.cstchef.operations.extractors;
 
-import java.util.List;
-
-import org.bouncycastle.util.Arrays;
-
-import burp.BurpExtender;
-import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.Cookie;
-import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.message.responses.HttpResponse;
-import burp.objects.CstcByteArray;
-import burp.objects.CstcHttpRequest;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -27,11 +14,13 @@ public class HttpCookieExtractor extends Operation {
     protected VariableTextField cookieNameField;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String cookieName = cookieNameField.getText();
 
         if(input.toString().isEmpty() || cookieName.isEmpty()) return factory.createByteArray("");
+
+        MessageType messageType = parseMessageType(input);
 
         if(messageType == MessageType.REQUEST) {
             HttpRequest request = factory.createHttpRequest(input);

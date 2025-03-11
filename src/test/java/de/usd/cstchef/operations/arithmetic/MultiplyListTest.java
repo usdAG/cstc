@@ -40,7 +40,7 @@ public class MultiplyListTest extends MultiplyList
         isFloat = false;
 
         String testValue = "1,2,3,4,5,6";
-        ByteArray result = perform(factory.createByteArray(testValue), null);
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("720");
     }
@@ -52,7 +52,7 @@ public class MultiplyListTest extends MultiplyList
         isFloat = true;
 
         String testValue = "3,0.5,0.5";
-        ByteArray result = perform(factory.createByteArray(testValue), null);
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("0.75");
     }
@@ -64,7 +64,7 @@ public class MultiplyListTest extends MultiplyList
         isFloat = false;
 
         String testValue = "1 2 3 4 5 6";
-        ByteArray result = perform(factory.createByteArray(testValue), null);
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         System.out.println(result.toString());
         assert result.toString().equals("720");
@@ -77,7 +77,7 @@ public class MultiplyListTest extends MultiplyList
         isFloat = true;
 
         String testValue = "3 0.5 0.5";
-        ByteArray result = perform(factory.createByteArray(testValue), null);
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("0.75");
     }

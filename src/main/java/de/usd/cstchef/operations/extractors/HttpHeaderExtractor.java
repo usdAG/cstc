@@ -1,8 +1,6 @@
 package de.usd.cstchef.operations.extractors;
 
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -15,11 +13,14 @@ public class HttpHeaderExtractor extends Operation {
     protected VariableTextField headerNameField;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String headerName = headerNameField.getText();
         if( headerName.length() == 0 )
             return factory.createByteArray(0);
+
+        MessageType messageType = parseMessageType(input);
+
         if(messageType == MessageType.REQUEST){
             return factory.createByteArray(checkNull(factory.createHttpRequest(input).headerValue(headerName)));
         }

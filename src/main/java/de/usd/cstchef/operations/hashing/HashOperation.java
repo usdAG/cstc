@@ -8,7 +8,6 @@ import javax.swing.JComboBox;
 import org.bouncycastle.util.encoders.Hex;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 
 public abstract class HashOperation extends Operation {
@@ -28,7 +27,7 @@ public abstract class HashOperation extends Operation {
     }
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         return factory.createByteArray(this.hash(input.getBytes()));
     }
 

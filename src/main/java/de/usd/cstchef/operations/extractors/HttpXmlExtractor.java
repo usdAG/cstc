@@ -1,9 +1,6 @@
 package de.usd.cstchef.operations.extractors;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.io.InputStream;
 
 import javax.swing.JTextField;
 import javax.xml.parsers.DocumentBuilder;
@@ -14,8 +11,6 @@ import org.w3c.dom.NodeList;
 
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.message.params.HttpParameterType;
-import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -27,11 +22,13 @@ public class HttpXmlExtractor extends Operation {
     protected JTextField fieldTxt;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String keyName = fieldTxt.getText();
         if (keyName.equals(""))
             return factory.createByteArray(0);
+
+        MessageType messageType = parseMessageType(input);
 
         if (messageType == MessageType.REQUEST) {
             try {

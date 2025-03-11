@@ -31,11 +31,11 @@ public class JsonExtractorTest extends JsonExtractor {
             ByteArray outputArray = factory.createByteArray(res.getValue0());
             this.fieldTxt.setText(res.getValue1());
             if (res.getValue2()) {
-                Exception exception = assertThrows(com.jayway.jsonpath.PathNotFoundException.class, () -> perform(inputArray, null));
+                Exception exception = assertThrows(com.jayway.jsonpath.PathNotFoundException.class, () -> perform(inputArray));
                 assertEquals(res.getValue3(), exception.getMessage());
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, null).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }

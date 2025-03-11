@@ -14,7 +14,6 @@ import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
 
@@ -30,14 +29,13 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
             Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
             ByteArray outputArray = factory.createByteArray(res.getValue0());
-            MessageType messageType = parseMessageType(inputArray);
             this.fieldTxt.setText(res.getValue1());
             if (res.getValue2()) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
                 assertEquals("Input is not a valid request", exception.getMessage());
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }

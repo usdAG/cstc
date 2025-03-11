@@ -44,7 +44,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.FormatTextField;
@@ -141,7 +140,7 @@ public class SoapMultiSignature extends KeystoreOperation {
     }
 
 
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
       String signMethod = (String)signatureMethod.getSelectedItem();
       PrivateKeyEntry keyEntry = this.selectedEntry;

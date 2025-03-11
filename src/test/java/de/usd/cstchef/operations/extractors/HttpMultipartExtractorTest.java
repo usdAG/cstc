@@ -33,16 +33,16 @@ public class HttpMultipartExtractorTest extends HttpMultipartExtractor {
             this.parameter.setText(res.getValue1());
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
-                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
                     assertEquals("Input is not a valid request", exception.getMessage());
                 }
                 if(messageType == MessageType.RESPONSE) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
                 assertEquals("Input is not a valid HTTP Request", exception.getMessage());
                 }
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }

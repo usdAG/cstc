@@ -1,16 +1,8 @@
 package de.usd.cstchef.operations.extractors;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.swing.JCheckBox;
 
-import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.params.HttpParameterType;
-import burp.api.montoya.http.message.params.ParsedHttpParameter;
-import burp.api.montoya.http.message.requests.HttpRequest;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -29,7 +21,9 @@ public class HttpUriExtractor extends Operation {
     }
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
+
+        MessageType messageType = parseMessageType(input);
 
         if (messageType == MessageType.REQUEST) {
             try {

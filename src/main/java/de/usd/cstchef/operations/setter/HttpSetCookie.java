@@ -18,13 +18,14 @@ public class HttpSetCookie extends SetterOperation {
     private JCheckBox addIfNotPresent;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String cookieName = getWhere();
         String cookieValue = getWhat();
         if (getWhat().equals(""))
             return input;
 
+        MessageType messageType = parseMessageType(input);
         
         if(messageType == MessageType.REQUEST) {
             HttpRequest request = HttpRequest.httpRequest(input);

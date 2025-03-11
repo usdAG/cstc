@@ -20,7 +20,7 @@ public class HttpXmlSetter extends Operation {
     private JCheckBox addIfNotPresent;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String p = this.path.getText();
         String v = this.value.getText();
@@ -28,6 +28,8 @@ public class HttpXmlSetter extends Operation {
         if(p.trim().isEmpty()) {
             return input;
         }
+
+        MessageType messageType = parseMessageType(input);
 
         if(messageType == MessageType.REQUEST) {
             return HttpRequest.httpRequest(input).withBody(Utils.xmlSetter(HttpRequest.httpRequest(input).body(), p, v, addIfNotPresent.isSelected())).toByteArray();

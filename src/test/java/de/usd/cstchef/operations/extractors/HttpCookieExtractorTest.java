@@ -15,7 +15,6 @@ import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
 import de.usd.cstchef.Utils;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HttpCookieExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
@@ -30,14 +29,13 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
             Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
             ByteArray outputArray = factory.createByteArray(res.getValue0());
-            MessageType messageType = parseMessageType(inputArray);
             this.cookieNameField.setText(res.getValue1());
             if (res.getValue2()) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
                 assertEquals("Parameter name not found.", exception.getMessage());
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }

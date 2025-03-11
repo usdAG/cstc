@@ -12,7 +12,6 @@ import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.HttpService;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -29,7 +28,7 @@ public class PlainRequest extends Operation {
     private JCheckBox sslEnabledBox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         MontoyaApi api = BurpUtils.getInstance().getApi();
         HttpService service = HttpService.httpService(hostTxt.getText(), Integer.valueOf(portTxt.getText()), sslEnabledBox.isSelected());
 

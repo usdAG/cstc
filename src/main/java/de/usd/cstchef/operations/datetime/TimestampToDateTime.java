@@ -6,9 +6,7 @@ import java.util.Date;
 
 import javax.swing.JCheckBox;
 
-import burp.Logger;
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -22,7 +20,7 @@ public class TimestampToDateTime extends Operation {
     
     
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         if(input.toString().isEmpty()) return factory.createByteArray("");
         String pattern = this.patternTxt.getText().trim();

@@ -6,23 +6,15 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JCheckBox;
 
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
-import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.HttpHeader;
 import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
-import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
-import de.usd.cstchef.operations.extractors.JsonExtractor;
 import de.usd.cstchef.view.ui.VariableTextField;
 
 @OperationInfos(name = "Set HTTP JSON", category = OperationCategory.SETTER, description = "Set a JSON parameter to the specified value.")
@@ -32,11 +24,13 @@ public class HttpJsonSetter extends SetterOperation {
     private VariableTextField path;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         String parameterName = getWhere();
         if (parameterName.equals(""))
             return input;
+
+        MessageType messageType = parseMessageType(input);
 
         if (messageType == MessageType.REQUEST) {
             return HttpRequest.httpRequest(input)

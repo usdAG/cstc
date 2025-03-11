@@ -1,13 +1,6 @@
 package de.usd.cstchef.operations.setter;
 
-import java.util.Arrays;
-
-import burp.BurpUtils;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.HttpHeader;
-import burp.api.montoya.http.message.params.HttpParameter;
-import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
@@ -22,10 +15,13 @@ public class HttpSetBody extends Operation {
     private FormatTextField replacementTxt;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
+
         ByteArray replacementBody = replacementTxt.getText();
         if( replacementBody.toString().equals("") )
             return input;
+
+        MessageType messageType = parseMessageType(input);
 
         if(messageType == MessageType.REQUEST){
             return HttpRequest.httpRequest(input).withBody(replacementBody).toByteArray();

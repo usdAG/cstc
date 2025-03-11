@@ -6,7 +6,6 @@ import javax.swing.JComboBox;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Delimiter;
 import de.usd.cstchef.Utils;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 
 public abstract class ArithmeticDelimiterOperation extends Operation
@@ -31,7 +30,7 @@ public abstract class ArithmeticDelimiterOperation extends Operation
     }
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception
+    protected ByteArray perform(ByteArray input) throws Exception
     {
         String delimiter = getDelimiter().getValue();
         String[] lines = new String(input.getBytes()).split(delimiter);

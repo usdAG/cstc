@@ -15,12 +15,15 @@ public class HttpHeaderRemove extends Operation {
     private VariableTextField header;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
+
         String headerName = header.getText();
 
         if(headerName.isEmpty()) {
             return input;
         }
+
+        MessageType messageType = parseMessageType(input);
 
         if(messageType == MessageType.REQUEST) {
             return HttpRequest.httpRequest(input).withRemovedHeader(headerName).toByteArray();

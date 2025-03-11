@@ -4,14 +4,13 @@ import burp.api.montoya.core.ByteArray;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 
 @Operation.OperationInfos(name = "JSON Beautifier", category = OperationCategory.DATAFORMAT, description = "Format JSON Data.")
 public class JsonBeautifier extends Operation {
 	@Override
-	protected ByteArray perform(ByteArray input, Utils.MessageType messageType) throws Exception {
+	protected ByteArray perform(ByteArray input) throws Exception {
 
 		String beautifiedInput;
 

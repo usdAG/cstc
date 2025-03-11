@@ -10,9 +10,10 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class HttpBodyExtractor extends Operation {
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
-        parseMessageType(input);
+        MessageType messageType = parseMessageType(input);
+
         if(messageType == MessageType.REQUEST){
 
             ByteArray result = factory.getHttpRequestBody(input);

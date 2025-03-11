@@ -2,7 +2,6 @@ package de.usd.cstchef.operations.setter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bouncycastle.util.encoders.Hex;
@@ -10,7 +9,6 @@ import org.bouncycastle.util.encoders.Hex;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.params.HttpParameter;
 import burp.api.montoya.http.message.params.HttpParameterType;
 import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;

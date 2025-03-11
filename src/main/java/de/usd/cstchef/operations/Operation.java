@@ -403,9 +403,9 @@ public abstract class Operation extends JPanel {
         return dim;
     }
 
-    public ByteArray performOperation(ByteArray input, MessageType messageType) {
+    public ByteArray performOperation(ByteArray input) {
         try {
-            ByteArray result = this.perform(input, messageType);
+            ByteArray result = this.perform(input);
             this.setErrorMessage(null);
             return result;
         } catch (EOFException e) {
@@ -513,7 +513,7 @@ public abstract class Operation extends JPanel {
         public OperationCategory category() default OperationCategory.MISC;
     }
 
-    protected abstract ByteArray perform(ByteArray input, MessageType messageType) throws Exception;
+    protected abstract ByteArray perform(ByteArray input) throws Exception;
 
     public void createUI() {
 
@@ -540,7 +540,7 @@ public abstract class Operation extends JPanel {
     }
 
     public ByteArray parseRawMessage(ByteArray input) throws Exception{
-        return perform(input, parseMessageType(input));
+        return perform(input);
     }
 
     private class NotifyChangeListener implements DocumentListener, ActionListener, ChangeListener {

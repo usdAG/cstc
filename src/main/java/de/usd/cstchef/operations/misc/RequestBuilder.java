@@ -3,7 +3,6 @@ package de.usd.cstchef.operations.misc;
 import javax.swing.JComboBox;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -18,7 +17,7 @@ public class RequestBuilder extends Operation {
     private JComboBox<String> requestMethodBox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         return factory.createByteArray(String.format("%s %s HTTP/1.1\r\n" + //
                 "Host: %s\r\n" + //
                 "Accept: %s\r\n\r\n", requestMethodBox.getSelectedItem(), document.getText(), host.getText(), accept.getText()));

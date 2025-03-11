@@ -61,7 +61,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private int operationSteps = 10;
     private boolean autoBake = true;
-    private MessageType messageType;
     private int bakeThreshold = 400;
     private String recipeName;
     private BurpOperation operation;
@@ -90,10 +89,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
     private JButton bakeButton = new JButton("Bake");
 
-    public RecipePanel(BurpOperation operation, MessageType messageType) {
+    public RecipePanel(BurpOperation operation) {
 
         this.operation = operation;
-        this.messageType = messageType;
         this.recipeName = operation.toString();
 
         ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
@@ -107,7 +105,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create input panel
         JPanel inputPanel = new LayoutPanel("Input");
-        inputText = new BurpEditorWrapper(controllerOrig, messageType, this);
+        inputText = new BurpEditorWrapper(controllerOrig, operation, this);
         inputPanel.add(inputText.uiComponent());
 
         /* 
@@ -119,7 +117,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create output panel
         JPanel outputPanel = new LayoutPanel("Output");
-        outputText = new BurpEditorWrapper(controllerMod, messageType, this);
+        outputText = new BurpEditorWrapper(controllerMod, operation, this);
         outputPanel.add(outputText.uiComponent());
 
         outputPanel.setPreferredSize(new Dimension(248, 0));
@@ -451,13 +449,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void setInput(HttpRequestResponse requestResponse) {
-        if(messageType == MessageType.REQUEST){
+        if(operation == BurpOperation.OUTGOING){
             HttpRequest request = requestResponse.request();
             if(request == null)
                 request = HttpRequest.httpRequest(ByteArray.byteArray("The message you have sent via the context menu is not a valid HTML request. Try using the formatting tab."));
             this.inputText.setRequest(request);
         }
-        else if(messageType == MessageType.RESPONSE) {
+        else if(operation == BurpOperation.INCOMING) {
             HttpResponse response = requestResponse.response();
             if(response == null)
                 response = HttpResponse.httpResponse(ByteArray.byteArray("The message you have sent via the context menu does not have a valid HTML response. Try including a response to a request or use the formatting tab."));
@@ -625,7 +623,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private ByteArray doBake(ByteArray input, MessageType messageType) {
+    private ByteArray doBake(ByteArray input) {
         
         ByteArray result = input.copy();
         ByteArray intermediateResult = input;
@@ -652,7 +650,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                     continue;
                 }
 
-                intermediateResult = op.performOperation(intermediateResult, messageType);
+                intermediateResult = op.performOperation(intermediateResult);
                 outputChanged = true;
 
                 if (op.isBreakpoint()) {
@@ -682,15 +680,15 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray(), messageType);
+                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray());
                 HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if( messageType == MessageType.REQUEST) {
+                        if( operation == BurpOperation.OUTGOING) {
                             outputText.setRequest(HttpRequest.httpRequest(result));
                             controllerMod.setRequest(HttpRequest.httpRequest(result));
-                        } else if (messageType == MessageType.RESPONSE){
+                        } else if (operation == BurpOperation.INCOMING){
                             outputText.setResponse(HttpResponse.httpResponse(result));
                             controllerMod.setResponse(HttpResponse.httpResponse(result));
                         }
@@ -716,7 +714,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();
-            return this.doBake(input, messageType);
+            return this.doBake(input);
         } finally {
             store.unlock();
         }
