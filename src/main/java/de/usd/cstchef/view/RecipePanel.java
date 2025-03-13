@@ -543,7 +543,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 // check if it is an operation
                 Operation op = cls.newInstance();
                 op.load(parameters);
-                op.setDisabled(!operationNode.get("is_enabled").asBoolean());
+
+                if(operationNode.get("is_enabled") != null) {
+                    op.setDisabled(!operationNode.get("is_enabled").asBoolean());
+                }
 
                 // check if "comment" attribute is set (since 1.3.2)
                 if(operationNode.get("comment") != null) {
