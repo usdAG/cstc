@@ -1,5 +1,6 @@
 package burp;
 
+import burp.api.montoya.core.Annotations;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.handler.HttpHandler;
 import burp.api.montoya.http.handler.HttpRequestToBeSent;
@@ -27,11 +28,12 @@ public class CstcHttpHandler implements HttpHandler {
 
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
+        if(requestToBeSent.toolSource().isFromTool(EXTENSIONS) && requestToBeSent.hasHeader("X-CSTC-79301f837932346cb067c568e27369bf")) {
+            ByteArray request = requestToBeSent.withRemovedHeader("X-CSTC-79301f837932346cb067c568e27369bf").toByteArray();
+            return continueWith(HttpRequest.httpRequest(request).withService(requestToBeSent.httpService()), Annotations.annotations("CSTC"));
+        }
+
         if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.OUTGOING, requestToBeSent.toolSource().toolType())) {
-            if(requestToBeSent.hasHeader("X-CSTC-79301f837932346cb067c568e27369bf") && requestToBeSent.toolSource().isFromTool(EXTENSIONS)) {
-                ByteArray request = requestToBeSent.withRemovedHeader("X-CSTC-79301f837932346cb067c568e27369bf").toByteArray();
-                return continueWith(HttpRequest.httpRequest(request).withService(requestToBeSent.httpService()));
-            }
 
             ByteArray request = requestToBeSent.toByteArray();
             ByteArray modifiedRequest = view.getOutgoingRecipePanel().bake(request, MessageType.REQUEST);
@@ -45,6 +47,9 @@ public class CstcHttpHandler implements HttpHandler {
     @Override
     public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
         if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.INCOMING, responseReceived.toolSource().toolType())) {
+            if(responseReceived.annotations().hasNotes() && responseReceived.annotations().notes().equals("CSTC")) {
+                return continueWith(responseReceived);
+            }
             ByteArray response = responseReceived.toByteArray();
             ByteArray modifiedResponse = view.getIncomingRecipePanel().bake(response, MessageType.RESPONSE);
             return continueWith(HttpResponse.httpResponse(modifiedResponse));
