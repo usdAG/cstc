@@ -16,13 +16,13 @@ import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 
-@OperationInfos(name = "Write File", category = OperationCategory.MISC, description = "Appends data to the end of a file.")
+@OperationInfos(name = "Write File", category = OperationCategory.MISC, description = "Write data to a file.")
 public class WriteFile extends Operation implements ActionListener {
 
     private final JFileChooser fileChooser = new JFileChooser();
     private VariableTextField fileNameTxt;
     private JCheckBox overwriteCheckbox;
-    private String lastPath = "";
+    private JCheckBox newLineCheckBox;
     private FileOutputStream out;
 
     @Override
@@ -32,7 +32,9 @@ public class WriteFile extends Operation implements ActionListener {
         if (!path.isEmpty()) {
             out = new FileOutputStream(path, this.overwriteCheckbox.isSelected());
             out.write(input.getBytes());
-            out.write('\n');
+            if(this.newLineCheckBox.isSelected()) {
+                out.write('\n');   
+            }
             out.close();
         }
         return input;
@@ -47,9 +49,13 @@ public class WriteFile extends Operation implements ActionListener {
         chooseFileButton.addActionListener(this);
         this.addUIElement(null, chooseFileButton, false, "button1");
 
-        this.overwriteCheckbox = new JCheckBox("Append Contents");
+        this.overwriteCheckbox = new JCheckBox("Append");
         this.overwriteCheckbox.setSelected(true);
-        this.addUIElement("Append Contents", overwriteCheckbox);
+        this.addUIElement(null, overwriteCheckbox, "checkbox1");
+
+        this.newLineCheckBox = new JCheckBox("Add new line");
+        this.newLineCheckBox.setSelected(false);
+        this.addUIElement(null, newLineCheckBox, "checkbox2");
     }
 
 
