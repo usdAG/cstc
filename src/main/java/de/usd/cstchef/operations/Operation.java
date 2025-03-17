@@ -536,7 +536,7 @@ public abstract class Operation extends JPanel {
             return MessageType.RESPONSE;
         }
 
-        throw new IllegalArgumentException("Input is not a valid HTTP message");
+        throw new IllegalArgumentException("Input is not a valid HTTP message.");
     }
 
     public ByteArray parseRawMessage(ByteArray input) throws Exception{
