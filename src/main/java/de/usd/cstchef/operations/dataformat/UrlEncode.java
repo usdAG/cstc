@@ -21,6 +21,10 @@ public class UrlEncode extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
+        if(input.length() == 0) {
+            return input;
+        }
+
         ByteArray result = null;
         MontoyaApi api = BurpUtils.getInstance().getApi();
         if( checkbox.isSelected() ) {
