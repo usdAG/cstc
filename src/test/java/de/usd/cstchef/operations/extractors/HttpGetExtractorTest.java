@@ -35,11 +35,11 @@ public class HttpGetExtractorTest extends HttpGetExtractor {
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                    assertEquals("Parameter name not found.", exception.getMessage());
+                    assertEquals("GET parameter not found.", exception.getMessage());
                 }
                 else{
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                    assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                    assertEquals("Input is not a valid HTTP request.", exception.getMessage());
                 }
             }
             else{
@@ -94,9 +94,8 @@ public class HttpGetExtractorTest extends HttpGetExtractor {
 
 
                 """;
-        String reqOut4 = "";
         String reqParam4 = "";
-        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqOut4, reqParam4, false);
+        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqIn4, reqParam4, false);
 
         // HTTP Response
         String resIn1 = """

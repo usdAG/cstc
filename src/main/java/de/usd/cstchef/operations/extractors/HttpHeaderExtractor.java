@@ -15,17 +15,28 @@ public class HttpHeaderExtractor extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        String headerName = headerNameField.getText();
-        if( headerName.length() == 0 )
-            return factory.createByteArray(0);
-
         MessageType messageType = parseMessageType(input);
 
+        String headerName = headerNameField.getText();
+        if( headerName.length() == 0 ) {
+            return input;
+        }
+
         if(messageType == MessageType.REQUEST){
-            return factory.createByteArray(checkNull(factory.createHttpRequest(input).headerValue(headerName)));
+            try {
+                return factory.createByteArray(checkNull(factory.createHttpRequest(input).headerValue(headerName)));
+            }
+            catch(Exception e) {
+                throw new IllegalArgumentException("Header not found.");
+            }
         }
         else if(messageType == MessageType.RESPONSE){
-            return factory.createByteArray(checkNull(factory.createHttpResponse(input).headerValue(headerName)));
+            try {
+                return factory.createByteArray(checkNull(factory.createHttpResponse(input).headerValue(headerName)));
+            }
+            catch(Exception e) {
+                throw new IllegalArgumentException("Header not found.");
+            }
         }
         else{
             return parseRawMessage(input);

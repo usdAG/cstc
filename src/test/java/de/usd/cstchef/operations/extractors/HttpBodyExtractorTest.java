@@ -32,7 +32,7 @@ public class HttpBodyExtractorTest extends HttpBodyExtractor {
             MessageType messageType = parseMessageType(inputArray);
             if(res.getValue1()) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                assertEquals(messageType == MessageType.REQUEST ? "HTTP Request has no body." : "HTTP Response has no body.", exception.getMessage());
+                assertEquals(messageType == MessageType.REQUEST ? "HTTP request has no body." : "HTTP response has no body.", exception.getMessage());
             }
             else {
                 assertArrayEquals(factory.createByteArray(res.getValue0()).getBytes(), perform(inputArray).getBytes());

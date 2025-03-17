@@ -16,7 +16,7 @@ import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
-@OperationInfos(name = "Get HTTP XML", category = OperationCategory.EXTRACTORS, description = "Extract the first occurrence of a XML value from HTTP message.")
+@OperationInfos(name = "Get HTTP XML", category = OperationCategory.EXTRACTORS, description = "Extracts XML of the HTTP message.")
 public class HttpXmlExtractor extends Operation {
 
     protected JTextField fieldTxt;
@@ -24,17 +24,17 @@ public class HttpXmlExtractor extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
+        MessageType messageType = parseMessageType(input);
+
         String keyName = fieldTxt.getText();
         if (keyName.equals(""))
-            return factory.createByteArray(0);
-
-        MessageType messageType = parseMessageType(input);
+            return input;
 
         if (messageType == MessageType.REQUEST) {
             try {
                 return factory.createByteArray(checkNull(factory.createHttpRequest(input).parameterValue(keyName, HttpParameterType.XML)));
             } catch (Exception e) {
-                throw new IllegalArgumentException("Input is not a valid request");
+                throw new IllegalArgumentException("XML element not found.");
             }
         } else if (messageType == MessageType.RESPONSE) {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -44,7 +44,7 @@ public class HttpXmlExtractor extends Operation {
             try {
                 return factory.createByteArray(checkNull(nodeList.item(0).getTextContent()));
             } catch (NullPointerException e) {
-                throw new IllegalArgumentException("Input is not a valid request");
+                throw new IllegalArgumentException("XML element not found.");
             }
         } else {
             return parseRawMessage(input);

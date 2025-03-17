@@ -16,20 +16,20 @@ public class HttpPostExtractor extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
+        MessageType messageType = parseMessageType(input);
+
         String parameterName = parameter.getText();
         if (parameterName.equals(""))
-            return factory.createByteArray(0);
-
-        MessageType messageType = parseMessageType(input);
+            return input;
 
         if (messageType == MessageType.REQUEST) {
             try {
                 return checkNull(factory.createByteArray(factory.createHttpRequest(input).parameterValue(parameterName, HttpParameterType.BODY)));
             } catch (Exception e) {
-                throw new IllegalArgumentException("Input is not a valid request");
+                throw new IllegalArgumentException("POST parameter not found.");
             }
         } else if (messageType == MessageType.RESPONSE) {
-            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+            throw new IllegalArgumentException("Input is not a valid HTTP request.");
         } else {
             return parseRawMessage(input);
         }

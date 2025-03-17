@@ -35,11 +35,11 @@ public class HttpPostExtractorTest extends HttpPostExtractor {
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                    assertEquals("Input is not a valid request", exception.getMessage());
+                    assertEquals("POST parameter not found.", exception.getMessage());
                 }
                 if(messageType == MessageType.RESPONSE) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                assertEquals("Input is not a valid HTTP request.", exception.getMessage());
                 }
             }
             else{
@@ -74,9 +74,8 @@ public class HttpPostExtractorTest extends HttpPostExtractor {
 
             param1=value1&param2=value2
             """;
-        String reqOut2 = "";
         String reqParam2 = "";
-        Triplet<String, String,  Boolean> reqTriplet2 = new Triplet<String, String, Boolean>(reqOut2, reqParam2, false);
+        Triplet<String, String,  Boolean> reqTriplet2 = new Triplet<String, String, Boolean>(reqIn2, reqParam2, false);
 
         // param not found
         String reqIn3 = """

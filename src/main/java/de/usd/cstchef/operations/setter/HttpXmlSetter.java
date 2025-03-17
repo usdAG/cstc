@@ -22,14 +22,14 @@ public class HttpXmlSetter extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
+        MessageType messageType = parseMessageType(input);
+
         String p = this.path.getText();
         String v = this.value.getText();
 
         if(p.trim().isEmpty()) {
             return input;
         }
-
-        MessageType messageType = parseMessageType(input);
 
         if(messageType == MessageType.REQUEST) {
             return HttpRequest.httpRequest(input).withBody(Utils.xmlSetter(HttpRequest.httpRequest(input).body(), p, v, addIfNotPresent.isSelected())).toByteArray();

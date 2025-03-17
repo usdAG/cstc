@@ -259,7 +259,7 @@ public class Utils {
             } catch (Exception e) {
 
                 if (!addIfNotPresent)
-                    throw new IllegalArgumentException("Key not found.");
+                    throw new IllegalArgumentException("Invalid key or path.");
 
                 String insertPath = path;
                 if (insertPath.equals("Insert-Path") || insertPath.equals(""))
@@ -269,7 +269,7 @@ public class Utils {
                     document = document.put(insertPath, key, value);
                     return  ByteArray.byteArray(document.jsonString());
                 } catch (Exception ex) {
-                    throw new IllegalArgumentException("Could not parse JSON from input");
+                    throw new IllegalArgumentException("Error parsing the input.");
                 }
             }
 

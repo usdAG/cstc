@@ -32,7 +32,7 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
             this.cookieNameField.setText(res.getValue1());
             if (res.getValue2()) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                assertEquals("Parameter name not found.", exception.getMessage());
+                assertEquals("Cookie not found.", exception.getMessage());
             }
             else{
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
@@ -91,9 +91,8 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
 
 
                 """;
-        String reqOut4 = "";
         String reqCookie4 = "";
-        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String, String, Boolean>(reqOut4, reqCookie4, false);
+        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String, String, Boolean>(reqIn4, reqCookie4, false);
 
         // cookie1
         String resIn1 = """
@@ -139,9 +138,8 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
                 Set-Cookie: cookie2=value2
 
                 """;
-        String resOut4 = "";
         String resCookie4 = "";
-        Triplet<String, String, Boolean> resTriplet4 = new Triplet<String,String,Boolean>(resOut4, resCookie4, false);
+        Triplet<String, String, Boolean> resTriplet4 = new Triplet<String,String,Boolean>(resIn4, resCookie4, false);
 
         inputs.put(reqIn1, reqTriplet1);
         inputs.put(reqIn2, reqTriplet2);

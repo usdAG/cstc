@@ -19,7 +19,7 @@ public class HttpBodyExtractor extends Operation {
             ByteArray result = factory.getHttpRequestBody(input);
 
             if(result.length() == 0) {
-                throw new IllegalArgumentException("HTTP Request has no body.");
+                throw new IllegalArgumentException("HTTP request has no body.");
             }
             else {
                 return result;
@@ -30,7 +30,7 @@ public class HttpBodyExtractor extends Operation {
             ByteArray result = factory.getHttpResponseBody(input);
 
             if(result.length() == 0) {
-                throw new IllegalArgumentException("HTTP Response has no body.");
+                throw new IllegalArgumentException("HTTP response has no body.");
             }
             else {
                 return result;

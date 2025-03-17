@@ -29,10 +29,16 @@ public class HttpSetUri extends Operation {
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-        if( this.uriTxt.getText().equals("") )
-            return input;
 
         MessageType messageType = parseMessageType(input);
+
+        if(messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP request.");
+        }
+
+        if(this.uriTxt.getText().equals("")) {
+            return input;
+        }
 
         if(messageType == MessageType.REQUEST){
             try {
@@ -58,15 +64,11 @@ public class HttpSetUri extends Operation {
                 return newRequest;
     
             } catch (Exception e) {
-                throw new IllegalArgumentException("Provided input is not a valid http request.");
+                throw new IllegalArgumentException("Input is not a valid request");
             }
         }
-        else if(messageType == MessageType.RESPONSE){
-            throw new IllegalArgumentException("Provided input is not a valid http request.");
-        }
-        else{
-            return parseRawMessage(input);
-        }
+        
+        return parseRawMessage(input);
         
     }
 

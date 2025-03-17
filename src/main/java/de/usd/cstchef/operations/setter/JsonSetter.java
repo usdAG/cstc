@@ -22,7 +22,20 @@ public class JsonSetter extends SetterOperation implements ActionListener {
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-        return Utils.jsonSetter(input, getWhere(), getWhat(), addIfNotPresent.isSelected(), path.getText());
+        if(getWhere().equals("")) {
+            return input;
+        }
+        try {
+            return Utils.jsonSetter(input, getWhere(), getWhat(), addIfNotPresent.isSelected(), path.getText());
+        }
+        catch(Exception e) {
+            if(e.getMessage().equals("json string can not be null or empty")) {
+                return input;
+            }
+            else {
+                throw e;
+            }
+        }
     }
 
     @Override

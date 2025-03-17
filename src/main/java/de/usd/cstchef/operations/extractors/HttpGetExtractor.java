@@ -16,19 +16,27 @@ public class HttpGetExtractor extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        String parameterName = parameter.getText();
-        if (parameterName.equals(""))
-            return factory.createByteArray(0);
-
         MessageType messageType = parseMessageType(input);
 
-        if (messageType == MessageType.REQUEST) {
-            return factory.createByteArray(factory.createHttpRequest(input).parameterValue(parameterName, HttpParameterType.URL));
-        } else if (messageType == MessageType.RESPONSE) {
-            throw new IllegalArgumentException("Input is not a valid HTTP Request");
-        } else {
-            return parseRawMessage(input);
+        if(messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP request.");
         }
+
+        String parameterName = parameter.getText();
+        if (parameterName.equals("")) {
+            return input;
+        }
+
+        if (messageType == MessageType.REQUEST) {
+            try {
+                return factory.createByteArray(checkNull(factory.createHttpRequest(input).parameterValue(parameterName, HttpParameterType.URL)));
+            }
+            catch(Exception e) {
+                throw new IllegalArgumentException("GET parameter not found.");
+            }
+        }
+
+        return input;
 
     }
 

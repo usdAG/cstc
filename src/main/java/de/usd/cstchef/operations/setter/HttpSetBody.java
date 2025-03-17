@@ -17,11 +17,12 @@ public class HttpSetBody extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        ByteArray replacementBody = replacementTxt.getText();
-        if( replacementBody.toString().equals("") )
-            return input;
-
         MessageType messageType = parseMessageType(input);
+
+        ByteArray replacementBody = replacementTxt.getText();
+        if(replacementBody.toString().equals("")) {
+            return input;
+        }
 
         if(messageType == MessageType.REQUEST){
             return HttpRequest.httpRequest(input).withBody(replacementBody).toByteArray();

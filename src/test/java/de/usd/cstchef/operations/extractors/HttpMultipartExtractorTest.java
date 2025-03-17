@@ -34,11 +34,11 @@ public class HttpMultipartExtractorTest extends HttpMultipartExtractor {
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                    assertEquals("Input is not a valid request", exception.getMessage());
+                    assertEquals("Parameter name not found.", exception.getMessage());
                 }
                 if(messageType == MessageType.RESPONSE) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                assertEquals("Input is not a valid HTTP request.", exception.getMessage());
                 }
             }
             else{
@@ -174,9 +174,8 @@ public class HttpMultipartExtractorTest extends HttpMultipartExtractor {
             
             -----2a8ae6ad
                 """;
-        String reqOut5 = "";
         String reqParam5 = "";
-        Triplet<String, String, Boolean> reqTriplet5 = new Triplet<String, String, Boolean>(reqOut5, reqParam5, false);
+        Triplet<String, String, Boolean> reqTriplet5 = new Triplet<String, String, Boolean>(reqIn5, reqParam5, false);
 
         // HTTP Response
         String resIn1 = """

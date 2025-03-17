@@ -18,12 +18,13 @@ public class HttpHeaderSetter extends SetterOperation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
+        MessageType messageType = parseMessageType(input);
+
         String newValue = getWhat();
         String headerName = getWhere();
-        if( headerName.length() == 0 )
+        if( headerName.length() == 0 ) {
             return input;
-
-        MessageType messageType = parseMessageType(input);
+        }
 
         if(messageType == MessageType.REQUEST){
             HttpRequest request = HttpRequest.httpRequest(input);

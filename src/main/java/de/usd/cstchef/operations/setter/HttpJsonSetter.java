@@ -26,11 +26,12 @@ public class HttpJsonSetter extends SetterOperation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        String parameterName = getWhere();
-        if (parameterName.equals(""))
-            return input;
-
         MessageType messageType = parseMessageType(input);
+
+        String parameterName = getWhere();
+        if (parameterName.equals("")) {
+            return input;
+        }
 
         if (messageType == MessageType.REQUEST) {
             return HttpRequest.httpRequest(input)

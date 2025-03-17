@@ -30,7 +30,7 @@ public class HttpMethodExtractorTest extends HttpMethodExtractor {
             ByteArray outputArray = factory.createByteArray(res.getValue0());
             if (res.getValue1()) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                assertEquals("Input is not a valid HTTP request.", exception.getMessage());
             }
             else{
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());

@@ -21,11 +21,11 @@ public class HttpMethodExtractor extends Operation {
                 return factory.createByteArray(factory.createHttpRequest(input).method());
             }
             catch(Exception e){
-                throw new IllegalArgumentException("Input is not a valid request");
+                throw new IllegalArgumentException("Input is not a valid HTTP request.");
             }
         }
         else if(messageType == MessageType.RESPONSE){
-            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+            throw new IllegalArgumentException("Input is not a valid HTTP request.");
         }
         else{
             return parseRawMessage(input);

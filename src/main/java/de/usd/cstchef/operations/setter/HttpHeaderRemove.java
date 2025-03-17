@@ -17,13 +17,12 @@ public class HttpHeaderRemove extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        String headerName = header.getText();
+        MessageType messageType = parseMessageType(input);
 
+        String headerName = header.getText();
         if(headerName.isEmpty()) {
             return input;
         }
-
-        MessageType messageType = parseMessageType(input);
 
         if(messageType == MessageType.REQUEST) {
             return HttpRequest.httpRequest(input).withRemovedHeader(headerName).toByteArray();

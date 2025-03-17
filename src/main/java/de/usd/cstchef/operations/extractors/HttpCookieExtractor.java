@@ -16,11 +16,13 @@ public class HttpCookieExtractor extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
+        MessageType messageType = parseMessageType(input);
+
         String cookieName = cookieNameField.getText();
 
-        if(input.toString().isEmpty() || cookieName.isEmpty()) return factory.createByteArray("");
-
-        MessageType messageType = parseMessageType(input);
+        if(cookieName.isEmpty()) {
+            return input;
+        }
 
         if(messageType == MessageType.REQUEST) {
             HttpRequest request = factory.createHttpRequest(input);
@@ -40,18 +42,18 @@ public class HttpCookieExtractor extends Operation {
                     }
                 }
                 else {
-                    throw new IllegalArgumentException("Parameter name not found.");
+                    throw new IllegalArgumentException("Cookie not found.");
                 }
             }
 
-            throw new IllegalArgumentException("Parameter name not found.");
+            throw new IllegalArgumentException("Cookie not found.");
            
         }
         else if(messageType == MessageType.RESPONSE) {
             String cookie = factory.createHttpResponse(input).cookieValue(cookieName);
             
             if(cookie == null) {
-                throw new IllegalArgumentException("Parameter name not found.");
+                throw new IllegalArgumentException("Cookie not found.");
             }
             else {
                 return factory.createByteArray(cookie);

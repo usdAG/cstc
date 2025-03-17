@@ -35,11 +35,11 @@ public class HttpUriExtractorTest extends HttpUriExtractor {
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
                     Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                    assertEquals("Input is not a valid request", exception.getMessage());
+                    assertEquals("Input is not a valid request.", exception.getMessage());
                 }
                 if(messageType == MessageType.RESPONSE) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
-                assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                assertEquals("Input is not a valid HTTP request.", exception.getMessage());
                 }
             }
             else{

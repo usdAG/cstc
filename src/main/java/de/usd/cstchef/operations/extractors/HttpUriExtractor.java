@@ -34,10 +34,10 @@ public class HttpUriExtractor extends Operation {
                     return factory.createByteArray(url);
                 }
             } catch (Exception e) {
-                throw new IllegalArgumentException("Input is not a valid request");
+                throw new IllegalArgumentException("Input is not a valid request.");
             }
         } else if (messageType == MessageType.RESPONSE) {
-            throw new IllegalArgumentException("Input is not a valid HTTP Request");
+            throw new IllegalArgumentException("Input is not a valid HTTP request.");
         } else {
             return parseRawMessage(input);
         }

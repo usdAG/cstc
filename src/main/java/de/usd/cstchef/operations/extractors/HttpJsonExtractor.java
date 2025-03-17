@@ -16,11 +16,11 @@ public class HttpJsonExtractor extends Operation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
+        MessageType messageType = parseMessageType(input);
+
         String keyName = fieldTxt.getText();
         if( keyName.equals("") )
-            return factory.createByteArray(0);
-
-        MessageType messageType = parseMessageType(input);
+            return input;
 
         JsonExtractor extractor = new JsonExtractor(keyName);
         if(messageType == MessageType.REQUEST){

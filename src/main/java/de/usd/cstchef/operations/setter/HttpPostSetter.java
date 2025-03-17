@@ -20,11 +20,16 @@ public class HttpPostSetter extends SetterOperation {
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        String parameterName = getWhere();
-        if (parameterName.equals(""))
-            return input;
-
         MessageType messageType = parseMessageType(input);
+
+        if(messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP request.");
+        }
+
+        String parameterName = getWhere();
+        if (parameterName.equals("")) {
+            return input;
+        }
 
         if (messageType == MessageType.REQUEST) {
             try {
@@ -37,13 +42,11 @@ public class HttpPostSetter extends SetterOperation {
                     return input;
                 }
             } catch (Exception e) {
-                throw new IllegalArgumentException("Input is not a valid request");
+                throw new IllegalArgumentException("Input is not a valid request.");
             }
-        } else if (messageType == MessageType.RESPONSE) {
-            throw new IllegalArgumentException("Input is not a valid HTTP Request");
-        } else {
-            return parseRawMessage(input);
         }
+
+        return parseRawMessage(input);
     }
 
     @Override
