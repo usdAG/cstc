@@ -25,9 +25,15 @@ public class HttpHeaderRemove extends Operation {
         }
 
         if(messageType == MessageType.REQUEST) {
+            if(!HttpRequest.httpRequest(input).hasHeader(headerName)) {
+                throw new IllegalArgumentException("Header not found.");
+            }
             return HttpRequest.httpRequest(input).withRemovedHeader(headerName).toByteArray();
         }
         else if(messageType == MessageType.RESPONSE) {
+            if(!HttpResponse.httpResponse(input).hasHeader(headerName)) {
+                throw new IllegalArgumentException("Header not found.");
+            }
             return HttpResponse.httpResponse(input).withRemovedHeader(headerName).toByteArray();
         }
         else {
