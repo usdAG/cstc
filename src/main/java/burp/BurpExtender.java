@@ -55,7 +55,7 @@ public class BurpExtender implements BurpExtension {
             view.preventRaceConditionOnVariables();
         } catch (Exception e) {
             Logger.getInstance().log(
-                    "Could not restore the filter state. If this is the first time using CSTC in a project, you can ignore this message. " + e.getMessage());
+                    "Could not restore the filter state. If this is the first time using CSTC in a project, you can ignore this message. ");
         }
     }
 }
