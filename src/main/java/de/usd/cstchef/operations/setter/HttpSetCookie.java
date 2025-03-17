@@ -15,7 +15,6 @@ import de.usd.cstchef.operations.OperationCategory;
 @OperationInfos(name = "Set HTTP Cookie", category = OperationCategory.SETTER, description = "Set a HTTP cookie to the specified value.")
 public class HttpSetCookie extends SetterOperation {
 
-    private JCheckBox removeIfNoValue;
     private JCheckBox addIfNotPresent;
 
     @Override
@@ -40,9 +39,6 @@ public class HttpSetCookie extends SetterOperation {
                     String[] c = cookies.split("; ");
                     cookies = "";
                     for(String cookie : c) {
-                        if(removeIfNoValue.isSelected() && cookie.split("=")[0].equals(cookieName) && cookieValue.isEmpty()) {
-                            continue;
-                        }
                         cookie = cookie.replaceAll(cookieName + "=\\S*", cookieName + "=" + cookieValue);
                         cookies = cookies.concat(cookie + "; ");
                     }
@@ -72,9 +68,6 @@ public class HttpSetCookie extends SetterOperation {
                     if(httpHeader.get(i).name().equals("Set-Cookie")) {
                         // has this particular cookie set
                         if(httpHeader.get(i).value().contains(cookieName + "=")) {
-                            if(removeIfNoValue.isSelected() && cookieValue.isEmpty()) {
-                                continue;
-                            }
                             response = response.withAddedHeader("Set-Cookie", cookieName + "=" + cookieValue);
                         }
                         else{
@@ -104,13 +97,9 @@ public class HttpSetCookie extends SetterOperation {
     public void createUI() {
         super.createUI();
 
-        this.removeIfNoValue = new JCheckBox("Remove if value is not set");
-        this.removeIfNoValue.setSelected(false);
-        this.addUIElement(null, this.removeIfNoValue, "checkbox1");
-
         this.addIfNotPresent = new JCheckBox("Add if not present");
-        this.addIfNotPresent.setSelected(false);
-        this.addUIElement(null, this.addIfNotPresent, "checkbox2");
+        this.addIfNotPresent.setSelected(true);
+        this.addUIElement(null, this.addIfNotPresent, "checkbox1");
     }
 
 }
