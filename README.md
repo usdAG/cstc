@@ -94,7 +94,7 @@ Currently the Burp Montoya API doesn't offer a way to change this order automati
 
 ### What is the *Formatting* tab in the CSTC about?
 
-The *CSTC Formatting* tab is available in all of Burp's HTTP message ditors and shows the result of applying the recipe currently defined in *Formatting* to the content. It has purely a visual effect, the underlying message is not changed. It is intended for testing recipes and for temporarily visualizing changes to the HTTP message using the operations available in the CSTC. 
+The *CSTC Formatting* tab is available in all of Burp's HTTP message editors and shows the result of applying the recipe currently defined in *Formatting* to the content. It has purely a visual effect, the underlying message is not changed. It is intended for testing recipes and for temporarily visualizing changes to the HTTP message using the operations available in the CSTC.
 
 Only the HTTP request message editor in the *Repeater* has an additional tab called *CSTC*. Here, the recipe currently defined in *Outgoing* is applied to the request, making it visible how the request is sent to the server **if** the CSTC is activated for the *Repeater*.
 
