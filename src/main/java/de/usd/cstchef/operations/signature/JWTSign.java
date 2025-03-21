@@ -1,6 +1,5 @@
 package de.usd.cstchef.operations.signature;
 
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -9,14 +8,10 @@ import de.usd.cstchef.view.ui.VariableTextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.StringReader;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.interfaces.RSAKey;
 import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
@@ -28,9 +23,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.RSAKeyProvider;
 
-import burp.Logger;
 import burp.api.montoya.core.ByteArray;
 
 @OperationInfos(name = "JWT Sign", category = OperationCategory.SIGNATURE, description = "Sign a given JWT payload")
@@ -42,10 +35,11 @@ public class JWTSign extends Operation implements ActionListener, DocumentListen
 	private boolean hasError= false;
 	
 	@Override
-	protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+	protected ByteArray perform(ByteArray input) throws Exception {
 		if(this.hasError) {			
 			throw new IllegalArgumentException("Key not valid");
 		}
+		this.reconfigureAlgorithmAndKey();
 		String token = JWT.create().withPayload(input.toString()).sign(this.currentAlgorithm);
 		return factory.createByteArray(token);
 	}

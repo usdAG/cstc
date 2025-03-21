@@ -33,16 +33,16 @@ public class HttpMultipartExtractorTest extends HttpMultipartExtractor {
             this.parameter.setText(res.getValue1());
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
-                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                    assertEquals("Input is not a valid request", exception.getMessage());
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                    assertEquals("Parameter name not found.", exception.getMessage());
                 }
                 if(messageType == MessageType.RESPONSE) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                assertEquals("Input is not a valid HTTP request.", exception.getMessage());
                 }
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }
@@ -174,9 +174,8 @@ public class HttpMultipartExtractorTest extends HttpMultipartExtractor {
             
             -----2a8ae6ad
                 """;
-        String reqOut5 = "";
         String reqParam5 = "";
-        Triplet<String, String, Boolean> reqTriplet5 = new Triplet<String, String, Boolean>(reqOut5, reqParam5, false);
+        Triplet<String, String, Boolean> reqTriplet5 = new Triplet<String, String, Boolean>(reqIn5, reqParam5, false);
 
         // HTTP Response
         String resIn1 = """

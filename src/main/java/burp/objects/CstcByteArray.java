@@ -40,6 +40,11 @@ public class CstcByteArray implements ByteArray{
     }
 
     @Override
+    public int length() {
+        return bytes.length;
+    }
+
+    @Override
     public Iterator<Byte> iterator() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'iterator'");
@@ -79,12 +84,6 @@ public class CstcByteArray implements ByteArray{
     public void setBytes(int index, ByteArray byteArray) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setBytes'");
-    }
-
-    @Override
-    public int length() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'length'");
     }
 
     @Override

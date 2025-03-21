@@ -20,7 +20,9 @@ public class HttpXmlSetter extends Operation {
     private JCheckBox addIfNotPresent;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
+
+        MessageType messageType = parseMessageType(input);
 
         String p = this.path.getText();
         String v = this.value.getText();

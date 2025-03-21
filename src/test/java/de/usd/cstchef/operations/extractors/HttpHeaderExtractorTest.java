@@ -14,7 +14,6 @@ import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HttpHeaderExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
@@ -29,15 +28,14 @@ public class HttpHeaderExtractorTest extends HttpHeaderExtractor {
             Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
             ByteArray outputArray = factory.createByteArray(res.getValue0());
-            MessageType messageType = parseMessageType(inputArray);
             this.headerNameField.setText(res.getValue1());
             if (res.getValue2()) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                assertEquals("Parameter name not found.", exception.getMessage());
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                assertEquals("Header not found.", exception.getMessage());
             }
             else{
                 //assertEquals(perform(inputArray, messageType), outputArray);
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }
@@ -92,9 +90,8 @@ public class HttpHeaderExtractorTest extends HttpHeaderExtractor {
 
                 d
                 """;
-        String reqOut4 = "";
         String reqHeader4 = "";
-        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqOut4, reqHeader4, false);
+        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqIn4, reqHeader4, false);
 
         // HTTP Response - Header2
         String resIn1 = """

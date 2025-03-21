@@ -5,7 +5,6 @@ import javax.swing.JCheckBox;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -20,7 +19,7 @@ public class Replace extends Operation {
     private VariableTextArea replacementTxt;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         ByteArray result = null;
         if( checkbox.isSelected() ) {

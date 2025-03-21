@@ -12,11 +12,18 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpMultipartSetter extends SetterOperation {
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
+
+        MessageType messageType = parseMessageType(input);
+
+        if(messageType == MessageType.RESPONSE) {
+            throw new IllegalArgumentException("Input is not a valid HTTP request.");
+        }
 
         String parameterName = getWhere();
-        if (parameterName.equals(""))
+        if (parameterName.equals("")) {
             return input;
+        }
 
         if (messageType == MessageType.REQUEST) {
             try {
@@ -24,13 +31,11 @@ public class HttpMultipartSetter extends SetterOperation {
                         .withParameter(HttpParameter.parameter(parameterName, getWhat(), HttpParameterType.BODY))
                         .toByteArray();
             } catch (Exception e) {
-                throw new IllegalArgumentException("Input is not a valid request");
+                throw new IllegalArgumentException("Input is not a valid request.");
             }
-        } else if (messageType == MessageType.RESPONSE) {
-            throw new IllegalArgumentException("Input is not a valid HTTP Request");
-        } else {
-            return parseRawMessage(input);
         }
+
+        return parseRawMessage(input);
 
     }
 }

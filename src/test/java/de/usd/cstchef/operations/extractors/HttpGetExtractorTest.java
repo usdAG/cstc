@@ -34,16 +34,16 @@ public class HttpGetExtractorTest extends HttpGetExtractor {
             this.parameter.setText(res.getValue1());
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
-                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                    assertEquals("Parameter name not found.", exception.getMessage());
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                    assertEquals("GET parameter not found.", exception.getMessage());
                 }
                 else{
-                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                    assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                    assertEquals("Input is not a valid HTTP request.", exception.getMessage());
                 }
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }
@@ -94,9 +94,8 @@ public class HttpGetExtractorTest extends HttpGetExtractor {
 
 
                 """;
-        String reqOut4 = "";
         String reqParam4 = "";
-        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqOut4, reqParam4, false);
+        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String,String,Boolean>(reqIn4, reqParam4, false);
 
         // HTTP Response
         String resIn1 = """

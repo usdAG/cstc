@@ -15,7 +15,6 @@ import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
 import de.usd.cstchef.Utils;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(name = "HttpCookieExtractorTest", category = OperationCategory.EXTRACTORS, description = "Test class")
@@ -30,14 +29,13 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
             Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
             ByteArray outputArray = factory.createByteArray(res.getValue0());
-            MessageType messageType = parseMessageType(inputArray);
             this.cookieNameField.setText(res.getValue1());
             if (res.getValue2()) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                assertEquals("Parameter name not found.", exception.getMessage());
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                assertEquals("Cookie not found.", exception.getMessage());
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }
@@ -93,15 +91,15 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
 
 
                 """;
-        String reqOut4 = "";
         String reqCookie4 = "";
-        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String, String, Boolean>(reqOut4, reqCookie4, false);
+        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String, String, Boolean>(reqIn4, reqCookie4, false);
 
         // cookie1
         String resIn1 = """
                 HTTP/2 200 Ok
                 Header1: a
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
         String resOut1 = "value1";
@@ -112,7 +110,8 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         String resIn2 = """
                 HTTP/2 200 Ok
                 Header1: b
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
         String resOut2 = "value2";
@@ -123,23 +122,24 @@ public class HttpCookieExtractorTest extends HttpCookieExtractor {
         String resIn3 = """
                 HTTP/2 200 Ok
                 Header1: c
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
         String resOut3 = "";
         String resCookie3 = "cookie3";
-        Triplet<String, String, Boolean> resTriplet3 = new Triplet<String,String,Boolean>(resOut3, resCookie3, false);
+        Triplet<String, String, Boolean> resTriplet3 = new Triplet<String,String,Boolean>(resOut3, resCookie3, true);
 
         // empty cookieName
         String resIn4 = """
                 HTTP/2 200 Ok
                 Header1: d
-                Set-Cookie: cookie1=value1; cookie2=value2
+                Set-Cookie: cookie1=value1
+                Set-Cookie: cookie2=value2
 
                 """;
-        String resOut4 = "";
         String resCookie4 = "";
-        Triplet<String, String, Boolean> resTriplet4 = new Triplet<String,String,Boolean>(resOut4, resCookie4, false);
+        Triplet<String, String, Boolean> resTriplet4 = new Triplet<String,String,Boolean>(resIn4, resCookie4, false);
 
         inputs.put(reqIn1, reqTriplet1);
         inputs.put(reqIn2, reqTriplet2);

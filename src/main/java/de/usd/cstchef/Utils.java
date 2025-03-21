@@ -126,10 +126,11 @@ import de.usd.cstchef.operations.hashing.Skein;
 import de.usd.cstchef.operations.hashing.Tiger;
 import de.usd.cstchef.operations.hashing.Luhn;
 import de.usd.cstchef.operations.hashing.Whirlpool;
-import de.usd.cstchef.operations.misc.GetRequestBuilder;
+import de.usd.cstchef.operations.misc.RequestBuilder;
 import de.usd.cstchef.operations.misc.ReadFile;
 import de.usd.cstchef.operations.misc.WriteFile;
 import de.usd.cstchef.operations.networking.PlainRequest;
+import de.usd.cstchef.operations.setter.HttpHeaderRemove;
 import de.usd.cstchef.operations.setter.HttpGetSetter;
 import de.usd.cstchef.operations.setter.HttpHeaderSetter;
 import de.usd.cstchef.operations.setter.HttpJsonSetter;
@@ -258,7 +259,7 @@ public class Utils {
             } catch (Exception e) {
 
                 if (!addIfNotPresent)
-                    throw new IllegalArgumentException("Key not found.");
+                    throw new IllegalArgumentException("Invalid key or path.");
 
                 String insertPath = path;
                 if (insertPath.equals("Insert-Path") || insertPath.equals(""))
@@ -268,7 +269,7 @@ public class Utils {
                     document = document.put(insertPath, key, value);
                     return  ByteArray.byteArray(document.jsonString());
                 } catch (Exception ex) {
-                    throw new IllegalArgumentException("Could not parse JSON from input");
+                    throw new IllegalArgumentException("Error parsing the input.");
                 }
             }
 
@@ -385,15 +386,15 @@ public class Utils {
 
     // TODO reflection does not work in Burp Suite
     @SuppressWarnings("unchecked")
-    public static Class<? extends Operation>[] getOperationsDevOutgoingFormatting() {
+    public static Class<? extends Operation>[] getOperationsDev() {
         return new Class[] {
                 Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
                 Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
                 Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class,
-                GetRequestBuilder.class,
+                RequestBuilder.class,
                 GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class,
                 HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
-                HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class,
+                HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpHeaderRemove.class,
                 HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
                 HttpMultipartSetter.class,
                 HttpPostExtractor.class, HttpPostSetter.class, PlainRequest.class, HttpSetBody.class,
@@ -417,39 +418,8 @@ public class Utils {
         };
     }
 
-    // TODO reflection does not work in Burp Suite
-    @SuppressWarnings("unchecked")
-    public static Class<? extends Operation>[] getOperationsDevIncoming() {
-        return new Class[] {
-                Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
-                Blake.class, Counter.class, DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
-                Divide.class, DivideList.class, DSTU7564.class, FromBase64.class, FromHex.class, GetRequestBuilder.class,
-                GetVariable.class, Gost.class, GUnzip.class, Gzip.class, Hmac.class, HttpBodyExtractor.class, 
-                HttpCookieExtractor.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpJsonExtractor.class,
-                HttpJsonSetter.class, HttpMultipartExtractor.class, HttpMultipartSetter.class, PlainRequest.class,
-                HttpSetBody.class, HttpSetCookie.class, HttpXmlExtractor.class, HttpXmlSetter.class, XmlSetter.class, HtmlEncode.class,
-                HtmlDecode.class, Inflate.class, JsonExtractor.class, JsonSetter.class, JWTDecode.class, JWTSign.class,
-                Length.class, LineExtractor.class, LineSetter.class, MD2.class, MD4.class, MD5.class, Mean.class, Median.class,
-                Multiply.class, MultiplyList.class, NoOperation.class, NumberCompare.class, Prefix.class, RandomNumber.class,
-                RandomUUID.class, ReadFile.class, RegexExtractor.class, Reverse.class, Replace.class,
-                RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, SM2Signature.class, SM3.class,
-                SM4Encryption.class, SM4Decryption.class, RegexMatch.class, SetIfEmpty.class, SHA1.class, SHA2.class,
-                SHA3.class, Skein.class, SplitAndSelect.class, StaticString.class, StoreVariable.class, Sub.class, Substring.class,
-                Uppercase.class, Lowercase.class, Subtraction.class, Suffix.class, Sum.class, StringContains.class,
-                StringMatch.class, Tiger.class, TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class,
-                UnixTimestamp.class, UrlDecode.class, UrlEncode.class, Whirlpool.class, WriteFile.class, XmlFullSignature.class,
-                XmlMultiSignature.class, Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class, JsonBeautifier.class
-        };
-    }
-
-    public static Class<? extends Operation>[] getOperations(BurpOperation operation) {
-        //return BurpUtils.inBurp() ? Utils.getOperationsDev() : Utils.getOperationsDev();
-        if(operation == BurpOperation.INCOMING) {
-            return getOperationsDevIncoming();
-        }
-        else {
-            return getOperationsDevOutgoingFormatting();
-        }
+    public static Class<? extends Operation>[] getOperations() {
+        return Utils.getOperationsDev();
     }
 
     public enum MessageType {

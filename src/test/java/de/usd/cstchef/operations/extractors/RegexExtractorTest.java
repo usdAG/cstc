@@ -1,7 +1,5 @@
 package de.usd.cstchef.operations.extractors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.util.HashMap;
@@ -14,7 +12,6 @@ import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
 
@@ -33,7 +30,7 @@ public class RegexExtractorTest extends RegexExtractor {
             ByteArray outputArray = factory.createByteArray(res.getValue0());
             this.regexTxt.setText(res.getValue1());
             this.outputBox.setSelectedItem(res.getValue2() ? "List matches" : "List capture groups");
-            assertArrayEquals(outputArray.getBytes(), perform(inputArray, null).getBytes());
+            assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
         }
     }
 

@@ -107,7 +107,7 @@ public class CstcHttpRequest implements HttpRequest {
                         }
                     }
 
-                    throw new IllegalArgumentException("Input is not a vlaid request");
+                    throw new IllegalArgumentException("Input is not a valid request");
                 }
             case XML:
                 String postBody = request.split("\n\n")[1].trim();
@@ -135,6 +135,18 @@ public class CstcHttpRequest implements HttpRequest {
 
         String url = request.split("\\s")[1];
         return url;
+    }
+
+    @Override
+    public boolean hasHeader(String name) {
+        try {
+            headerValue(name);
+        }
+        catch(IllegalArgumentException e) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -223,12 +235,6 @@ public class CstcHttpRequest implements HttpRequest {
 
     @Override
     public boolean hasHeader(HttpHeader header) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hasHeader'");
-    }
-
-    @Override
-    public boolean hasHeader(String name) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'hasHeader'");
     }
@@ -477,6 +483,18 @@ public class CstcHttpRequest implements HttpRequest {
     public HttpRequest withDefaultHeaders() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'withDefaultHeaders'");
+    }
+
+    @Override
+    public ParsedHttpParameter parameter(String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'parameter'");
+    }
+
+    @Override
+    public String parameterValue(String arg0) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'parameterValue'");
     }
     
 }

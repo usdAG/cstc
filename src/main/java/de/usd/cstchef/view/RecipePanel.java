@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -23,63 +22,45 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
-import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.type.PlaceholderForType;
 
-import burp.BurpExtender;
 import burp.BurpUtils;
 import burp.CstcMessageEditorController;
 import burp.Logger;
-import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.BurpSuiteEdition;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.HttpHeader;
-import burp.api.montoya.http.message.HttpMessage;
 import burp.api.montoya.http.message.HttpRequestResponse;
-import burp.api.montoya.http.message.params.HttpParameter;
-import burp.api.montoya.http.message.params.ParsedHttpParameter;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedObject;
-import de.usd.cstchef.Utils;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
-import de.usd.cstchef.view.filter.FilterState;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 import de.usd.cstchef.view.ui.PlaceholderTextField;
 import de.usd.cstchef.view.ui.TextChangedListener;
 
 public class RecipePanel extends JPanel implements ChangeListener {
 
-    private static Logger logger = Logger.getInstance();
-
     private int operationSteps = 10;
     private boolean autoBake = true;
-    private MessageType messageType;
     private int bakeThreshold = 400;
     private String recipeName;
     private BurpOperation operation;
@@ -108,10 +89,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
     private JButton bakeButton = new JButton("Bake");
 
-    public RecipePanel(BurpOperation operation, MessageType messageType) {
+    public RecipePanel(BurpOperation operation) {
 
         this.operation = operation;
-        this.messageType = messageType;
         this.recipeName = operation.toString();
 
         ToolTipManager tooltipManager = ToolTipManager.sharedInstance();
@@ -125,7 +105,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create input panel
         JPanel inputPanel = new LayoutPanel("Input");
-        inputText = new BurpEditorWrapper(controllerOrig, messageType, this);
+        inputText = new BurpEditorWrapper(controllerOrig, operation, this);
         inputPanel.add(inputText.uiComponent());
 
         /* 
@@ -137,7 +117,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         // create output panel
         JPanel outputPanel = new LayoutPanel("Output");
-        outputText = new BurpEditorWrapper(controllerMod, messageType, this);
+        outputText = new BurpEditorWrapper(controllerMod, operation, this);
         outputPanel.add(outputText.uiComponent());
 
         outputPanel.setPreferredSize(new Dimension(248, 0));
@@ -148,8 +128,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         PlaceholderTextField searchText = new PlaceholderTextField("Search");
         searchTreePanel.add(searchText, BorderLayout.PAGE_START);
 
-        // pass the operation parameter so that separate operation trees can be defined for incoming/outgoing/formatting
-        OperationsTree operationsTree = new OperationsTree(operation);
+        OperationsTree operationsTree = new OperationsTree();
         operationsTree.setRootVisible(false);
         searchTreePanel.add(new JScrollPane(operationsTree));
         searchText.addTextChangedListener(new TextChangedListener() {
@@ -470,13 +449,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void setInput(HttpRequestResponse requestResponse) {
-        if(messageType == MessageType.REQUEST){
+        if(operation == BurpOperation.OUTGOING){
             HttpRequest request = requestResponse.request();
             if(request == null)
                 request = HttpRequest.httpRequest(ByteArray.byteArray("The message you have sent via the context menu is not a valid HTML request. Try using the formatting tab."));
             this.inputText.setRequest(request);
         }
-        else if(messageType == MessageType.RESPONSE) {
+        else if(operation == BurpOperation.INCOMING) {
             HttpResponse response = requestResponse.response();
             if(response == null)
                 response = HttpResponse.httpResponse(ByteArray.byteArray("The message you have sent via the context menu does not have a valid HTML response. Try including a response to a request or use the formatting tab."));
@@ -486,7 +465,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
         this.controllerOrig.setHttpRequestResponse(requestResponse);
         this.controllerMod.setHttpRequestResponse(requestResponse);
 
-        this.bake(false);
     }
 
     public void setFormatMessage(HttpRequestResponse requestResponse, MessageType messageType){
@@ -565,7 +543,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 // check if it is an operation
                 Operation op = cls.newInstance();
                 op.load(parameters);
-                op.setDisabled(!operationNode.get("is_enabled").asBoolean());
+
+                if(operationNode.get("is_enabled") != null) {
+                    op.setDisabled(!operationNode.get("is_enabled").asBoolean());
+                }
 
                 // check if "comment" attribute is set (since 1.3.2)
                 if(operationNode.get("comment") != null) {
@@ -645,10 +626,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private ByteArray doBake(ByteArray input, MessageType messageType) {
-        if (input == null || input.length() == 0) {
-            return ByteArray.byteArrayOfLength(0);
-        }
+    private ByteArray doBake(ByteArray input) {
+        
         ByteArray result = input.copy();
         ByteArray intermediateResult = input;
         boolean outputChanged;
@@ -674,7 +653,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                     continue;
                 }
 
-                intermediateResult = op.performOperation(intermediateResult, messageType);
+                intermediateResult = op.performOperation(intermediateResult);
                 outputChanged = true;
 
                 if (op.isBreakpoint()) {
@@ -693,37 +672,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         }
 
-        if (BurpUtils.inBurp()) {
-            MontoyaApi api = BurpUtils.getInstance().getApi();
-            HttpRequest req;
-            List<HttpHeader> headers;
-            int offset;
-            try {
-                req = HttpRequest.httpRequest(result);
-                headers = req.headers();
-                offset = req.bodyOffset();
-            } catch( IllegalArgumentException e ) {
-                // In this case there is no valid HTTP request and no Content-Length update is requried.
-                return result;
-            }
-
-            if( result.length() == offset ) {
-                // In this case there is no body and we do not need to update the content length header.
-                return result;
-            }
-
-            for(HttpHeader header : headers) {
-                if(header.toString().startsWith("Content-Length:")) {
-                    HttpParameter dummy = HttpParameter.bodyParameter("dummy", "dummy");
-                    result = HttpRequest.httpRequest(result).withAddedParameters(dummy).withRemovedParameters(dummy).toByteArray();
-                    break;
-                }
-            }
-            return result;
-
-        } else {
-            return result;
-        }
+        return result;
     }
 
     private void bake(boolean spamProtection) {
@@ -734,15 +683,15 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray(), messageType);
+                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray());
                 HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if( messageType == MessageType.REQUEST) {
+                        if( operation == BurpOperation.OUTGOING) {
                             outputText.setRequest(HttpRequest.httpRequest(result));
                             controllerMod.setRequest(HttpRequest.httpRequest(result));
-                        } else if (messageType == MessageType.RESPONSE){
+                        } else if (operation == BurpOperation.INCOMING){
                             outputText.setResponse(HttpResponse.httpResponse(result));
                             controllerMod.setResponse(HttpResponse.httpResponse(result));
                         }
@@ -768,7 +717,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();
-            return this.doBake(input, messageType);
+            return this.doBake(input);
         } finally {
             store.unlock();
         }

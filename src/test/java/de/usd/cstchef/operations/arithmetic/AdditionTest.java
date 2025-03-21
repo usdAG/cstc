@@ -35,7 +35,7 @@ public class AdditionTest extends Addition
         isFloat = false;
 
         String testValue = "22";
-        ByteArray result = perform(factory.createByteArray(testValue), null);
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("32");
     }
@@ -47,7 +47,7 @@ public class AdditionTest extends Addition
         isFloat = true;
 
         String testValue = "2.2";
-        ByteArray result = perform(factory.createByteArray(testValue), null);
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("4.4");
     }
@@ -59,7 +59,7 @@ public class AdditionTest extends Addition
         isFloat = false;
 
         String testValue = "2.2";
-        ByteArray result = perform(factory.createByteArray(testValue), null);
+        ByteArray result = perform(factory.createByteArray(testValue));
 
         assert result.toString().equals("4");
     }

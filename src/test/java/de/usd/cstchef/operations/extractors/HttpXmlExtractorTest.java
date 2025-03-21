@@ -14,7 +14,6 @@ import burp.CstcObjectFactory;
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.utils.UnitTestObjectFactory;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.OperationCategory;
 
 
@@ -30,14 +29,13 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
             Triplet<String, String, Boolean> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
             ByteArray outputArray = factory.createByteArray(res.getValue0());
-            MessageType messageType = parseMessageType(inputArray);
             this.fieldTxt.setText(res.getValue1());
             if (res.getValue2()) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                assertEquals("Input is not a valid request", exception.getMessage());
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                assertEquals("XML element not found.", exception.getMessage());
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }
@@ -138,9 +136,8 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                     </Tag2>
                 </RootTag>
                 """;
-        String reqOut3 = "";
         String reqTag3 = "";
-        Triplet<String, String,  Boolean> reqTriplet3 = new Triplet<String, String, Boolean>(reqOut3, reqTag3, false);
+        Triplet<String, String,  Boolean> reqTriplet3 = new Triplet<String, String, Boolean>(reqIn3, reqTag3, false);
 
         // HTTP Response && param empty
         String resIn3 = """
@@ -156,9 +153,8 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                     </Tag2>
                 </RootTag>
                 """;
-        String resOut3 = "";
         String resTag3 = "";
-        Triplet<String, String, Boolean> resTriplet3 = new Triplet<String, String, Boolean>(resOut3, resTag3, false);
+        Triplet<String, String, Boolean> resTriplet3 = new Triplet<String, String, Boolean>(resIn3, resTag3, false);
 
         // HTTP Request && param incorrect
         String reqIn4 = """

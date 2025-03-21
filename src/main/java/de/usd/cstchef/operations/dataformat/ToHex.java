@@ -8,7 +8,6 @@ import javax.swing.JComboBox;
 import org.bouncycastle.util.encoders.Hex;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -34,7 +33,7 @@ public class ToHex extends Operation {
     private JComboBox<String> delimiterBox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         String selectedKey = (String) this.delimiterBox.getSelectedItem();
         Delimiter delimiter = ToHex.delimiters.get(selectedKey);
 

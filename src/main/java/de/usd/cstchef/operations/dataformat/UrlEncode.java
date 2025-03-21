@@ -6,11 +6,9 @@ import javax.swing.JCheckBox;
 
 import org.bouncycastle.util.encoders.Hex;
 
-import burp.BurpExtender;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -21,7 +19,11 @@ public class UrlEncode extends Operation {
     private JCheckBox checkbox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
+
+        if(input.length() == 0) {
+            return input;
+        }
 
         ByteArray result = null;
         MontoyaApi api = BurpUtils.getInstance().getApi();

@@ -94,7 +94,20 @@ public abstract class CryptOperation extends Operation {
         this.cipherMode = new JComboBox<>(info.getModes());
         this.addUIElement("Mode", this.cipherMode);
 
-        this.paddings = new JComboBox<>(info.getPaddings());
+        /*
+         * javax.crypto.Cipher uses PKCS7 internally but names it PKCS5.
+         * The only difference between the two padding mechanisms is the
+         * block size they're working with and to not confuse the user
+         * we name the combobox item accordingly (see GitHub Issue #166)
+         */
+        String[] paddings = info.getPaddings();
+        for(int i = 0; i < paddings.length; i++) {
+            if(paddings[i].equals("PKCS5PADDING")) {
+                paddings[i] = "PKCS5PADDING / PKCS7PADDING";
+            }
+        }
+
+        this.paddings = new JComboBox<>(paddings);
         this.addUIElement("Padding", this.paddings);
 
         this.inputMode = new JComboBox<>(inOutModes);

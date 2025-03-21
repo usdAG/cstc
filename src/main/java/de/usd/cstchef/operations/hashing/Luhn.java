@@ -1,7 +1,6 @@
 package de.usd.cstchef.operations.hashing;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -11,11 +10,14 @@ import de.usd.cstchef.operations.Operation.OperationInfos;
 public class Luhn extends Operation {
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
+
+        String exceptionMessage = "Luhn can only be applied to numerical values.";
+        if(input.length() == 0) throw new IllegalArgumentException(exceptionMessage);
 
         for (int i = 0; i < input.length(); i++){
             if ((input.getByte(i) < '0') || (input.getByte(i) > '9')) {
-                throw new IllegalArgumentException("Luhn can only be applied to numerical values.");
+                throw new IllegalArgumentException(exceptionMessage);
             }
         }
 

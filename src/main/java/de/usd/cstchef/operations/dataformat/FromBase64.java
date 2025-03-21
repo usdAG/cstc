@@ -2,7 +2,6 @@ package de.usd.cstchef.operations.dataformat;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Base64;
 
 import javax.swing.JCheckBox;
 
@@ -10,7 +9,6 @@ import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.utilities.Base64DecodingOptions;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -22,7 +20,7 @@ public class FromBase64 extends Operation implements ActionListener {
 	private JCheckBox urlSafeCheckBox;
 	
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) {
+    protected ByteArray perform(ByteArray input) {
 		MontoyaApi api = BurpUtils.getInstance().getApi();
 		if(!this.urlSafe) {
 			return api.utilities().base64Utils().decode(input);

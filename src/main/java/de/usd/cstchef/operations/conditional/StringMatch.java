@@ -2,11 +2,9 @@ package de.usd.cstchef.operations.conditional;
 
 import javax.swing.JCheckBox;
 
-import burp.BurpExtender;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
@@ -17,7 +15,7 @@ public class StringMatch extends ConditionalOperation {
     private JCheckBox caseSensitive;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         
         ByteArray search = this.expr.getBytes();
         if( search.length() != input.length() ) {

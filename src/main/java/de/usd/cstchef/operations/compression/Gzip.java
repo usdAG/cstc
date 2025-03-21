@@ -1,7 +1,5 @@
 package de.usd.cstchef.operations.compression;
 
-import java.util.zip.GZIPOutputStream;
-
 import javax.swing.JComboBox;
 
 import burp.api.montoya.core.ByteArray;
@@ -9,7 +7,6 @@ import burp.api.montoya.core.ByteArray;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -21,7 +18,7 @@ public class Gzip extends Operation {
     private JComboBox<Integer> compressionLevelBox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         //GZIPOutputStream gzos = new GZIPOutputStream(out);
         GZIPOutputStreamWrapper gzos = new GZIPOutputStreamWrapper(out);

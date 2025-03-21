@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 import javax.swing.JComboBox;
 
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -22,7 +21,7 @@ public class RegexExtractor extends Operation {
     protected JComboBox<String> outputBox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         Pattern p = Pattern.compile(this.regexTxt.getText());
         Matcher m = p.matcher(input.toString());
         String outputType = (String) this.outputBox.getSelectedItem();

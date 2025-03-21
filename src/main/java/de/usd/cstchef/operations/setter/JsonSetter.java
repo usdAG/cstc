@@ -10,7 +10,6 @@ import javax.swing.JCheckBox;
 
 import burp.api.montoya.core.ByteArray;
 import de.usd.cstchef.Utils;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.view.ui.VariableTextField;
@@ -22,8 +21,21 @@ public class JsonSetter extends SetterOperation implements ActionListener {
     private VariableTextField path;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
-        return Utils.jsonSetter(input, getWhere(), getWhat(), addIfNotPresent.isSelected(), path.getText());
+    protected ByteArray perform(ByteArray input) throws Exception {
+        if(getWhere().equals("")) {
+            return input;
+        }
+        try {
+            return Utils.jsonSetter(input, getWhere(), getWhat(), addIfNotPresent.isSelected(), path.getText());
+        }
+        catch(Exception e) {
+            if(e.getMessage().equals("json string can not be null or empty")) {
+                return input;
+            }
+            else {
+                throw e;
+            }
+        }
     }
 
     @Override

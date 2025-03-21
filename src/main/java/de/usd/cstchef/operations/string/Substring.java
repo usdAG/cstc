@@ -1,12 +1,10 @@
 package de.usd.cstchef.operations.string;
 
 import javax.swing.JSpinner;
-
-import org.bouncycastle.util.Arrays;
+import javax.swing.SpinnerNumberModel;
 
 import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
@@ -18,17 +16,13 @@ public class Substring extends Operation {
     private JSpinner endSpinner;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
         int start = (int) startSpinner.getValue();
         int end = (int) endSpinner.getValue();
 
-        if( start < 0 )
-            start = input.length() + start;
-        if( end < 0 )
-            end = input.length() + end;
-        if( end > input.length() )
-            end = input.length() + 1;
+        if(input.length() + start < 0) throw new IllegalArgumentException("Start index out of bounds for input length " + input.length() + ".");
+        if(end > input.length()) throw new IllegalArgumentException("End index out of bounds for input length " + input.length() + ".");
 
         ByteArray slice = BurpUtils.subArray(input, start, end);
         return slice;
@@ -36,10 +30,12 @@ public class Substring extends Operation {
 
     @Override
     public void createUI() {
-        this.startSpinner = new JSpinner();
+        SpinnerNumberModel startIndexModel = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
+        this.startSpinner = new JSpinner(startIndexModel);
         this.addUIElement("Start", this.startSpinner);
 
-        this.endSpinner = new JSpinner();
+        SpinnerNumberModel endIndexModel = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
+        this.endSpinner = new JSpinner(endIndexModel);
         this.addUIElement("End", this.endSpinner);
     }
 

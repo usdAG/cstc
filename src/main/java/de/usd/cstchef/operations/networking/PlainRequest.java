@@ -12,11 +12,11 @@ import burp.api.montoya.core.ByteArray;
 import burp.api.montoya.http.HttpService;
 import burp.api.montoya.http.message.HttpRequestResponse;
 import burp.api.montoya.http.message.requests.HttpRequest;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.OperationCategory;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
+
 
 @OperationInfos(name = "Send Plain Request", category = OperationCategory.NETWORKING, description = "Makes an request and returns the response. You can use this operation in combination with e.g. \"Static String\" to perform more complex requests.")
 public class PlainRequest extends Operation {
@@ -26,7 +26,7 @@ public class PlainRequest extends Operation {
     private JCheckBox sslEnabledBox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
         MontoyaApi api = BurpUtils.getInstance().getApi();
         HttpService service = HttpService.httpService(hostTxt.getText(), Integer.valueOf(portTxt.getText()), sslEnabledBox.isSelected());
 
@@ -63,7 +63,8 @@ public class PlainRequest extends Operation {
 
         @Override
         public HttpRequestResponse call() throws Exception {
-            return api.http().sendRequest(HttpRequest.httpRequest(service, data));
+            HttpRequest requestWithCustomHeader = HttpRequest.httpRequest(service, data).withAddedHeader("X-CSTC-79301f837932346cb067c568e27369bf", "cstc");
+            return api.http().sendRequest(requestWithCustomHeader);
         }
 
     }

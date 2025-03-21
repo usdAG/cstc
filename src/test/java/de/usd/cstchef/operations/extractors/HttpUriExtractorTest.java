@@ -34,16 +34,16 @@ public class HttpUriExtractorTest extends HttpUriExtractor {
             this.checkbox.setSelected(res.getValue1());
             if (res.getValue2()) {
                 if(messageType == MessageType.REQUEST) {
-                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                    assertEquals("Input is not a valid request", exception.getMessage());
+                    Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                    assertEquals("Input is not a valid request.", exception.getMessage());
                 }
                 if(messageType == MessageType.RESPONSE) {
-                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray, messageType));
-                assertEquals("Input is not a valid HTTP Request", exception.getMessage());
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                assertEquals("Input is not a valid HTTP request.", exception.getMessage());
                 }
             }
             else{
-                assertArrayEquals(outputArray.getBytes(), perform(inputArray, messageType).getBytes());
+                assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
             }
         }
     }

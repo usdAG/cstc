@@ -1,13 +1,10 @@
 package de.usd.cstchef.operations.dataformat;
 
-import java.io.ByteArrayOutputStream;
-
 import javax.swing.JCheckBox;
 
-import org.apache.commons.text.StringEscapeUtils;
-
+import burp.BurpUtils;
 import burp.api.montoya.core.ByteArray;
-import de.usd.cstchef.Utils.MessageType;
+import burp.api.montoya.utilities.HtmlEncoding;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
@@ -18,33 +15,18 @@ public class HtmlEncode extends Operation {
     private JCheckBox checkbox;
 
     @Override
-    protected ByteArray perform(ByteArray input, MessageType messageType) throws Exception {
+    protected ByteArray perform(ByteArray input) throws Exception {
 
-        ByteArray result = null;
-        if( checkbox.isSelected() ) {
+        String encodedInput;
 
-            ByteArray delimiter = factory.createByteArray("&#");
-            ByteArray closer = factory.createByteArray(";");
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-            out.write(delimiter.getBytes());
-            for (int i = 0; i < input.length() - 1; i++) {
-                out.write(String.valueOf(Byte.toUnsignedInt(input.getByte(i))).getBytes());
-                out.write(closer.getBytes());
-                out.write(delimiter.getBytes());
-            }
-
-            out.write(String.valueOf(Byte.toUnsignedInt(input.getByte(input.length() - 1))).getBytes());
-            out.write(closer.getBytes());
-            result = factory.createByteArray(out.toByteArray());
-
-        } else {
-            String tmp = input.toString();
-            tmp = StringEscapeUtils.escapeHtml4(tmp);
-            result = factory.createByteArray(tmp);
+        if(checkbox.isSelected()) {
+            encodedInput = BurpUtils.getInstance().getApi().utilities().htmlUtils().encode(input.toString(), HtmlEncoding.ALL_CHARACTERS);
+        }
+        else {
+            encodedInput = BurpUtils.getInstance().getApi().utilities().htmlUtils().encode(input.toString(), HtmlEncoding.STANDARD);
         }
 
-        return result;
+        return factory.createByteArray(encodedInput);
     }
 
     @Override
