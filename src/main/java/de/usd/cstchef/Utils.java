@@ -169,9 +169,9 @@ import de.usd.cstchef.operations.utils.NoOperation;
 import de.usd.cstchef.operations.utils.RandomNumber;
 import de.usd.cstchef.operations.utils.RandomUUID;
 import de.usd.cstchef.operations.utils.SetIfEmpty;
+import de.usd.cstchef.operations.utils.Sleep;
 import de.usd.cstchef.operations.utils.StoreVariable;
 import de.usd.cstchef.view.View;
-import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class Utils {
 
@@ -414,7 +414,7 @@ public class Utils {
                 TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToHex.class, UnixTimestamp.class,
                 UrlDecode.class, UrlEncode.class,
                 Whirlpool.class, WriteFile.class, XmlFullSignature.class, XmlMultiSignature.class,
-                Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class, JsonBeautifier.class
+                Xor.class, SoapMultiSignature.class, Luhn.class, Concatenate.class, JsonBeautifier.class, Sleep.class
         };
     }
 
