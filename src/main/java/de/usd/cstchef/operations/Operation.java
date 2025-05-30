@@ -9,8 +9,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.EOFException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -21,7 +19,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -49,9 +46,9 @@ import burp.BurpObjectFactory;
 import burp.CstcObjectFactory;
 import burp.Logger;
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils.MessageType;
+import de.usd.cstchef.operations.utils.Sleep;
+import de.usd.cstchef.view.RecipePanel;
 import de.usd.cstchef.view.ui.FormatTextField;
 import de.usd.cstchef.view.ui.VariableTextArea;
 import de.usd.cstchef.view.ui.VariableTextField;
@@ -403,8 +400,12 @@ public abstract class Operation extends JPanel {
         return dim;
     }
 
-    public ByteArray performOperation(ByteArray input) {
+    public ByteArray performOperation(ByteArray input, RecipePanel... recipePanel) {
         try {
+            if(this instanceof Sleep) {
+                ((Sleep) this).setRecipePanel(recipePanel[0]);
+                return this.perform(input);
+            }
             ByteArray result = this.perform(input);
             this.setErrorMessage(null);
             return result;

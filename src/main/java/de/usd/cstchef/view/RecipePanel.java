@@ -56,6 +56,7 @@ import burp.api.montoya.persistence.PersistedObject;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
+import de.usd.cstchef.operations.utils.Sleep;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 import de.usd.cstchef.view.ui.PlaceholderTextField;
 import de.usd.cstchef.view.ui.TextChangedListener;
@@ -91,6 +92,9 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private JCheckBox bakeCheckBox = new JCheckBox("Auto bake");
     private JButton bakeButton = new JButton("Bake");
+
+    private int laneToContinue;
+    private int operationToContinue;
 
     public RecipePanel(BurpOperation operation) {
 
@@ -634,13 +638,29 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private ByteArray doBake(ByteArray input) {
+    public void stopAllBaking() {
+        this.autoBake = false;
+        this.bakeCheckBox.setSelected(false);
+        this.bakeCheckBox.setEnabled(false);
+        this.bakeButton.setEnabled(false);
+    }
+
+    public void reenableBaking() {
+        this.bakeCheckBox.setEnabled(true);
+        this.bakeButton.setEnabled(true);
+    }
+
+    public ByteArray continuebakeAfterSleep(ByteArray input, int lane, int operation) {
+        return this.doBake(input, lane, operation);
+    }
+
+    private ByteArray doBake(ByteArray input, int lane, int operation) {
         
         ByteArray result = input.copy();
         ByteArray intermediateResult = input;
         boolean outputChanged;
         VariableStore store = VariableStore.getInstance();
-        out: for (int j = 0; j < this.operationLines.getComponentCount(); j++) {
+        out: for (int j = lane; j < this.operationLines.getComponentCount(); j++) {
 
             Component operationLine = this.operationLines.getComponent(j);
             if (!(operationLine instanceof RecipeStepPanel)) {
@@ -654,14 +674,25 @@ public class RecipePanel extends JPanel implements ChangeListener {
             outputChanged = false;
 
             List<Operation> operationList = ((RecipeStepPanel)operationLine).getOperations();
-            for(int i = 0; i < operationList.size(); i++) {
+            for(int i = operation; i < operationList.size(); i++) {
+
+                // every subsequent iteration must start at 0 again
+                operation = 0;
 
                 Operation op = operationList.get(i);
                 if (op.isDisabled()) {
                     continue;
                 }
 
-                intermediateResult = op.performOperation(intermediateResult);
+                if(op instanceof Sleep) {
+                    //stopAllBaking();
+                    intermediateResult = ((Sleep) op).performOperation(input, this);
+                    //reenableBaking();
+                }
+                else {
+                    intermediateResult = op.performOperation(intermediateResult);
+                }
+
                 outputChanged = true;
 
                 if (op.isBreakpoint()) {
@@ -691,7 +722,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray());
+                ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() /* inputText.getResponse().toByteArray() */ : inputText.getRequest().toByteArray(), 0, 0);
                 HashMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
@@ -725,7 +756,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();
-            return this.doBake(input);
+            return this.doBake(input, 0, 0);
         } finally {
             store.unlock();
         }
