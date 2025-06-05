@@ -24,7 +24,6 @@ public class Sleep extends Operation {
     public int elapsedTime;
     public int totalTime;
 
-    private RecipePanel recipePanel;
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
@@ -66,10 +65,6 @@ public class Sleep extends Operation {
 
         
         return input;
-    }
-
-    public void setRecipePanel(RecipePanel recipePanel) {
-        this.recipePanel = recipePanel;
     }
 
     public JProgressBar getProgressBar() {

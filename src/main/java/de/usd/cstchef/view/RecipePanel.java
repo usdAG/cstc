@@ -684,15 +684,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
                     continue;
                 }
 
-                if(op instanceof Sleep) {
-                    //stopAllBaking();
-                    intermediateResult = ((Sleep) op).performOperation(input, this);
-                    //reenableBaking();
-                }
-                else {
-                    intermediateResult = op.performOperation(intermediateResult);
-                }
-
+                intermediateResult = op.performOperation(intermediateResult);
                 outputChanged = true;
 
                 if (op.isBreakpoint()) {

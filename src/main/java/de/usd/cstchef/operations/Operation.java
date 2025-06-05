@@ -400,12 +400,8 @@ public abstract class Operation extends JPanel {
         return dim;
     }
 
-    public ByteArray performOperation(ByteArray input, RecipePanel... recipePanel) {
+    public ByteArray performOperation(ByteArray input) {
         try {
-            if(this instanceof Sleep) {
-                ((Sleep) this).setRecipePanel(recipePanel[0]);
-                return this.perform(input);
-            }
             ByteArray result = this.perform(input);
             this.setErrorMessage(null);
             return result;
