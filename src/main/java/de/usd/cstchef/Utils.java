@@ -159,6 +159,7 @@ import de.usd.cstchef.operations.string.Uppercase;
 import de.usd.cstchef.operations.string.Lowercase;
 import de.usd.cstchef.operations.string.Concatenate;
 import de.usd.cstchef.operations.utils.Counter;
+import de.usd.cstchef.operations.utils.DropRequest;
 import de.usd.cstchef.operations.utils.GetVariable;
 import de.usd.cstchef.operations.utils.NoOperation;
 import de.usd.cstchef.operations.utils.RandomNumber;
@@ -375,7 +376,7 @@ public class Utils {
                 Addition.class, AddKey.class, AesDecryption.class, AesEncryption.class, And.class,
                 Blake.class,
                 Counter.class, Concatenate.class,
-                DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
+                DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class, DropRequest.class,
                 Divide.class, DivideList.class, DSTU7564.class,
                 FromBase64.class, FromDecimal.class, FromHex.class,
                 GetVariable.class, Gost.class, GUnzip.class, Gzip.class,

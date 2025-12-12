@@ -16,6 +16,7 @@ import static burp.api.montoya.http.handler.RequestToBeSentAction.continueWith;
 import static burp.api.montoya.http.handler.ResponseReceivedAction.continueWith;
 
 import static burp.api.montoya.core.ToolType.EXTENSIONS;
+import static burp.api.montoya.core.ToolType.PROXY;
 
 public class CstcHttpHandler implements HttpHandler {
 
@@ -27,6 +28,11 @@ public class CstcHttpHandler implements HttpHandler {
 
     @Override
     public RequestToBeSentAction handleHttpRequestToBeSent(HttpRequestToBeSent requestToBeSent) {
+
+        if(requestToBeSent.toolSource().isFromTool(PROXY)) {
+            return continueWith(requestToBeSent);
+        }
+
         if(requestToBeSent.toolSource().isFromTool(EXTENSIONS) && requestToBeSent.hasHeader("X-CSTC-79301f837932346cb067c568e27369bf")) {
             HttpRequest request = requestToBeSent.withRemovedHeader("X-CSTC-79301f837932346cb067c568e27369bf");
             return continueWith(request, Annotations.annotations("CSTC"));
