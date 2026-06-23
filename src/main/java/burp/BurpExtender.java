@@ -24,6 +24,8 @@ public class BurpExtender implements BurpExtension {
         api.extension().setName(extensionName);
         api.userInterface().registerContextMenuItemsProvider(new CstcContextMenuItemsProvider(api, view));
         api.http().registerHttpHandler(new CstcHttpHandler(view));
+        api.proxy().registerRequestHandler(new CstcProxyRequestHandler(view));
+        api.proxy().registerResponseHandler(new CstcProxyResponseHandler(view));
         api.userInterface().registerSuiteTab(extensionName, view);
         api.userInterface().registerHttpRequestEditorProvider(new MyHttpRequestEditorProvider(view));
         api.userInterface().registerHttpRequestEditorProvider(new MyHttpRequestEditorProviderFormatting(view));
@@ -41,8 +43,10 @@ public class BurpExtender implements BurpExtension {
     private void restoreInput(PersistedObject persistence) {
         try {
             this.view.getFormatRecipePanel().restoreInput(persistence.getString(BurpOperation.FORMAT + "Input"));
-            this.view.getIncomingRecipePanel().restoreInput(persistence.getString(BurpOperation.INCOMING + "Input"));
-            this.view.getOutgoingRecipePanel().restoreInput(persistence.getString(BurpOperation.OUTGOING + "Input"));
+            this.view.getIncomingProxyRequestRecipePanel().restoreInput(persistence.getString(BurpOperation.INCOMING_PROXY_REQUEST + "Input"));
+            this.view.getOutgoingHttpRequestRecipePanel().restoreInput(persistence.getString(BurpOperation.OUTGOING_HTTP_REQUEST + "Input"));
+            this.view.getIncomingHttpResponseRecipePanel().restoreInput(persistence.getString(BurpOperation.INCOMING_HTTP_RESPONSE + "Input"));
+            this.view.getOutgoingProxyResponseRecipePanel().restoreInput(persistence.getString(BurpOperation.OUTGOING_PROXY_RESPONSE + "Input"));
         } catch (Exception e) {
             Logger.getInstance().log(
                     "Could not restore the input for one or multiple panels. If this is the first time using CSTC in a project, you can ignore this message.");
@@ -52,8 +56,10 @@ public class BurpExtender implements BurpExtension {
     private void restoreRecipe(PersistedObject persistence) {
         try {
             this.view.getFormatRecipePanel().restoreState(persistence.getString(BurpOperation.FORMAT + "Recipe"));
-            this.view.getIncomingRecipePanel().restoreState(persistence.getString(BurpOperation.INCOMING + "Recipe"));
-            this.view.getOutgoingRecipePanel().restoreState(persistence.getString(BurpOperation.OUTGOING + "Recipe"));
+            this.view.getIncomingHttpResponseRecipePanel().restoreState(persistence.getString(BurpOperation.INCOMING_HTTP_RESPONSE + "Recipe"));
+            this.view.getIncomingProxyRequestRecipePanel().restoreState(persistence.getString(BurpOperation.INCOMING_PROXY_REQUEST + "Recipe"));
+            this.view.getOutgoingHttpRequestRecipePanel().restoreState(persistence.getString(BurpOperation.OUTGOING_HTTP_REQUEST + "Recipe"));
+            this.view.getOutgoingProxyResponseRecipePanel().restoreState(persistence.getString(BurpOperation.OUTGOING_PROXY_RESPONSE + "Recipe"));
         } catch (Exception e) {
             Logger.getInstance().log(
                     "Could not restore the recipe for one or multiple panels. If this is the first time using CSTC in a project, you can ignore this message.");

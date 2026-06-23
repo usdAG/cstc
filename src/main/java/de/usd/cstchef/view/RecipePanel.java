@@ -425,7 +425,24 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void disableAutobakeIfFilterActive() {
-        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()) {
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingHttpResponseFilterSettings().values()) {
+            if(b) {
+                this.autoBake = false;
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                this.autoBakeInterval.setEnabled(false);
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+                this.autoBakeInterval.setEnabled(true);
+            }
+        }
+        
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingProxyRequestFilterSettings().values()) {
             if(b) {
                 this.autoBake = false;
                 this.bakeCheckBox.setSelected(false);
@@ -442,7 +459,24 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         }
 
-        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()) {
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingHttpRequestFilterSettings().values()) {
+            if(b) {
+                this.autoBake = false;
+                this.bakeCheckBox.setSelected(false);
+                this.bakeButton.setEnabled(true);
+                this.bakeCheckBox.setEnabled(false);
+                this.bakeCheckBox.setToolTipText("Auto bake is disabled if Filter is active.");
+                this.autoBakeInterval.setEnabled(false);
+                return;
+            }
+            else if(!this.bakeCheckBox.isEnabled() && !b) {
+                this.bakeCheckBox.setEnabled(true);
+                this.bakeCheckBox.setToolTipText("");
+                this.autoBakeInterval.setEnabled(true);
+            }
+        }
+        
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingProxyResponseFilterSettings().values()) {
             if(b) {
                 this.autoBake = false;
                 this.bakeCheckBox.setSelected(false);
@@ -500,13 +534,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     public void setInput(HttpRequestResponse requestResponse) {
-        if(operation == BurpOperation.OUTGOING){
+        if(operation == BurpOperation.INCOMING_PROXY_REQUEST || operation == BurpOperation.OUTGOING_HTTP_REQUEST){
             HttpRequest request = requestResponse.request();
             if(request == null)
                 request = HttpRequest.httpRequest(ByteArray.byteArray("The message you have sent via the context menu is not a valid HTML request. Try using the formatting tab."));
             this.inputText.setRequest(request);
         }
-        else if(operation == BurpOperation.INCOMING) {
+        else if(operation == BurpOperation.OUTGOING_PROXY_RESPONSE || operation == BurpOperation.INCOMING_HTTP_RESPONSE) {
             HttpResponse response = requestResponse.response();
             if(response == null) {
                 response = HttpResponse.httpResponse(ByteArray.byteArray("The message you have sent via the context menu does not have a valid HTML response. Try including a response to a request or use the formatting tab."));
@@ -750,10 +784,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        if( operation == BurpOperation.OUTGOING) {
+                        if( operation == BurpOperation.INCOMING_PROXY_REQUEST || operation == BurpOperation.OUTGOING_HTTP_REQUEST) {
                             outputText.setRequest(HttpRequest.httpRequest(result));
                             controllerMod.setRequest(HttpRequest.httpRequest(result));
-                        } else if (operation == BurpOperation.INCOMING){
+                        } else if (operation == BurpOperation.OUTGOING_PROXY_RESPONSE || operation == BurpOperation.INCOMING_HTTP_RESPONSE){
                             outputText.setResponse(HttpResponse.httpResponse(result));
                             controllerMod.setResponse(HttpResponse.httpResponse(result));
                         }

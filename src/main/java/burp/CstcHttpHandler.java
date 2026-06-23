@@ -32,10 +32,10 @@ public class CstcHttpHandler implements HttpHandler {
             return continueWith(request, Annotations.annotations("CSTC"));
         }
 
-        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.OUTGOING, requestToBeSent.toolSource().toolType())) {
+        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.OUTGOING_HTTP_REQUEST, requestToBeSent.toolSource().toolType())) {
 
             ByteArray request = requestToBeSent.toByteArray();
-            ByteArray modifiedRequest = view.getOutgoingRecipePanel().bake(request, null);
+            ByteArray modifiedRequest = view.getOutgoingHttpRequestRecipePanel().bake(request, null);
             return continueWith(HttpRequest.httpRequest(modifiedRequest).withService(requestToBeSent.httpService()));
         }
         else{
@@ -45,12 +45,12 @@ public class CstcHttpHandler implements HttpHandler {
 
     @Override
     public ResponseReceivedAction handleHttpResponseReceived(HttpResponseReceived responseReceived) {
-        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.INCOMING, responseReceived.toolSource().toolType())) {
+        if (BurpUtils.getInstance().getFilterState().shouldProcess(FilterState.BurpOperation.INCOMING_HTTP_RESPONSE, responseReceived.toolSource().toolType())) {
             if(responseReceived.annotations().hasNotes() && responseReceived.annotations().notes().equals("CSTC")) {
                 return continueWith(responseReceived);
             }
             ByteArray response = responseReceived.toByteArray();
-            ByteArray modifiedResponse = view.getIncomingRecipePanel().bake(response, responseReceived.initiatingRequest().toByteArray());
+            ByteArray modifiedResponse = view.getIncomingHttpResponseRecipePanel().bake(response, responseReceived.initiatingRequest().toByteArray());
             return continueWith(HttpResponse.httpResponse(modifiedResponse));
         }
         else{

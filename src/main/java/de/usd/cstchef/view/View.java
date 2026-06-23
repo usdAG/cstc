@@ -16,8 +16,10 @@ import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class View extends JPanel {
 
-    private RecipePanel incomingRecipePanel;
-    private RecipePanel outgoingRecipePanel;
+    private RecipePanel incomingHttpResponseRecipePanel;
+    private RecipePanel incomingProxyRequestRecipePanel;
+    private RecipePanel outgoingHttpRequestRecipePanel;
+    private RecipePanel outgoingProxyResponseRecipePanel;
     private RecipePanel formatRecipePanel;
 
     public View(){
@@ -30,22 +32,34 @@ public class View extends JPanel {
         this.setLayout(new BorderLayout());
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        incomingRecipePanel = new RecipePanel(BurpOperation.INCOMING);
-        outgoingRecipePanel = new RecipePanel(BurpOperation.OUTGOING);
+        incomingHttpResponseRecipePanel = new RecipePanel(BurpOperation.INCOMING_HTTP_RESPONSE);
+        incomingProxyRequestRecipePanel = new RecipePanel(BurpOperation.INCOMING_PROXY_REQUEST);
+        outgoingHttpRequestRecipePanel = new RecipePanel(BurpOperation.OUTGOING_HTTP_REQUEST);
+        outgoingProxyResponseRecipePanel = new RecipePanel(BurpOperation.OUTGOING_PROXY_RESPONSE);
         formatRecipePanel = new RecipePanel(BurpOperation.FORMAT);
 
-        tabbedPane.addTab("Outgoing Requests", null, outgoingRecipePanel, "Outgoing requests from the browser, the repeater or another tool.");
-        tabbedPane.addTab("Incoming Responses", null, incomingRecipePanel, "Responses from the server.");
+        tabbedPane.addTab("Incoming Proxy Requests", null, incomingProxyRequestRecipePanel, "Incoming requests from the client application.");
+        tabbedPane.addTab("Outgoing HTTP Requests", null, outgoingHttpRequestRecipePanel, "Outgoing requests from any tool of Burp.");
+        tabbedPane.addTab("Incoming HTTP Responses", null, incomingHttpResponseRecipePanel, "Responses from the server.");
+        tabbedPane.addTab("Outgoing Proxy Responses", null, outgoingProxyResponseRecipePanel, "Outgoing responses from Burp.");
         tabbedPane.addTab("Formatting", null, formatRecipePanel, "Formatting for messages.");
         this.add(tabbedPane);
     }
 
-    public RecipePanel getIncomingRecipePanel() {
-        return this.incomingRecipePanel;
+    public RecipePanel getIncomingHttpResponseRecipePanel() {
+        return this.incomingHttpResponseRecipePanel;
+    }
+    
+    public RecipePanel getIncomingProxyRequestRecipePanel() {
+        return this.incomingProxyRequestRecipePanel;
     }
 
-    public RecipePanel getOutgoingRecipePanel() {
-        return this.outgoingRecipePanel;
+    public RecipePanel getOutgoingHttpRequestRecipePanel() {
+        return this.outgoingHttpRequestRecipePanel;
+    }
+    
+    public RecipePanel getOutgoingProxyResponseRecipePanel() {
+        return this.outgoingProxyResponseRecipePanel;
     }
 
     public RecipePanel getFormatRecipePanel() {
@@ -64,22 +78,36 @@ public class View extends JPanel {
     }
 
     public void updateInactiveWarnings() {
-        incomingRecipePanel.showInactiveWarning();
-        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingFilterSettings().values()){
+        incomingHttpResponseRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingHttpResponseFilterSettings().values()){
             if(b == true)
-                incomingRecipePanel.hideInactiveWarning();
+                incomingHttpResponseRecipePanel.hideInactiveWarning();
+        }
+        
+        incomingProxyRequestRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getIncomingProxyRequestFilterSettings().values()){
+            if(b == true)
+                incomingProxyRequestRecipePanel.hideInactiveWarning();
         }
 
-        outgoingRecipePanel.showInactiveWarning();
-        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingFilterSettings().values()){
+        outgoingHttpRequestRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingHttpRequestFilterSettings().values()){
             if(b == true)
-                outgoingRecipePanel.hideInactiveWarning();
+                outgoingHttpRequestRecipePanel.hideInactiveWarning();
+        }
+        
+        outgoingProxyResponseRecipePanel.showInactiveWarning();
+        for(Boolean b : BurpUtils.getInstance().getFilterState().getOutgoingProxyResponseFilterSettings().values()){
+            if(b == true)
+                outgoingProxyResponseRecipePanel.hideInactiveWarning();
         }
     }
 
     public void preventRaceConditionOnVariables() {
-        incomingRecipePanel.disableAutobakeIfFilterActive();
-        outgoingRecipePanel.disableAutobakeIfFilterActive();
+        incomingHttpResponseRecipePanel.disableAutobakeIfFilterActive();
+        incomingProxyRequestRecipePanel.disableAutobakeIfFilterActive();
+        outgoingHttpRequestRecipePanel.disableAutobakeIfFilterActive();
+        outgoingProxyResponseRecipePanel.disableAutobakeIfFilterActive();
         formatRecipePanel.disableAutobakeIfFilterActive();
     }
 }

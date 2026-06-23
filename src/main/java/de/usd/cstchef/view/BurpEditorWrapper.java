@@ -41,8 +41,10 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
         this.lastContent = ByteArray.byteArray("");
         if (BurpUtils.inBurp()) {
             switch(operation){
-                case OUTGOING: burpEditor = api.userInterface().createHttpRequestEditor(); break;
-                case INCOMING: burpEditor = api.userInterface().createHttpResponseEditor(); break;
+                case INCOMING_PROXY_REQUEST:
+                case OUTGOING_HTTP_REQUEST: burpEditor = api.userInterface().createHttpRequestEditor(); break;
+                case OUTGOING_PROXY_RESPONSE:
+                case INCOMING_HTTP_RESPONSE: burpEditor = api.userInterface().createHttpResponseEditor(); break;
                 case FORMAT: burpEditor = api.userInterface().createRawEditor(); break;
                 default: break;
             }
@@ -101,9 +103,9 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     public ByteArray getContents() {
         if(operation == BurpOperation.FORMAT)
             return ((RawEditor)burpEditor).getContents();
-        else if(operation == BurpOperation.OUTGOING)
+        else if(operation == BurpOperation.INCOMING_PROXY_REQUEST || operation == BurpOperation.OUTGOING_HTTP_REQUEST)
             return ((HttpRequestEditor)burpEditor).getRequest().toByteArray();
-        else if(operation == BurpOperation.INCOMING)
+        else if(operation == BurpOperation.INCOMING_HTTP_RESPONSE || operation == BurpOperation.OUTGOING_PROXY_RESPONSE)
             return ((HttpResponseEditor)burpEditor).getResponse().toByteArray();
         else
             return ByteArray.byteArray();
@@ -113,9 +115,9 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     public void setContents(ByteArray contents) {
         isChangedViaContextMenu = true;
         this.lastContent = contents;
-        if(operation == BurpOperation.OUTGOING)
+        if(operation == BurpOperation.INCOMING_PROXY_REQUEST || operation == BurpOperation.OUTGOING_HTTP_REQUEST)
             ((HttpRequestEditor)burpEditor).setRequest(HttpRequest.httpRequest(contents));
-        else if(operation == BurpOperation.INCOMING)
+        else if(operation == BurpOperation.INCOMING_HTTP_RESPONSE || operation == BurpOperation.OUTGOING_PROXY_RESPONSE)
             ((HttpResponseEditor)burpEditor).setResponse(HttpResponse.httpResponse(contents));
         else
             ((RawEditor)burpEditor).setContents(contents);
@@ -124,7 +126,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public HttpResponse getResponse() {
-        if(operation != BurpOperation.INCOMING){
+        if(operation != BurpOperation.INCOMING_HTTP_RESPONSE && operation != BurpOperation.OUTGOING_PROXY_RESPONSE){
             return null;
         }
         HttpResponse result;
@@ -146,7 +148,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public HttpRequest getRequest() {
-        if(operation != BurpOperation.OUTGOING){
+        if(operation != BurpOperation.INCOMING_PROXY_REQUEST && operation != BurpOperation.OUTGOING_HTTP_REQUEST){
             return null;
         }
         HttpRequest result;

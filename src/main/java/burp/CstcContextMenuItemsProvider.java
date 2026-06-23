@@ -30,27 +30,45 @@ public class CstcContextMenuItemsProvider implements ContextMenuItemsProvider {
     public List<Component> provideMenuItems(ContextMenuEvent event) {
         
         List<Component> menuItems = new ArrayList<>();
-        JMenuItem incomingMenu = new JMenuItem("Send to CSTC (Incoming)");
-        JMenuItem outgoingMenu = new JMenuItem("Send to CSTC (Outgoing)");
-        JMenuItem incomingReqFormatMenu = new JMenuItem("Send request to CSTC (Formatting)");
-        JMenuItem incomingResFormatMenu = new JMenuItem("Send response to CSTC (Formatting)");
+        JMenuItem incomingHttpResponseMenu = new JMenuItem("Send to Incoming HTTP Responses");
+        JMenuItem incomingProxyRequestMenu = new JMenuItem("Send to Incoming Proxy Requests");
+        JMenuItem outgoingHttpRequestMenu = new JMenuItem("Send to Outgoing HTTP Requests");
+        JMenuItem outgoingProxyResponseMenu = new JMenuItem("Send to Outgoing Proxy Responses");
+        JMenuItem incomingReqFormatMenu = new JMenuItem("Send request to Formatting");
+        JMenuItem incomingResFormatMenu = new JMenuItem("Send response to Formatting");
         
-        menuItems.add(outgoingMenu);
-        menuItems.add(incomingMenu);
+        menuItems.add(outgoingHttpRequestMenu);
+        menuItems.add(outgoingProxyResponseMenu);
+        menuItems.add(incomingHttpResponseMenu);
+        menuItems.add(incomingProxyRequestMenu);
         menuItems.add(incomingReqFormatMenu);
         menuItems.add(incomingResFormatMenu);
 
-        incomingMenu.addActionListener(new ActionListener() {
+        incomingHttpResponseMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                view.getIncomingRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
+                view.getIncomingHttpResponseRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
+            }
+        });
+        
+        incomingProxyRequestMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.getIncomingProxyRequestRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
             }
         });
 
-        outgoingMenu.addActionListener(new ActionListener() {
+        outgoingHttpRequestMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                view.getOutgoingRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
+                view.getOutgoingHttpRequestRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
+            }
+        });
+        
+        outgoingProxyResponseMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.getOutgoingProxyResponseRecipePanel().setInput(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0));
             }
         });
 
