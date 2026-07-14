@@ -138,6 +138,7 @@ import de.usd.cstchef.operations.setter.HttpXmlSetter;
 import de.usd.cstchef.operations.setter.XmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
+import de.usd.cstchef.operations.signature.EdDsaSignature;
 import de.usd.cstchef.operations.signature.JWTDecode;
 import de.usd.cstchef.operations.signature.JWTSign;
 import de.usd.cstchef.operations.signature.RsaSignature;
@@ -377,6 +378,7 @@ public class Utils {
                 Counter.class, Concatenate.class,
                 DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
                 Divide.class, DivideList.class, DSTU7564.class,
+                EdDsaSignature.class,
                 FromBase64.class, FromDecimal.class, FromHex.class,
                 GetVariable.class, Gost.class, GUnzip.class, Gzip.class,
                 Hmac.class, HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
