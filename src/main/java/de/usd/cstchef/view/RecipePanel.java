@@ -105,6 +105,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private static ImageIcon plusIcon = new ImageIcon(Operation.class.getResource("/plus.png"));
     private static ImageIcon minusIcon = new ImageIcon(Operation.class.getResource("/minus.png"));
 
+    private static boolean filterDialogHotKeyRegistered = false;
+
     private JButton filters = new JButton("Filter");
 
     private JButton addLaneButton = new JButton();
@@ -249,10 +251,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        HotKey hotKey = HotKey.hotKey("Open Filter Dialog", "Ctrl+Shift+F");
-        HotKeyHandler handler = event -> filters.doClick();
-        BurpUtils.getInstance().getApi().userInterface().registerHotKeyHandler(hotKey, handler);
-        filters.setToolTipText("Hotkey from within a message editor: Ctrl + Shift + F");
+        if(!RecipePanel.filterDialogHotKeyRegistered){
+            HotKey hotKey = HotKey.hotKey("Open Filter Dialog", "Ctrl+Shift+F");
+            HotKeyHandler handler = event -> filters.doClick();
+            BurpUtils.getInstance().getApi().userInterface().registerHotKeyHandler(hotKey, handler);
+            filters.setToolTipText("Hotkey from within a message editor: Ctrl + Shift + F");
+            RecipePanel.filterDialogHotKeyRegistered = true;
+        }        
 
         bakeButton.setEnabled(!autoBake);
         controlsPanel.add(bakeButton);

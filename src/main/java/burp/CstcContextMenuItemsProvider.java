@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent;
@@ -105,7 +106,11 @@ public class CstcContextMenuItemsProvider implements ContextMenuItemsProvider {
 
         @Override
         public void run() {
-            resetHighlighting();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run(){
+                    resetHighlighting();
+                }
+            });
         }
         
         };
