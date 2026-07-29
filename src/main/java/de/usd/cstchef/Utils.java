@@ -104,6 +104,7 @@ import de.usd.cstchef.operations.extractors.HttpXmlExtractor;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
 import de.usd.cstchef.operations.extractors.LineExtractor;
 import de.usd.cstchef.operations.extractors.RegexExtractor;
+import de.usd.cstchef.operations.extractors.XmlExtractor;
 import de.usd.cstchef.operations.hashing.Blake;
 import de.usd.cstchef.operations.hashing.DSTU7564;
 import de.usd.cstchef.operations.hashing.Gost;
@@ -400,7 +401,7 @@ public class Utils {
                 Tiger.class, TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToDecimal.class, ToHex.class,
                 UnixTimestamp.class, UrlDecode.class, UrlEncode.class, Uppercase.class, UnconditionalJump.class, Unzip.class,
                 Whirlpool.class, WriteFile.class,
-                XmlFullSignature.class, XmlMultiSignature.class, Xor.class, XmlSetter.class, Zip.class
+                XmlFullSignature.class, XmlMultiSignature.class, Xor.class, XmlSetter.class, XmlExtractor.class, Zip.class
         };
     }
 
