@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -65,6 +63,7 @@ import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.ui.hotkey.HotKey;
 import burp.api.montoya.ui.hotkey.HotKeyHandler;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
@@ -104,6 +103,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private static ImageIcon plusIcon = new ImageIcon(Operation.class.getResource("/plus.png"));
     private static ImageIcon minusIcon = new ImageIcon(Operation.class.getResource("/minus.png"));
+
+    private static boolean filterDialogHotKeyRegistered = false;
 
     private JButton filters = new JButton("Filter");
 
@@ -249,10 +250,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        HotKey hotKey = HotKey.hotKey("Open Filter Dialog", "Ctrl+Shift+F");
-        HotKeyHandler handler = event -> filters.doClick();
-        BurpUtils.getInstance().getApi().userInterface().registerHotKeyHandler(hotKey, handler);
-        filters.setToolTipText("Hotkey from within a message editor: Ctrl + Shift + F");
+        if(!RecipePanel.filterDialogHotKeyRegistered){
+            HotKey hotKey = HotKey.hotKey("Open Filter Dialog", "Ctrl+Shift+F");
+            HotKeyHandler handler = event -> filters.doClick();
+            BurpUtils.getInstance().getApi().userInterface().registerHotKeyHandler(hotKey, handler);
+            filters.setToolTipText("Hotkey from within a message editor: Ctrl + Shift + F");
+            RecipePanel.filterDialogHotKeyRegistered = true;
+        }        
 
         bakeButton.setEnabled(!autoBake);
         controlsPanel.add(bakeButton);
@@ -876,10 +880,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
         // save content length in case it is set. null because headerValue returns null if header is not found
         String contentLength = "null";
         
-        if(isHttpRequest(input)) {
+        if(Utils.isHttpRequest(input)) {
             contentLength = HttpRequest.httpRequest(input).headerValue("Content-Length");
         }
-        else if(isHttpResponse(input)) {
+        else if(Utils.isHttpResponse(input)) {
             contentLength = HttpResponse.httpResponse(input).headerValue("Content-Length");
         }
         
@@ -928,10 +932,10 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
             // if isSelected update the content length
             if(contentLengthCheckbox.isSelected()) {
-                if(isHttpRequest(input)) {
+                if(Utils.isHttpRequest(result)) {
                     result = HttpRequest.httpRequest(result).withBody(HttpRequest.httpRequest(result).body()).toByteArray();
                 }
-                else if(isHttpResponse(input)) {
+                else if(Utils.isHttpResponse(result)) {
                     result = HttpResponse.httpResponse(result).withBody(HttpResponse.httpResponse(result).body()).toByteArray();
                 }
             }
@@ -956,15 +960,21 @@ public class RecipePanel extends JPanel implements ChangeListener {
             ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() : inputText.getRequest().toByteArray(), inputText.getRequestToResponse());
             TreeMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
 
-            if( operation == BurpOperation.OUTGOING) {
-                outputText.setRequest(HttpRequest.httpRequest(result));
-                controllerMod.setRequest(HttpRequest.httpRequest(result));
-            } else if (operation == BurpOperation.INCOMING){
-                outputText.setResponse(HttpResponse.httpResponse(result));
-                controllerMod.setResponse(HttpResponse.httpResponse(result));
+            if(Utils.isHttpRequest(result)) {
+                HttpRequest bakedRequest = HttpRequest.httpRequest(result);
+                outputText.setRequest(bakedRequest);
+                controllerMod.setRequest(bakedRequest);
+                controllerMod.setResponse(null);
+            } else if (Utils.isHttpResponse(result)){
+                HttpResponse bakedResponse = HttpResponse.httpResponse(result);
+                outputText.setResponse(bakedResponse);
+                controllerMod.setRequest(null);
+                controllerMod.setResponse(bakedResponse);
             }
             else{
                 outputText.setContents(result);
+                controllerMod.setRequest(null);
+                controllerMod.setResponse(null);
                 // TODO: MessageEditorController?
 
             }
@@ -1071,32 +1081,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         if (!BurpUtils.getInstance().getApi().burpSuite().version().edition().equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
             saveRecipe();
-        }
-    }
-
-    private boolean isHttpRequest(ByteArray input) {
-        String httpRequestRegex = "(GET|POST|HEAD|PUT|DELETE|CONNECT|OPTIONS|TRACE|PATCH)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
-
-        final Pattern requestPattern = Pattern.compile(httpRequestRegex);
-        final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
-        if (requestMatcher.matches()) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private boolean isHttpResponse(ByteArray input) {
-        String httpResponseRegex = "HTTP/\\d(\\.\\d)?\\s\\d{3}\\s(\\w*\\s?)*";
-
-        final Pattern responsePattern = Pattern.compile(httpResponseRegex);
-        final Matcher responseMatcher = responsePattern.matcher(input.toString().split("\n")[0].trim());
-        if (responseMatcher.matches()) {
-            return true;
-        }
-        else {
-            return false;
         }
     }
 

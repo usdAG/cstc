@@ -22,6 +22,7 @@ import burp.api.montoya.ui.editor.Editor;
 import burp.api.montoya.ui.editor.HttpRequestEditor;
 import burp.api.montoya.ui.editor.HttpResponseEditor;
 import burp.api.montoya.ui.editor.RawEditor;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.view.filter.FilterState.BurpOperation;
 
 public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor, RawEditor{
@@ -35,6 +36,30 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     private ByteArray requestToResponse;
     private boolean isChangedViaContextMenu = false;
     private boolean isInputRestored = false;
+
+    private boolean hasRawEditor() {
+        return burpEditor instanceof RawEditor;
+    }
+
+    private boolean hasRequestEditor() {
+        return burpEditor instanceof HttpRequestEditor;
+    }
+
+    private boolean hasResponseEditor() {
+        return burpEditor instanceof HttpResponseEditor;
+    }
+
+    private void setEditorText(ByteArray contents) {
+        if (fallbackMode) {
+            fallbackArea.setText(contents.toString());
+            return;
+        }
+
+        JTextArea textArea = findTextAreaComponent(burpEditor.uiComponent());
+        if (textArea != null) {
+            textArea.setText(contents.toString());
+        }
+    }
 
     private void persistInput(DocumentEvent e, JTextArea textArea) {
         try {
@@ -67,7 +92,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
             fallbackMode = true;
         }
 
-        Component component = burpEditor.uiComponent();
+        Component component = fallbackMode ? fallbackArea : burpEditor.uiComponent();
         JTextArea textArea = isInputEditor ? findTextAreaComponent(component) : null;
 
         if(textArea != null) {
@@ -105,12 +130,20 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
 
     @Override
     public ByteArray getContents() {
-        if(operation == BurpOperation.FORMAT)
+        if (fallbackMode) {
+            return ByteArray.byteArray(fallbackArea.getText());
+        }
+
+        if(hasRawEditor())
             return ((RawEditor)burpEditor).getContents();
-        else if(operation == BurpOperation.OUTGOING)
-            return ((HttpRequestEditor)burpEditor).getRequest().toByteArray();
-        else if(operation == BurpOperation.INCOMING)
-            return ((HttpResponseEditor)burpEditor).getResponse().toByteArray();
+        else if(hasRequestEditor()) {
+            HttpRequest request = ((HttpRequestEditor)burpEditor).getRequest();
+            return request == null ? ByteArray.byteArray() : request.toByteArray();
+        }
+        else if(hasResponseEditor()) {
+            HttpResponse response = ((HttpResponseEditor)burpEditor).getResponse();
+            return response == null ? ByteArray.byteArray() : response.toByteArray();
+        }
         else
             return ByteArray.byteArray();
     }
@@ -119,12 +152,24 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     public void setContents(ByteArray contents) {
         isChangedViaContextMenu = true;
         this.lastContent = contents;
-        if(operation == BurpOperation.OUTGOING)
+
+        if(contents.length() == 0) {
+            isChangedViaContextMenu = false;
+            return;
+        }
+
+        if (fallbackMode) {
+            fallbackArea.setText(contents.toString());
+        }
+        else if(hasRawEditor()) {
+            ((RawEditor)burpEditor).setContents(contents);
+        }
+        else if(hasRequestEditor() && Utils.isHttpRequest(contents))
             ((HttpRequestEditor)burpEditor).setRequest(HttpRequest.httpRequest(contents));
-        else if(operation == BurpOperation.INCOMING)
+        else if(hasResponseEditor() && Utils.isHttpResponse(contents))
             ((HttpResponseEditor)burpEditor).setResponse(HttpResponse.httpResponse(contents));
         else
-            ((RawEditor)burpEditor).setContents(contents);
+            setEditorText(contents);
         isChangedViaContextMenu = false;
     }
 

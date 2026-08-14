@@ -1,17 +1,14 @@
 package de.usd.cstchef.operations.extractors;
 
 import burp.api.montoya.core.ByteArray;
-import burp.api.montoya.http.message.requests.HttpRequest;
-import burp.api.montoya.http.message.responses.HttpResponse;
 import de.usd.cstchef.Utils;
-import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.view.ui.VariableTextField;
 import de.usd.cstchef.operations.OperationCategory;
 
 @OperationInfos(
-    name = "Get HTTP XML",
+    name = "Get XML",
     category = OperationCategory.EXTRACTORS,
     description = """
             <html>
@@ -52,14 +49,12 @@ import de.usd.cstchef.operations.OperationCategory;
             </html>
             """
 )
-public class HttpXmlExtractor extends Operation {
+public class XmlExtractor extends Operation {
 
     protected VariableTextField path;
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
-
-        MessageType messageType = parseMessageType(input);
 
         String p = this.path.getText();
 
@@ -67,15 +62,7 @@ public class HttpXmlExtractor extends Operation {
             return input;
         }
 
-        if(messageType == MessageType.REQUEST) {
-            return Utils.xmlExtractor(factory, factory.createHttpRequest(input).body(), p);
-        }
-        else if(messageType == MessageType.RESPONSE) {
-            return Utils.xmlExtractor(factory, factory.createHttpResponse(input).body(), p);
-        }
-        else {
-            return parseRawMessage(input);
-        }
+        return Utils.xmlExtractor(input, p);
     }
 
     @Override

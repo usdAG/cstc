@@ -105,6 +105,7 @@ import de.usd.cstchef.operations.extractors.JsonExtractor;
 import de.usd.cstchef.operations.extractors.LineExtractor;
 import de.usd.cstchef.operations.extractors.RegexExtractor;
 import de.usd.cstchef.operations.extractors.JsonRemover;
+import de.usd.cstchef.operations.extractors.XmlExtractor;
 import de.usd.cstchef.operations.hashing.Blake;
 import de.usd.cstchef.operations.hashing.DSTU7564;
 import de.usd.cstchef.operations.hashing.Gost;
@@ -331,6 +332,76 @@ public class Utils {
         return ByteArray.byteArray(output.toString());
     }
 
+    public static ByteArray xmlExtractor(ByteArray input, String path) throws Exception {
+        return xmlExtractor(factory, input, path);
+    }
+
+    public static ByteArray xmlExtractor(CstcObjectFactory factory, ByteArray input, String path) throws Exception {
+
+        if(path.trim().isEmpty()) {
+            return input;
+        }
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        // XXE prevention as per https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
+        doc.getDocumentElement().normalize();
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Node node;
+
+        try {
+            node = (Node) xPath.compile(path).evaluate(doc, XPathConstants.NODE);
+        }
+        catch(Exception e) {
+            throw new IllegalArgumentException("Invalid XPath Syntax.");
+        }
+
+        if(node == null) {
+            throw new IllegalArgumentException("XML element not found.");
+        }
+
+        String result = node.getNodeValue();
+        if(result == null) {
+            result = node.getTextContent();
+        }
+
+        return factory.createByteArray(result);
+    }
+
+    public static boolean isHttpRequest(ByteArray input) {
+        String httpRequestRegex = "(GET|POST|HEAD|PUT|DELETE|CONNECT|OPTIONS|TRACE|PATCH)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
+
+        final Pattern requestPattern = Pattern.compile(httpRequestRegex);
+        final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
+        if (requestMatcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static boolean isHttpResponse(ByteArray input) {
+        String httpResponseRegex = "HTTP/\\d(\\.\\d)?\\s\\d{3}\\s(\\w*\\s?)*";
+
+        final Pattern responsePattern = Pattern.compile(httpResponseRegex);
+        final Matcher responseMatcher = responsePattern.matcher(input.toString().split("\n")[0].trim());
+        if (responseMatcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public static Class<? extends Operation>[] getOperationsBurp() {
         ZipInputStream zip = null;
         List<Class<? extends Operation>> operations = new ArrayList<Class<? extends Operation>>();
@@ -387,7 +458,7 @@ public class Utils {
                 HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
                 HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
                 Inflate.class,
-                JsonExtractor.class, JsonSetter.class, JsonBeautifier.class, JWTDecode.class, JWTSign.class,
+                JsonExtractor.class, JsonRemover.class, JsonSetter.class, JsonBeautifier.class, JWTDecode.class, JWTSign.class,
                 Length.class, LineExtractor.class, LineSetter.class, Lowercase.class, Luhn.class,
                 MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class,
                 NoOperation.class, NumberCompare.class,
@@ -401,7 +472,7 @@ public class Utils {
                 Tiger.class, TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToDecimal.class, ToHex.class,
                 UnixTimestamp.class, UrlDecode.class, UrlEncode.class, Uppercase.class, UnconditionalJump.class, Unzip.class,
                 Whirlpool.class, WriteFile.class,
-                XmlFullSignature.class, XmlMultiSignature.class, Xor.class, XmlSetter.class, Zip.class, JsonRemover.class
+                XmlFullSignature.class, XmlMultiSignature.class, Xor.class, XmlSetter.class, XmlExtractor.class, Zip.class
         };
     }
 
