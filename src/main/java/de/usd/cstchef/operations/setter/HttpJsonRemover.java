@@ -1,29 +1,28 @@
-package de.usd.cstchef.operations.extractors;
+package de.usd.cstchef.operations.setter;
 
 import javax.swing.JTextField;
 
-import com.jayway.jsonpath.Configuration;
-import com.jayway.jsonpath.DocumentContext;
-import com.jayway.jsonpath.JsonPath;
-
-import com.jayway.jsonpath.spi.json.JsonProvider;
-
 import burp.api.montoya.core.ByteArray;
+import burp.api.montoya.http.message.requests.HttpRequest;
+import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.operations.Operation;
 import de.usd.cstchef.operations.Operation.OperationInfos;
 import de.usd.cstchef.operations.OperationCategory;
 
+
 @OperationInfos(
-    name = "Remove JSON",
-    category = OperationCategory.EXTRACTORS,
+    name = "Remove HTTP JSON",
+    category = OperationCategory.SETTER,
     description = """
             <html>
               <body>
                 <p>
+                  Remove JSON key-value pairs and arrays from HTTP requests and responses based on the keys.
+                </p>
+                <p>
                   This operation uses JsonPath expressions. More information: https://github.com/json-path/JsonPath
                 </p>
-
-                Remover values from JSON.
 
                 <h2>Operators</h2>
                 <table cellspacing="0" cellpadding="3">
@@ -75,37 +74,29 @@ import de.usd.cstchef.operations.OperationCategory;
             </html>
             """
 )
-public class JsonRemover extends Operation {
+public class HttpJsonRemover extends Operation {
 
-    private static JsonProvider provider;
-
-    //TODO should this be a VariableTextField?
     protected JTextField fieldTxt;
-
-    public JsonRemover(){
-        this(new String());
-    }
-
-    public JsonRemover(String key) {
-        super();
-        if (JsonRemover.provider == null) {
-            JsonRemover.provider = Configuration.defaultConfiguration().jsonProvider();
-        }
-        this.setKey(key);
-    }
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
 
-        if (fieldTxt.getText().equals("")) {
+        MessageType messageType = parseMessageType(input);
+
+        String keyName = fieldTxt.getText();
+        if( keyName.equals("") )
             return input;
+
+        JsonRemover remover = new JsonRemover(keyName);
+        if(messageType == MessageType.REQUEST){
+          return HttpRequest.httpRequest(input).withBody(remover.perform(factory.createHttpRequest(input).body())).toByteArray();
         }
-            
-        DocumentContext document = JsonPath.parse(input.toString());
-
-        document.delete(fieldTxt.getText());
-
-        return factory.createByteArray(document.jsonString());
+        else if(messageType == MessageType.RESPONSE){
+            return HttpResponse.httpResponse(input).withBody(remover.perform(factory.createHttpRequest(input).body())).toByteArray();
+        }
+        else{
+            return parseRawMessage(input);
+        }
     }
 
     @Override
