@@ -331,6 +331,76 @@ public class Utils {
         return ByteArray.byteArray(output.toString());
     }
 
+    public static ByteArray xmlExtractor(ByteArray input, String path) throws Exception {
+        return xmlExtractor(factory, input, path);
+    }
+
+    public static ByteArray xmlExtractor(CstcObjectFactory factory, ByteArray input, String path) throws Exception {
+
+        if(path.trim().isEmpty()) {
+            return input;
+        }
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        // XXE prevention as per https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
+        doc.getDocumentElement().normalize();
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Node node;
+
+        try {
+            node = (Node) xPath.compile(path).evaluate(doc, XPathConstants.NODE);
+        }
+        catch(Exception e) {
+            throw new IllegalArgumentException("Invalid XPath Syntax.");
+        }
+
+        if(node == null) {
+            throw new IllegalArgumentException("XML element not found.");
+        }
+
+        String result = node.getNodeValue();
+        if(result == null) {
+            result = node.getTextContent();
+        }
+
+        return factory.createByteArray(result);
+    }
+
+    public static boolean isHttpRequest(ByteArray input) {
+        String httpRequestRegex = "(GET|POST|HEAD|PUT|DELETE|CONNECT|OPTIONS|TRACE|PATCH)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
+
+        final Pattern requestPattern = Pattern.compile(httpRequestRegex);
+        final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
+        if (requestMatcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static boolean isHttpResponse(ByteArray input) {
+        String httpResponseRegex = "HTTP/\\d(\\.\\d)?\\s\\d{3}\\s(\\w*\\s?)*";
+
+        final Pattern responsePattern = Pattern.compile(httpResponseRegex);
+        final Matcher responseMatcher = responsePattern.matcher(input.toString().split("\n")[0].trim());
+        if (responseMatcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public static Class<? extends Operation>[] getOperationsBurp() {
         ZipInputStream zip = null;
         List<Class<? extends Operation>> operations = new ArrayList<Class<? extends Operation>>();
