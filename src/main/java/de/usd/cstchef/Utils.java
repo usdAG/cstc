@@ -104,6 +104,7 @@ import de.usd.cstchef.operations.extractors.HttpXmlExtractor;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
 import de.usd.cstchef.operations.extractors.LineExtractor;
 import de.usd.cstchef.operations.extractors.RegexExtractor;
+import de.usd.cstchef.operations.extractors.JsonRemover;
 import de.usd.cstchef.operations.extractors.XmlExtractor;
 import de.usd.cstchef.operations.hashing.Blake;
 import de.usd.cstchef.operations.hashing.DSTU7564;
@@ -457,7 +458,7 @@ public class Utils {
                 HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
                 HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
                 Inflate.class,
-                JsonExtractor.class, JsonSetter.class, JsonBeautifier.class, JWTDecode.class, JWTSign.class,
+                JsonExtractor.class, JsonRemover.class, JsonSetter.class, JsonBeautifier.class, JWTDecode.class, JWTSign.class,
                 Length.class, LineExtractor.class, LineSetter.class, Lowercase.class, Luhn.class,
                 MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class,
                 NoOperation.class, NumberCompare.class,
