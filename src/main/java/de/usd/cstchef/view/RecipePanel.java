@@ -960,12 +960,12 @@ public class RecipePanel extends JPanel implements ChangeListener {
             ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() : inputText.getRequest().toByteArray(), inputText.getRequestToResponse());
             TreeMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
 
-            if(Utils.isHttpRequest(result)) {
+            if(operation.equals(BurpOperation.OUTGOING)) {
                 HttpRequest bakedRequest = HttpRequest.httpRequest(result);
                 outputText.setRequest(bakedRequest);
                 controllerMod.setRequest(bakedRequest);
                 controllerMod.setResponse(null);
-            } else if (Utils.isHttpResponse(result)){
+            } else if (operation.equals(BurpOperation.INCOMING)){
                 HttpResponse bakedResponse = HttpResponse.httpResponse(result);
                 outputText.setResponse(bakedResponse);
                 controllerMod.setRequest(null);
