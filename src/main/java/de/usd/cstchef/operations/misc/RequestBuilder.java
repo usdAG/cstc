@@ -25,7 +25,7 @@ public class RequestBuilder extends Operation {
 
     @Override
     public void createUI() {
-        this.requestMethodBox = new JComboBox<>(new String[] {"GET", "HEAD", "POST", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE", "PATCH"});
+        this.requestMethodBox = new JComboBox<>(new String[] {"GET", "POST", "HEAD", "CONNECT", "PUT", "TRACE", "OPTIONS", "DELETE", "ACL", "ARBITRARY", "BASELINE-CONTROL", "BCOPY", "BDELETE", "BIND", "BMOVE", "BPROPFIND", "BPROPPATCH", "CHECKIN", "CHECKOUT", "COPY", "DEBUG", "INDEX", "LABEL", "LINK", "LOCK", "MERGE", "MKACTIVITY", "MKCALENDAR", "MKCOL", "MKREDIRECTREF", "MKWORKSPACE", "MOVE", "NOTIFY", "ORDERPATCH", "PATCH", "POLL", "PROPFIND", "PROPPATCH", "REBIND", "REPORT", "RPC_IN_DATA", "RPC_OUT_DATA", "SEARCH", "SUBSCRIBE", "TRACK", "UNBIND", "UNCHECKOUT", "UNLINK", "UNLOCK", "UNSUBSCRIBE", "UPDATE", "UPDATEREDIRECTREF", "VERSION-CONTROL", "X-MS-ENUMATTS"});
         this.addUIElement("Method", this.requestMethodBox);
 
         this.document = new VariableTextField();
