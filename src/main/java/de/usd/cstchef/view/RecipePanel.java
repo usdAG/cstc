@@ -1075,7 +1075,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
     }
 
     private boolean isHttpRequest(ByteArray input) {
-        String httpRequestRegex = "(GET|POST|HEAD|PUT|DELETE|CONNECT|OPTIONS|TRACE|PATCH)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
+        String httpRequestRegex = "(GET|POST|HEAD|CONNECT|PUT|TRACE|OPTIONS|DELETE|ACL|ARBITRARY|BASELINE-CONTROL|BCOPY|BDELETE|BIND|BMOVE|BPROPFIND|BPROPPATCH|CHECKIN|CHECKOUT|COPY|DEBUG|INDEX|LABEL|LINK|LOCK|MERGE|MKACTIVITY|MKCALENDAR|MKCOL|MKREDIRECTREF|MKWORKSPACE|MOVE|NOTIFY|ORDERPATCH|PATCH|POLL|PROPFIND|PROPPATCH|REBIND|REPORT|RPC_IN_DATA|RPC_OUT_DATA|SEARCH|SUBSCRIBE|TRACK|UNBIND|UNCHECKOUT|UNLINK|UNLOCK|UNSUBSCRIBE|UPDATE|UPDATEREDIRECTREF|VERSION-CONTROL|X-MS-ENUMATTS)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
 
         final Pattern requestPattern = Pattern.compile(httpRequestRegex);
         final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
