@@ -14,6 +14,7 @@ import burp.api.montoya.http.handler.RequestToBeSentAction;
 import burp.api.montoya.http.handler.ResponseReceivedAction;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.view.RecipePanel;
 import de.usd.cstchef.view.View;
 import de.usd.cstchef.view.filter.FilterState;
@@ -44,7 +45,12 @@ public class CstcHttpHandler implements HttpHandler {
 
         for (RecipePanel recipePanel : getOrderedRecipePanels(FilterState.BurpOperation.OUTGOING,
                 requestToBeSent.toolSource().toolType())) {
-            modifiedRequest = recipePanel.bake(modifiedRequest, null);
+            ByteArray candidateRequest = recipePanel.bake(modifiedRequest, null);
+            if (!Utils.isHttpRequest(candidateRequest)) {
+                Logger.getInstance().err("CSTC recipe produced an invalid HTTP request. Leaving request unchanged.");
+                return continueWith(requestToBeSent);
+            }
+            modifiedRequest = candidateRequest;
             requestModified = true;
         }
 
@@ -67,7 +73,12 @@ public class CstcHttpHandler implements HttpHandler {
 
         for (RecipePanel recipePanel : getOrderedRecipePanels(FilterState.BurpOperation.INCOMING,
                 responseReceived.toolSource().toolType())) {
-            modifiedResponse = recipePanel.bake(modifiedResponse, responseReceived.initiatingRequest().toByteArray());
+            ByteArray candidateResponse = recipePanel.bake(modifiedResponse, responseReceived.initiatingRequest().toByteArray());
+            if (!Utils.isHttpResponse(candidateResponse)) {
+                Logger.getInstance().err("CSTC recipe produced an invalid HTTP response. Leaving response unchanged.");
+                return continueWith(responseReceived);
+            }
+            modifiedResponse = candidateResponse;
             responseModified = true;
         }
 
