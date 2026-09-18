@@ -233,7 +233,7 @@ public class BurpEditorWrapper implements HttpRequestEditor, HttpResponseEditor,
     public boolean isModified() {
         boolean result = this.getContents().equals(lastContent);
         lastContent = this.getContents();
-        return result;
+        return !result;
     }
 
     @Override
