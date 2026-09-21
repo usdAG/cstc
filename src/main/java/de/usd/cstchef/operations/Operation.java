@@ -18,8 +18,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.BasicStroke;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -98,6 +104,8 @@ public abstract class Operation extends JPanel {
     private Popup helpPopup;
     private JComponent helpPopupContent;
     private Timer helpHideTimer;
+    private LoadingIndicator loadingIndicator;
+    private final AtomicInteger runningOperations = new AtomicInteger();
 
     private String comment;
     private JButton commentBtn;
@@ -150,6 +158,8 @@ public abstract class Operation extends JPanel {
         JButton helpBtn = createIconButton(Operation.helpIcon);
         installHelpPopup(helpBtn, opInfos.description());
         commentBtn = createIconButton(noCommentIcon);
+        loadingIndicator = new LoadingIndicator(defaultFontColor);
+        loadingIndicator.setToolTipText("Operation is running");
 
         commentBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -201,6 +211,8 @@ public abstract class Operation extends JPanel {
         header.add(Box.createHorizontalStrut(3));
         header.add(commentBtn);
         header.add(Box.createHorizontalGlue());
+        header.add(loadingIndicator);
+        header.add(Box.createHorizontalStrut(5));
         header.add(disableBtn);
         header.add(Box.createHorizontalStrut(3));
         header.add(breakpointBtn);
@@ -593,6 +605,7 @@ public abstract class Operation extends JPanel {
 
     public ByteArray performOperation(ByteArray input, ByteArray requestToResponse) {
         ByteArray result = null;
+        setOperationRunning(true);
         try {
             if(this instanceof RequestToResponse) {
                 result = this.perform(input, requestToResponse);
@@ -609,26 +622,53 @@ public abstract class Operation extends JPanel {
         } catch (Throwable e) {
             this.setErrorMessage(e);
             return factory.createByteArray("");
+        } finally {
+            setOperationRunning(false);
+        }
+    }
+
+    private void setOperationRunning(boolean running) {
+        int runningCount = running ? runningOperations.incrementAndGet() : runningOperations.decrementAndGet();
+        if (runningCount < 0) {
+            runningOperations.set(0);
+            runningCount = 0;
+        }
+
+        boolean visible = runningCount > 0;
+        Runnable updateLoadingIndicator = () -> loadingIndicator.setRunning(visible);
+
+        if (SwingUtilities.isEventDispatchThread()) {
+            updateLoadingIndicator.run();
+        } else {
+            SwingUtilities.invokeLater(updateLoadingIndicator);
         }
     }
 
     public void setErrorMessage(Throwable e) {
-        boolean error = e != null;
+        Runnable updateErrorMessage = () -> {
+            boolean error = e != null;
 
-        String msg = error ? e.getMessage() : "";
-        String text;
-        if (msg == null) {
-            text = e.getClass().getName();
+            String msg = error ? e.getMessage() : "";
+            String text;
+            if (msg == null) {
+                text = e.getClass().getName();
+            } else {
+                text = error ? (msg.isEmpty() ? e.toString() : msg) : "";
+            }
+
+            this.errorArea.setText(text);
+
+            this.setError(error);
+            this.refreshColors();
+            this.validate();
+            this.repaint();
+        };
+
+        if (SwingUtilities.isEventDispatchThread()) {
+            updateErrorMessage.run();
         } else {
-            text = error ? (msg.isEmpty() ? e.toString() : msg) : "";
+            SwingUtilities.invokeLater(updateErrorMessage);
         }
-
-        this.errorArea.setText(text);
-
-        this.setError(error);
-        this.refreshColors();
-        this.validate();
-        this.repaint();
     }
 
     public void removeChangeListener() {
@@ -767,6 +807,55 @@ public abstract class Operation extends JPanel {
         @Override
         public void stateChanged(ChangeEvent e) {
             notifyChange();
+        }
+    }
+
+    private static class LoadingIndicator extends JComponent {
+        private static final int SIZE = 14;
+
+        private final Timer timer;
+        private final Color color;
+        private int angle;
+
+        private LoadingIndicator(Color color) {
+            this.color = color;
+            this.setPreferredSize(new Dimension(SIZE, SIZE));
+            this.setMinimumSize(new Dimension(SIZE, SIZE));
+            this.setMaximumSize(new Dimension(SIZE, SIZE));
+            this.setVisible(false);
+            this.timer = new Timer(80, e -> {
+                angle = (angle + 30) % 360;
+                repaint();
+            });
+        }
+
+        private void setRunning(boolean running) {
+            setVisible(running);
+            if (running) {
+                if (!timer.isRunning()) {
+                    timer.start();
+                }
+            } else {
+                timer.stop();
+            }
+            revalidate();
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g.create();
+            try {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(color);
+                Stroke oldStroke = g2.getStroke();
+                g2.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+                g2.drawArc(2, 2, SIZE - 5, SIZE - 5, angle, 270);
+                g2.setStroke(oldStroke);
+            } finally {
+                g2.dispose();
+            }
         }
     }
 }

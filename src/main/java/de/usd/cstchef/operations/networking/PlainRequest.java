@@ -1,11 +1,16 @@
 package de.usd.cstchef.operations.networking;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.swing.JCheckBox;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import burp.BurpUtils;
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.core.ByteArray;
@@ -24,17 +29,40 @@ public class PlainRequest extends Operation {
     private VariableTextField hostTxt;
     private VariableTextField portTxt;
     private JCheckBox sslEnabledBox;
+    private JSpinner timeoutSecondsSpinner;
 
     @Override
     protected ByteArray perform(ByteArray input) throws Exception {
         MontoyaApi api = BurpUtils.getInstance().getApi();
         HttpService service = HttpService.httpService(hostTxt.getText(), Integer.valueOf(portTxt.getText()), sslEnabledBox.isSelected());
+        int timeoutSeconds = (Integer) timeoutSecondsSpinner.getValue();
 
         Callable<HttpRequestResponse> runnable = new PlainRequestRunnable(input, service, api);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<HttpRequestResponse> future = executor.submit(runnable);
-        HttpRequestResponse result = future.get();
-        return result == null ? null : result.response().toByteArray();
+        ExecutorService executor = Executors.newSingleThreadExecutor(task -> {
+            Thread thread = new Thread(task, "CSTC Plain Request");
+            thread.setDaemon(true);
+            return thread;
+        });
+
+        try {
+            Future<HttpRequestResponse> future = executor.submit(runnable);
+            HttpRequestResponse result = future.get(timeoutSeconds, TimeUnit.SECONDS);
+            if (result == null || result.response() == null) {
+                throw new IllegalStateException("No response received.");
+            }
+
+            return result.response().toByteArray();
+        } catch (TimeoutException e) {
+            throw new TimeoutException("Request timed out after " + timeoutSeconds + " seconds.");
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof Exception) {
+                throw (Exception) cause;
+            }
+            throw e;
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Override
@@ -47,6 +75,9 @@ public class PlainRequest extends Operation {
 
         this.sslEnabledBox = new JCheckBox();
         this.addUIElement("SSL", this.sslEnabledBox);
+
+        this.timeoutSecondsSpinner = new JSpinner(new SpinnerNumberModel(30, 1, 900, 1));
+        this.addUIElement("Timeout (s)", this.timeoutSecondsSpinner);
     }
 
     public class PlainRequestRunnable implements Callable<HttpRequestResponse>{
