@@ -3,7 +3,7 @@ package de.usd.cstchef.operations.misc;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -19,6 +19,9 @@ import de.usd.cstchef.view.ui.VariableTextField;
 @OperationInfos(name = "Read File", category = OperationCategory.MISC, description = "Reads data from a file.")
 public class ReadFile extends Operation implements ActionListener {
 
+    // Max size set to 100MB per file
+    private static final long MAX_FILE_SIZE_BYTES = 100L * 1024L * 1024L;
+
     private final JFileChooser fileChooser = new JFileChooser();
     private VariableTextField fileNameTxt;
 
@@ -30,19 +33,28 @@ public class ReadFile extends Operation implements ActionListener {
         // canonicalize base directory (follows symlinks)
         Path basePath = Paths.get(basePathField.getText()).toRealPath();
 
-        Path requestedPath = basePath.resolve(fileNameTxt.getText()).normalize().toRealPath();
+        Path requestedPath = basePath.resolve(fileNameTxt.getText()).normalize();
+
+        if(!Files.exists(requestedPath)){
+            throw new IllegalArgumentException("The requested file does not exist.");
+        }
+
+        requestedPath = requestedPath.toRealPath();
 
         if(!requestedPath.startsWith(basePath)) {
             throw new IllegalArgumentException("The requested file is located outside the base directory.");
         }
 
-        File file = new File(requestedPath.toString());
-        FileInputStream fis = new FileInputStream(file);
-        byte[] data = new byte[(int) file.length()];
-        fis.read(data);
-        fis.close();
+        if (!Files.isRegularFile(requestedPath)) {
+            throw new IllegalArgumentException("The requested path is not a regular file.");
+        }        
 
-        return factory.createByteArray(data);
+        long fileSize = Files.size(requestedPath);
+        if (fileSize > MAX_FILE_SIZE_BYTES) {
+            throw new IllegalArgumentException("The requested file is too large. Maximum size is 100 MB.");
+        }
+
+        return factory.createByteArray(Files.readAllBytes(requestedPath));
     }
 
     public void createUI() {
