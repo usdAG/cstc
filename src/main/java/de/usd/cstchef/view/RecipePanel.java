@@ -889,8 +889,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private ByteArray doBake(ByteArray input, ByteArray requestToResponse, boolean updateContentLength) {
 
-        // save content length in case it is set. null because headerValue returns null if header is not found
-        String contentLength = "null";
+        // Save content length in case it is set. headerValue returns null if the header is not found.
+        String contentLength = null;
         
         if(Utils.isHttpRequest(input)) {
             contentLength = HttpRequest.httpRequest(input).headerValue("Content-Length");
@@ -953,8 +953,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
             // if not set the previous value again in case it was changed during baking
             else {
-                if(!contentLength.equals("null")) {
-                    result = HttpRequest.httpRequest(result).withHeader("Content-Length", contentLength).toByteArray();
+                if(contentLength != null) {
+                    if(Utils.isHttpRequest(result)) {
+                        result = HttpRequest.httpRequest(result).withHeader("Content-Length", contentLength).toByteArray();
+                    }
+                    else if(Utils.isHttpResponse(result)) {
+                        result = HttpResponse.httpResponse(result).withUpdatedHeader("Content-Length", contentLength).toByteArray();
+                    }
                 }
             }
         }
