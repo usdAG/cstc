@@ -87,6 +87,8 @@ import de.usd.cstchef.operations.encryption.AesDecryption;
 import de.usd.cstchef.operations.encryption.AesEncryption;
 import de.usd.cstchef.operations.encryption.DesDecryption;
 import de.usd.cstchef.operations.encryption.DesEncryption;
+import de.usd.cstchef.operations.encryption.PgpDecryption;
+import de.usd.cstchef.operations.encryption.PgpEncryption;
 import de.usd.cstchef.operations.encryption.RsaDecryption;
 import de.usd.cstchef.operations.encryption.RsaEncryption;
 import de.usd.cstchef.operations.encryption.SM4Decryption;
@@ -143,6 +145,7 @@ import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
 import de.usd.cstchef.operations.signature.JWTDecode;
 import de.usd.cstchef.operations.signature.JWTSign;
+import de.usd.cstchef.operations.signature.PgpSign;
 import de.usd.cstchef.operations.signature.RsaSignature;
 import de.usd.cstchef.operations.signature.SM2Signature;
 import de.usd.cstchef.operations.signature.SoapMultiSignature;
@@ -463,7 +466,7 @@ public class Utils {
                 Length.class, LineExtractor.class, LineSetter.class, Lowercase.class, Luhn.class,
                 MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class,
                 NoOperation.class, NumberCompare.class,
-                Prefix.class, PlainRequest.class,
+                Prefix.class, PgpDecryption.class, PgpEncryption.class, PgpSign.class, PlainRequest.class,
                 RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, RegexMatch.class, RequestBuilder.class, Reverse.class,
                 Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RemoveWhitespace.class, RequestToResponse.class,
                 SM2Signature.class, SM3.class, SM4Encryption.class, SM4Decryption.class, SoapMultiSignature.class, StopOperation.class,
