@@ -145,7 +145,7 @@ import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
 import de.usd.cstchef.operations.signature.JWTDecode;
 import de.usd.cstchef.operations.signature.JWTSign;
-import de.usd.cstchef.operations.signature.PgpSignature;
+import de.usd.cstchef.operations.signature.PgpSign;
 import de.usd.cstchef.operations.signature.RsaSignature;
 import de.usd.cstchef.operations.signature.SM2Signature;
 import de.usd.cstchef.operations.signature.SoapMultiSignature;
@@ -466,9 +466,8 @@ public class Utils {
                 Length.class, LineExtractor.class, LineSetter.class, Lowercase.class, Luhn.class,
                 MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class,
                 NoOperation.class, NumberCompare.class,
-                Prefix.class, PlainRequest.class,
+                Prefix.class, PgpDecryption.class, PgpEncryption.class, PgpSign.class, PlainRequest.class,
                 RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, RegexMatch.class, RequestBuilder.class, Reverse.class,
-                PgpDecryption.class, PgpEncryption.class, PgpSignature.class,
                 Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RemoveWhitespace.class, RequestToResponse.class,
                 SM2Signature.class, SM3.class, SM4Encryption.class, SM4Decryption.class, SoapMultiSignature.class, StopOperation.class,
                 SetIfEmpty.class, SHA1.class, SHA2.class, SHA3.class, Skein.class, SplitAndSelect.class,
