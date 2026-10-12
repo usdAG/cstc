@@ -10,7 +10,7 @@
 
         <properties>
 			<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-			<bouncycastle.version>1.85</bouncycastle.version>
+			<bouncycastle.version>1.86</bouncycastle.version>
         </properties>
 
         <dependencies>
