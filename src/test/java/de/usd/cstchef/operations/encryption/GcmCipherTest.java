@@ -24,7 +24,7 @@ public class GcmCipherTest {
 
     @Test
     public void aesGcmRoundTrip() throws Exception {
-        byte[] plain = "attack at dawn".getBytes("UTF-8");
+        byte[] plain = "thisisatest".getBytes("UTF-8");
 
         byte[] enc = crypt(Cipher.ENCRYPT_MODE, "AES", "GCM", "NOPADDING", KEY_128, NONCE_12, plain);
         byte[] dec = crypt(Cipher.DECRYPT_MODE, "AES", "GCM", "NOPADDING", KEY_128, NONCE_12, enc);
@@ -45,7 +45,7 @@ public class GcmCipherTest {
 
     @Test(expected = AEADBadTagException.class)
     public void aesGcmDetectsTampering() throws Exception {
-        byte[] plain = "attack at dawn".getBytes("UTF-8");
+        byte[] plain = "thisisatest".getBytes("UTF-8");
 
         byte[] enc = crypt(Cipher.ENCRYPT_MODE, "AES", "GCM", "NOPADDING", KEY_128, NONCE_12, plain);
         enc[0] ^= 0x01;
@@ -54,7 +54,7 @@ public class GcmCipherTest {
 
     @Test
     public void sm4GcmRoundTrip() throws Exception {
-        byte[] plain = "attack at dawn".getBytes("UTF-8");
+        byte[] plain = "thisisatest".getBytes("UTF-8");
 
         byte[] enc = crypt(Cipher.ENCRYPT_MODE, "SM4", "GCM", "NOPADDING", KEY_128, NONCE_12, plain);
         byte[] dec = crypt(Cipher.DECRYPT_MODE, "SM4", "GCM", "NOPADDING", KEY_128, NONCE_12, enc);
@@ -65,7 +65,7 @@ public class GcmCipherTest {
     // The refactored cipher setup must keep the existing non-AEAD modes working.
     @Test
     public void aesCbcRoundTripStillWorks() throws Exception {
-        byte[] plain = "legacy mode".getBytes("UTF-8");
+        byte[] plain = "thisisatest".getBytes("UTF-8");
 
         byte[] enc = crypt(Cipher.ENCRYPT_MODE, "AES", "CBC", "PKCS5PADDING", KEY_128, IV_16, plain);
         byte[] dec = crypt(Cipher.DECRYPT_MODE, "AES", "CBC", "PKCS5PADDING", KEY_128, IV_16, enc);
@@ -76,7 +76,7 @@ public class GcmCipherTest {
 
     @Test
     public void aesEcbRoundTripStillWorks() throws Exception {
-        byte[] plain = "legacy mode".getBytes("UTF-8");
+        byte[] plain = "thisisatest".getBytes("UTF-8");
 
         byte[] enc = crypt(Cipher.ENCRYPT_MODE, "AES", "ECB", "PKCS5PADDING", KEY_128, new byte[0], plain);
         byte[] dec = crypt(Cipher.DECRYPT_MODE, "AES", "ECB", "PKCS5PADDING", KEY_128, new byte[0], enc);
