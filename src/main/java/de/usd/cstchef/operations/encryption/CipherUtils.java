@@ -2,6 +2,7 @@ package de.usd.cstchef.operations.encryption;
 
 import java.security.Provider;
 import java.security.Security;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class CipherUtils {
@@ -46,9 +47,30 @@ public class CipherUtils {
                 }
             }
         }
+        /*
+         * Since JDK 9 the providers no longer list GCM in "SupportedModes";
+         * it is only registered as complete transformations such as
+         * "Cipher.AES/GCM/NoPadding". Lift GCM out of those keys in a second
+         * pass so the unordered property iteration above cannot overwrite it.
+         */
+        for (Provider provider : Security.getProviders()) {
+            for (String key : provider.stringPropertyNames()) {
+                if (!key.startsWith("Cipher.") || key.contains(" ")) {
+                    continue;
+                }
+                String[] transformation = key.substring(7).split("/");
+                if (transformation.length != 3 || !transformation[1].equalsIgnoreCase("GCM")) {
+                    continue;
+                }
+                CipherInfo info = algos.getOrDefault(transformation[0], new CipherInfo());
+                info.addMode("GCM");
+                this.algos.put(transformation[0], info);
+            }
+        }
+
         // Add info for SM4
         CipherInfo info = new CipherInfo();
-        info.setModes(new String[]{"ECB", "CBC", "CTR", "OFB", "CFB"});
+        info.setModes(new String[]{"ECB", "CBC", "CTR", "OFB", "CFB", "GCM"});
         info.setPaddings(new String[]{"NOPADDING", "PKCS5PADDING"});
         algos.put("SM4", info);
     }
@@ -86,6 +108,16 @@ public class CipherUtils {
 
         public void setModes(String[] modes) {
             this.modes = modes;
+        }
+
+        public void addMode(String mode) {
+            for (String existing : this.modes) {
+                if (existing.equalsIgnoreCase(mode)) {
+                    return;
+                }
+            }
+            this.modes = Arrays.copyOf(this.modes, this.modes.length + 1);
+            this.modes[this.modes.length - 1] = mode;
         }
 
         public String[] getPaddings() {
