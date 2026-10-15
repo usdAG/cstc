@@ -26,8 +26,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -65,6 +67,7 @@ import burp.api.montoya.http.message.responses.HttpResponse;
 import burp.api.montoya.persistence.PersistedObject;
 import burp.api.montoya.ui.hotkey.HotKey;
 import burp.api.montoya.ui.hotkey.HotKeyHandler;
+import de.usd.cstchef.Utils;
 import de.usd.cstchef.Utils.MessageType;
 import de.usd.cstchef.VariableStore;
 import de.usd.cstchef.operations.Operation;
@@ -75,6 +78,12 @@ import de.usd.cstchef.view.ui.PlaceholderTextField;
 import de.usd.cstchef.view.ui.TextChangedListener;
 
 public class RecipePanel extends JPanel implements ChangeListener {
+
+    private static final ExecutorService UI_BAKE_EXECUTOR = Executors.newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "CSTC UI Bake");
+        thread.setDaemon(true);
+        return thread;
+    });
 
     private static final Path FIRST_LAUNCH_MARKER = Paths.get(System.getProperty("user.home"), ".config", ".cstc");
     private static final boolean SHOULD_INITIALIZE_DEFAULT_EXAMPLES = initializeDefaultExamplesFlag();
@@ -96,6 +105,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
     private CstcMessageEditorController controllerMod;
 
     private Timer bakeTimer;
+    private Future<?> currentUiBake;
+    private final AtomicLong uiBakeGeneration = new AtomicLong();
 
     private JLabel inactiveWarning;
 
@@ -104,6 +115,8 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
     private static ImageIcon plusIcon = new ImageIcon(Operation.class.getResource("/plus.png"));
     private static ImageIcon minusIcon = new ImageIcon(Operation.class.getResource("/minus.png"));
+
+    private static boolean filterDialogHotKeyRegistered = false;
 
     private JButton filters = new JButton("Filter");
 
@@ -249,10 +262,13 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
         });
 
-        HotKey hotKey = HotKey.hotKey("Open Filter Dialog", "Ctrl+Shift+F");
-        HotKeyHandler handler = event -> filters.doClick();
-        BurpUtils.getInstance().getApi().userInterface().registerHotKeyHandler(hotKey, handler);
-        filters.setToolTipText("Hotkey from within a message editor: Ctrl + Shift + F");
+        if(!RecipePanel.filterDialogHotKeyRegistered){
+            HotKey hotKey = HotKey.hotKey("Open Filter Dialog", "Ctrl+Shift+F");
+            HotKeyHandler handler = event -> filters.doClick();
+            BurpUtils.getInstance().getApi().userInterface().registerHotKeyHandler(hotKey, handler);
+            filters.setToolTipText("Hotkey from within a message editor: Ctrl + Shift + F");
+            RecipePanel.filterDialogHotKeyRegistered = true;
+        }        
 
         bakeButton.setEnabled(!autoBake);
         controlsPanel.add(bakeButton);
@@ -871,15 +887,15 @@ public class RecipePanel extends JPanel implements ChangeListener {
         fw.close();
     }
 
-    private ByteArray doBake(ByteArray input, ByteArray requestToResponse) {
+    private ByteArray doBake(ByteArray input, ByteArray requestToResponse, boolean updateContentLength) {
 
-        // save content length in case it is set. null because headerValue returns null if header is not found
-        String contentLength = "null";
+        // Save content length in case it is set. headerValue returns null if the header is not found.
+        String contentLength = null;
         
-        if(isHttpRequest(input)) {
+        if(Utils.isHttpRequest(input)) {
             contentLength = HttpRequest.httpRequest(input).headerValue("Content-Length");
         }
-        else if(isHttpResponse(input)) {
+        else if(Utils.isHttpResponse(input)) {
             contentLength = HttpResponse.httpResponse(input).headerValue("Content-Length");
         }
         
@@ -927,18 +943,23 @@ public class RecipePanel extends JPanel implements ChangeListener {
             }
 
             // if isSelected update the content length
-            if(contentLengthCheckbox.isSelected()) {
-                if(isHttpRequest(input)) {
+            if(updateContentLength) {
+                if(Utils.isHttpRequest(result)) {
                     result = HttpRequest.httpRequest(result).withBody(HttpRequest.httpRequest(result).body()).toByteArray();
                 }
-                else if(isHttpResponse(input)) {
+                else if(Utils.isHttpResponse(result)) {
                     result = HttpResponse.httpResponse(result).withBody(HttpResponse.httpResponse(result).body()).toByteArray();
                 }
             }
             // if not set the previous value again in case it was changed during baking
             else {
-                if(!contentLength.equals("null")) {
-                    result = HttpRequest.httpRequest(result).withHeader("Content-Length", contentLength).toByteArray();
+                if(contentLength != null) {
+                    if(Utils.isHttpRequest(result)) {
+                        result = HttpRequest.httpRequest(result).withHeader("Content-Length", contentLength).toByteArray();
+                    }
+                    else if(Utils.isHttpResponse(result)) {
+                        result = HttpResponse.httpResponse(result).withUpdatedHeader("Content-Length", contentLength).toByteArray();
+                    }
                 }
             }
         }
@@ -953,36 +974,81 @@ public class RecipePanel extends JPanel implements ChangeListener {
         }
 
         this.bakeTimer = new Timer(threshold, event -> {
-            ByteArray result = doBake(inputText.getRequest() == null ? inputText.getContents() : inputText.getRequest().toByteArray(), inputText.getRequestToResponse());
-            TreeMap<String, ByteArray> variables = VariableStore.getInstance().getVariables();
-
-            if( operation == BurpOperation.OUTGOING) {
-                outputText.setRequest(HttpRequest.httpRequest(result));
-                controllerMod.setRequest(HttpRequest.httpRequest(result));
-            } else if (operation == BurpOperation.INCOMING){
-                outputText.setResponse(HttpResponse.httpResponse(result));
-                controllerMod.setResponse(HttpResponse.httpResponse(result));
-            }
-            else{
-                outputText.setContents(result);
-                // TODO: MessageEditorController?
-
-            }
-            VariablesWindow vw = VariablesWindow.getInstance();
-            if (vw.isVisible()) {
-                vw.refresh(variables);
-            }
-            PopupVariableMenu.refresh(variables);
+            scheduleUiBake();
         });
         this.bakeTimer.setRepeats(false);
         this.bakeTimer.start();
+    }
+
+    private void scheduleUiBake() {
+        long bakeGeneration = this.uiBakeGeneration.incrementAndGet();
+        HttpRequest inputRequest = inputText.getRequest();
+        ByteArray input = inputRequest == null ? inputText.getContents() : inputRequest.toByteArray();
+        ByteArray requestToResponse = inputText.getRequestToResponse();
+        boolean updateContentLength = contentLengthCheckbox.isSelected();
+        BurpOperation currentOperation = operation;
+
+        if (this.currentUiBake != null && !this.currentUiBake.isDone()) {
+            this.currentUiBake.cancel(true);
+        }
+
+        this.currentUiBake = UI_BAKE_EXECUTOR.submit(() -> {
+            ByteArray result;
+            TreeMap<String, ByteArray> variables;
+            VariableStore store = VariableStore.getInstance();
+
+            try {
+                store.lock();
+                result = doBake(input, requestToResponse, updateContentLength);
+                variables = store.getVariables();
+            } catch (Throwable e) {
+                Logger.getInstance().err("Could not bake recipe '" + recipeName + "': " + e.getMessage());
+                return;
+            } finally {
+                store.unlock();
+            }
+
+            SwingUtilities.invokeLater(() -> {
+                if (bakeGeneration != uiBakeGeneration.get()) {
+                    return;
+                }
+
+                applyBakeResult(result, variables, currentOperation);
+            });
+        });
+    }
+
+    private void applyBakeResult(ByteArray result, TreeMap<String, ByteArray> variables, BurpOperation currentOperation) {
+        if(currentOperation.equals(BurpOperation.OUTGOING)) {
+            HttpRequest bakedRequest = HttpRequest.httpRequest(result);
+            outputText.setRequest(bakedRequest);
+            controllerMod.setRequest(bakedRequest);
+            controllerMod.setResponse(null);
+        } else if (currentOperation.equals(BurpOperation.INCOMING)){
+            HttpResponse bakedResponse = HttpResponse.httpResponse(result);
+            outputText.setResponse(bakedResponse);
+            controllerMod.setRequest(null);
+            controllerMod.setResponse(bakedResponse);
+        }
+        else{
+            outputText.setContents(result);
+            controllerMod.setRequest(null);
+            controllerMod.setResponse(null);
+            // TODO: MessageEditorController?
+
+        }
+        VariablesWindow vw = VariablesWindow.getInstance();
+        if (vw.isVisible()) {
+            vw.refresh(variables);
+        }
+        PopupVariableMenu.refresh(variables);
     }
 
     public ByteArray bake(ByteArray input, ByteArray /* make request available if a response is to bake (to use in RequesToResponse) */ requestToResponse) {
         VariableStore store = VariableStore.getInstance();
         try {
             store.lock();
-            return this.doBake(input, requestToResponse);
+            return this.doBake(input, requestToResponse, contentLengthCheckbox.isSelected());
         } finally {
             store.unlock();
         }
@@ -1006,13 +1072,7 @@ public class RecipePanel extends JPanel implements ChangeListener {
         if (!this.autoBake) {
             return;
         }
-        VariableStore store = VariableStore.getInstance();
-        try {
-            store.lock();
-            this.bake(true);
-        } finally {
-            store.unlock();
-        }
+        this.bake(true);
     }
 
     private void saveRecipe() {
@@ -1071,32 +1131,6 @@ public class RecipePanel extends JPanel implements ChangeListener {
 
         if (!BurpUtils.getInstance().getApi().burpSuite().version().edition().equals(BurpSuiteEdition.COMMUNITY_EDITION)) {
             saveRecipe();
-        }
-    }
-
-    private boolean isHttpRequest(ByteArray input) {
-        String httpRequestRegex = "(GET|POST|HEAD|CONNECT|PUT|TRACE|OPTIONS|DELETE|ACL|ARBITRARY|BASELINE-CONTROL|BCOPY|BDELETE|BIND|BMOVE|BPROPFIND|BPROPPATCH|CHECKIN|CHECKOUT|COPY|DEBUG|INDEX|LABEL|LINK|LOCK|MERGE|MKACTIVITY|MKCALENDAR|MKCOL|MKREDIRECTREF|MKWORKSPACE|MOVE|NOTIFY|ORDERPATCH|PATCH|POLL|PROPFIND|PROPPATCH|REBIND|REPORT|RPC_IN_DATA|RPC_OUT_DATA|SEARCH|SUBSCRIBE|TRACK|UNBIND|UNCHECKOUT|UNLINK|UNLOCK|UNSUBSCRIBE|UPDATE|UPDATEREDIRECTREF|VERSION-CONTROL|X-MS-ENUMATTS)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
-
-        final Pattern requestPattern = Pattern.compile(httpRequestRegex);
-        final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
-        if (requestMatcher.matches()) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    private boolean isHttpResponse(ByteArray input) {
-        String httpResponseRegex = "HTTP/\\d(\\.\\d)?\\s\\d{3}\\s(\\w*\\s?)*";
-
-        final Pattern responsePattern = Pattern.compile(httpResponseRegex);
-        final Matcher responseMatcher = responsePattern.matcher(input.toString().split("\n")[0].trim());
-        if (responseMatcher.matches()) {
-            return true;
-        }
-        else {
-            return false;
         }
     }
 

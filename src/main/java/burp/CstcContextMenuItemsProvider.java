@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import burp.api.montoya.MontoyaApi;
 import burp.api.montoya.ui.contextmenu.ContextMenuEvent;
@@ -61,7 +62,7 @@ public class CstcContextMenuItemsProvider implements ContextMenuItemsProvider {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        view.getRecipePanelAtIndex(index).setFormatMessage(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(1), MessageType.RESPONSE);
+                        view.getRecipePanelAtIndex(index).setFormatMessage(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0), MessageType.RESPONSE);
                         highlightExtensionName();
                     }
                     
@@ -86,7 +87,7 @@ public class CstcContextMenuItemsProvider implements ContextMenuItemsProvider {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        view.getRecipePanelAtIndex(index).setFormatMessage(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(1), MessageType.RESPONSE);
+                        view.getRecipePanelAtIndex(index).setFormatMessage(event.messageEditorRequestResponse().isPresent() ? event.messageEditorRequestResponse().get().requestResponse() : event.selectedRequestResponses().get(0), MessageType.RESPONSE);
                         highlightExtensionName();
                     }
                     
@@ -105,7 +106,11 @@ public class CstcContextMenuItemsProvider implements ContextMenuItemsProvider {
 
         @Override
         public void run() {
-            resetHighlighting();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run(){
+                    resetHighlighting();
+                }
+            });
         }
         
         };

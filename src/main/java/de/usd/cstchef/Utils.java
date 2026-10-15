@@ -87,6 +87,8 @@ import de.usd.cstchef.operations.encryption.AesDecryption;
 import de.usd.cstchef.operations.encryption.AesEncryption;
 import de.usd.cstchef.operations.encryption.DesDecryption;
 import de.usd.cstchef.operations.encryption.DesEncryption;
+import de.usd.cstchef.operations.encryption.PgpDecryption;
+import de.usd.cstchef.operations.encryption.PgpEncryption;
 import de.usd.cstchef.operations.encryption.RsaDecryption;
 import de.usd.cstchef.operations.encryption.RsaEncryption;
 import de.usd.cstchef.operations.encryption.SM4Decryption;
@@ -104,6 +106,7 @@ import de.usd.cstchef.operations.extractors.HttpXmlExtractor;
 import de.usd.cstchef.operations.extractors.JsonExtractor;
 import de.usd.cstchef.operations.extractors.LineExtractor;
 import de.usd.cstchef.operations.extractors.RegexExtractor;
+import de.usd.cstchef.operations.extractors.XmlExtractor;
 import de.usd.cstchef.operations.hashing.Blake;
 import de.usd.cstchef.operations.hashing.DSTU7564;
 import de.usd.cstchef.operations.hashing.Gost;
@@ -135,11 +138,15 @@ import de.usd.cstchef.operations.setter.HttpSetBody;
 import de.usd.cstchef.operations.setter.HttpSetCookie;
 import de.usd.cstchef.operations.setter.HttpSetUri;
 import de.usd.cstchef.operations.setter.HttpXmlSetter;
+import de.usd.cstchef.operations.setter.JsonRemover;
+import de.usd.cstchef.operations.setter.HttpJsonRemover;
 import de.usd.cstchef.operations.setter.XmlSetter;
 import de.usd.cstchef.operations.setter.JsonSetter;
 import de.usd.cstchef.operations.setter.LineSetter;
+import de.usd.cstchef.operations.signature.EdDsaSignature;
 import de.usd.cstchef.operations.signature.JWTDecode;
 import de.usd.cstchef.operations.signature.JWTSign;
+import de.usd.cstchef.operations.signature.PgpSign;
 import de.usd.cstchef.operations.signature.RsaSignature;
 import de.usd.cstchef.operations.signature.SM2Signature;
 import de.usd.cstchef.operations.signature.SoapMultiSignature;
@@ -330,6 +337,76 @@ public class Utils {
         return ByteArray.byteArray(output.toString());
     }
 
+    public static ByteArray xmlExtractor(ByteArray input, String path) throws Exception {
+        return xmlExtractor(factory, input, path);
+    }
+
+    public static ByteArray xmlExtractor(CstcObjectFactory factory, ByteArray input, String path) throws Exception {
+
+        if(path.trim().isEmpty()) {
+            return input;
+        }
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        // XXE prevention as per https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        dbf.setXIncludeAware(false);
+        dbf.setExpandEntityReferences(false);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
+        doc.getDocumentElement().normalize();
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Node node;
+
+        try {
+            node = (Node) xPath.compile(path).evaluate(doc, XPathConstants.NODE);
+        }
+        catch(Exception e) {
+            throw new IllegalArgumentException("Invalid XPath Syntax.");
+        }
+
+        if(node == null) {
+            throw new IllegalArgumentException("XML element not found.");
+        }
+
+        String result = node.getNodeValue();
+        if(result == null) {
+            result = node.getTextContent();
+        }
+
+        return factory.createByteArray(result);
+    }
+
+    public static boolean isHttpRequest(ByteArray input) {
+        String httpRequestRegex = "(GET|POST|HEAD|PUT|DELETE|CONNECT|OPTIONS|TRACE|PATCH)\\s/\\S*\\sHTTP/\\d(\\.\\d)?";
+
+        final Pattern requestPattern = Pattern.compile(httpRequestRegex);
+        final Matcher requestMatcher = requestPattern.matcher(input.toString().split("\n")[0].trim());
+        if (requestMatcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static boolean isHttpResponse(ByteArray input) {
+        String httpResponseRegex = "HTTP/\\d(\\.\\d)?\\s\\d{3}\\s(\\w*\\s?)*";
+
+        final Pattern responsePattern = Pattern.compile(httpResponseRegex);
+        final Matcher responseMatcher = responsePattern.matcher(input.toString().split("\n")[0].trim());
+        if (responseMatcher.matches()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public static Class<? extends Operation>[] getOperationsBurp() {
         ZipInputStream zip = null;
         List<Class<? extends Operation>> operations = new ArrayList<Class<? extends Operation>>();
@@ -377,20 +454,21 @@ public class Utils {
                 Counter.class, Concatenate.class,
                 DateTime.class, Deflate.class, DesDecryption.class, DesEncryption.class,
                 Divide.class, DivideList.class, DSTU7564.class,
+                EdDsaSignature.class,
                 FromBase64.class, FromDecimal.class, FromHex.class,
                 GetVariable.class, Gost.class, GUnzip.class, Gzip.class,
                 Hmac.class, HttpBodyExtractor.class, HttpCookieExtractor.class, HttpGetExtractor.class,
                 HttpGetSetter.class, HttpHeaderExtractor.class, HttpHeaderSetter.class, HttpHeaderRemove.class,
-                HttpJsonExtractor.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
+                HttpJsonExtractor.class, HttpJsonRemover.class, HttpJsonSetter.class, HttpMethodExtractor.class, HttpMultipartExtractor.class,
                 HttpMultipartSetter.class, HttpPostExtractor.class, HttpPostSetter.class, HttpRemoveCookie.class, HttpSetBody.class,
                 HttpSetCookie.class, HttpSetUri.class, HttpUriExtractor.class, HttpXmlExtractor.class,
                 HttpXmlSetter.class, HtmlEncode.class, HtmlDecode.class,
                 Inflate.class,
-                JsonExtractor.class, JsonSetter.class, JsonBeautifier.class, JWTDecode.class, JWTSign.class,
+                JsonExtractor.class, JsonRemover.class, JsonSetter.class, JsonBeautifier.class, JWTDecode.class, JWTSign.class,
                 Length.class, LineExtractor.class, LineSetter.class, Lowercase.class, Luhn.class,
                 MD2.class, MD4.class, MD5.class, Mean.class, Median.class, Multiply.class, MultiplyList.class,
                 NoOperation.class, NumberCompare.class,
-                Prefix.class, PlainRequest.class,
+                Prefix.class, PgpDecryption.class, PgpEncryption.class, PgpSign.class, PlainRequest.class,
                 RandomNumber.class, RandomUUID.class, ReadFile.class, RegexExtractor.class, RegexMatch.class, RequestBuilder.class, Reverse.class,
                 Replace.class, RIPEMD.class, RsaDecryption.class, RsaEncryption.class, RsaSignature.class, RemoveWhitespace.class, RequestToResponse.class,
                 SM2Signature.class, SM3.class, SM4Encryption.class, SM4Decryption.class, SoapMultiSignature.class, StopOperation.class,
@@ -400,7 +478,7 @@ public class Utils {
                 Tiger.class, TimestampOffset.class, TimestampToDateTime.class, ToBase64.class, ToDecimal.class, ToHex.class,
                 UnixTimestamp.class, UrlDecode.class, UrlEncode.class, Uppercase.class, UnconditionalJump.class, Unzip.class,
                 Whirlpool.class, WriteFile.class,
-                XmlFullSignature.class, XmlMultiSignature.class, Xor.class, XmlSetter.class, Zip.class
+                XmlFullSignature.class, XmlMultiSignature.class, Xor.class, XmlSetter.class, XmlExtractor.class, Zip.class
         };
     }
 

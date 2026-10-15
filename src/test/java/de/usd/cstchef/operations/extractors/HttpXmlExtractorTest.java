@@ -21,18 +21,23 @@ import de.usd.cstchef.operations.OperationCategory;
 public class HttpXmlExtractorTest extends HttpXmlExtractor {
 
     // HashMap<Input, Triplet<expectedOutput, keyName, throwsException>>
-    HashMap<String, Triplet<String, String, Boolean>> inputs = new HashMap<>();
+    HashMap<String, Triplet<String, String, Integer>> inputs = new HashMap<>();
 
     @Test
     public void extractionTest() throws Exception {
         for (String inp : inputs.keySet()) {
-            Triplet<String, String, Boolean> res = inputs.get(inp);
+            Triplet<String, String, Integer> res = inputs.get(inp);
             ByteArray inputArray = factory.createByteArray(inp);
             ByteArray outputArray = factory.createByteArray(res.getValue0());
-            this.fieldTxt.setText(res.getValue1());
-            if (res.getValue2()) {
+            this.path.setText(res.getValue1());
+            System.out.println(res.getValue1());
+            if (res.getValue2() == 1) {
                 Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
                 assertEquals("XML element not found.", exception.getMessage());
+            }
+            else if(res.getValue2() == 2) {
+                Exception exception = assertThrows(IllegalArgumentException.class, () -> perform(inputArray));
+                assertEquals("Invalid XPath Syntax.", exception.getMessage());
             }
             else{
                 assertArrayEquals(outputArray.getBytes(), perform(inputArray).getBytes());
@@ -49,7 +54,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         // outer tag (HTTP Request && param correct)
         String reqIn1 = """
                 GET / HTTP/2
-                Header1: a
+                Host: a
                 Content-Type: application/xml
 
                 <?xml version="1.0" encoding="utf-8"?>
@@ -61,13 +66,13 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                 </RootTag>
                 """;
         String reqOut1 = "tag1";
-        String reqTag1 = "Tag1";
-        Triplet<String, String, Boolean> reqTriplet1 = new Triplet<String, String, Boolean>(reqOut1, reqTag1, false);
+        String reqPath1 = "/RootTag/Tag1";
+        Triplet<String, String, Integer> reqTriplet1 = new Triplet<String, String, Integer>(reqOut1, reqPath1, 0);
 
         // inner tag (HTTP Request && param correct)
         String reqIn2 = """
                 GET / HTTP/2
-                Header1: b
+                Host: b
                 Content-Type: application/xml
 
                 <?xml version="1.0" encoding="utf-8"?>
@@ -79,14 +84,14 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                 </RootTag>
                 """;
         String reqOut2 = "tag3";
-        String reqTag2 = "Tag3";
-        Triplet<String, String, Boolean> reqTriplet2 = new Triplet<String, String, Boolean>(reqOut2, reqTag2, false);
+        String reqPath2 = "/RootTag/Tag2/Tag3";
+        Triplet<String, String, Integer> reqTriplet2 = new Triplet<String, String, Integer>(reqOut2, reqPath2, 0);
 
 
         // HTTP Request && param correct)
         String resIn1 = """
                 POST /echo/post/xml HTTP/1.1
-                Host: reqbin.com
+                Host: c
                 Content-Type: application/xml
                 Accept: application/xml
                 Content-Length: 118
@@ -100,13 +105,13 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                 </RootTag>
                 """;
         String resOut1 = "tag1";
-        String resTag1 = "Tag1";
-        Triplet<String, String, Boolean> resTriplet1 = new Triplet<String, String, Boolean>(resOut1, resTag1, false);
+        String resPath1 = "/RootTag/Tag1";
+        Triplet<String, String, Integer> resTriplet1 = new Triplet<String, String, Integer>(resOut1, resPath1, 0);
 
         // HTTP Response && param correct
         String resIn2 = """
                 HTTP/2 200 Ok
-                Header1: b
+                Host: d
                 Content-Type: application/xml
 
                 <?xml version="1.0" encoding="utf-8"?>
@@ -118,14 +123,14 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                 </RootTag>
                 """;
         String resOut2 = "tag3";
-        String resTag2 = "Tag3";
-        Triplet<String, String, Boolean> resTriplet2 = new Triplet<String, String, Boolean>(resOut2, resTag2, false);
+        String resPath2 = "/RootTag/Tag2/Tag3";
+        Triplet<String, String, Integer> resTriplet2 = new Triplet<String, String, Integer>(resOut2, resPath2, 0);
         
         
         // HTTP Request && param empty
         String reqIn3 = """
                 GET / HTTP/2
-                Header1: c
+                Host: e
                 Content-Type: application/xml
 
                 <?xml version="1.0" encoding="utf-8"?>
@@ -136,13 +141,13 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                     </Tag2>
                 </RootTag>
                 """;
-        String reqTag3 = "";
-        Triplet<String, String,  Boolean> reqTriplet3 = new Triplet<String, String, Boolean>(reqIn3, reqTag3, false);
+        String reqPath3 = "";
+        Triplet<String, String,  Integer> reqTriplet3 = new Triplet<String, String, Integer>(reqIn3, reqPath3, 0);
 
         // HTTP Response && param empty
         String resIn3 = """
                 GET / HTTP/2
-                Header1: c
+                Host: f
                 Content-Type: application/xml
 
                 <?xml version="1.0" encoding="utf-8"?>
@@ -153,13 +158,13 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                     </Tag2>
                 </RootTag>
                 """;
-        String resTag3 = "";
-        Triplet<String, String, Boolean> resTriplet3 = new Triplet<String, String, Boolean>(resIn3, resTag3, false);
+        String resPath3 = "";
+        Triplet<String, String, Integer> resTriplet3 = new Triplet<String, String, Integer>(resIn3, resPath3, 0);
 
         // HTTP Request && param incorrect
         String reqIn4 = """
                 GET / HTTP/2
-                Header1: a
+                Host: g
                 Content-Type: application/xml
 
                 <?xml version="1.0" encoding="utf-8"?>
@@ -171,13 +176,13 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                 </RootTag>
                 """;
         String reqOut4 = "";
-        String reqTag4 = "ImaginaryTag";
-        Triplet<String, String, Boolean> reqTriplet4 = new Triplet<String, String, Boolean>(reqOut4, reqTag4, true);
+        String reqPath4 = "ElementDoesNotExist";
+        Triplet<String, String, Integer> reqTriplet4 = new Triplet<String, String, Integer>(reqOut4, reqPath4, 1);
 
         // HTTP Response && param incorrect
         String resIn4 = """
                 HTTP/2 200 Ok
-                Header1: b
+                Host: h
                 Content-Type: application/xml
 
                 <?xml version="1.0" encoding="utf-8"?>
@@ -189,8 +194,45 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
                 </RootTag>
                 """;
         String resOut4 = "";
-        String resTag4 = "ImaginaryTag";
-        Triplet<String, String, Boolean> resTriplet4 = new Triplet<String, String, Boolean>(resOut4, resTag4, true);
+        String resPath4 = "WrongSyntax";
+        Triplet<String, String, Integer> resTriplet4 = new Triplet<String, String, Integer>(resOut4, resPath4, 1);
+
+
+        // HTTP Request && invalid syntax
+        String reqIn5 = """
+                GET / HTTP/2
+                Host: i
+                Content-Type: application/xml
+
+                <?xml version="1.0" encoding="utf-8"?>
+                <RootTag>
+                    <Tag1>tag1</Tag1>
+                    <Tag2>
+                        <Tag3>tag3</Tag3>
+                    </Tag2>
+                </RootTag>
+                """;
+        String reqOut5 = "";
+        String reqPath5 = "/invalidsyntax[";
+        Triplet<String, String, Integer> reqTriplet5 = new Triplet<String, String, Integer>(reqOut5, reqPath5, 2);
+
+        // HTTP Response && param incorrect
+        String resIn5 = """
+                HTTP/2 200 Ok
+                Host: j
+                Content-Type: application/xml
+
+                <?xml version="1.0" encoding="utf-8"?>
+                <RootTag>
+                    <Tag1>tag1</Tag1>
+                    <Tag2>
+                        <Tag3>tag3</Tag3>
+                    </Tag2>
+                </RootTag>
+                """;
+        String resOut5 = "";
+        String resPath5 = "/invalidsyntax[";
+        Triplet<String, String, Integer> resTriplet5 = new Triplet<String, String, Integer>(resOut5, resPath5, 2);
 
         inputs.put(reqIn1, reqTriplet1);
         inputs.put(reqIn2, reqTriplet2);
@@ -200,5 +242,7 @@ public class HttpXmlExtractorTest extends HttpXmlExtractor {
         inputs.put(resIn3, resTriplet3);
         inputs.put(reqIn4, reqTriplet4);
         inputs.put(resIn4, resTriplet4);
+        inputs.put(reqIn5, reqTriplet5);
+        inputs.put(resIn5, resTriplet5);
     }
 }

@@ -3,6 +3,7 @@ package de.usd.cstchef.operations.encryption;
 import java.security.Security;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.JComboBox;
@@ -26,6 +27,8 @@ public abstract class CryptOperation extends Operation {
 
     private static String[] inOutModes = new String[] { "Raw", "Hex", "Base64" };
 
+    private static final int GCM_TAG_LENGTH_BITS = 128;
+
     protected String algorithm;
     protected FormatTextField ivTxt;
     protected FormatTextField keyTxt;
@@ -46,21 +49,7 @@ public abstract class CryptOperation extends Operation {
         ByteArray key = keyTxt.getText();
         ByteArray iv = ivTxt.getText();
 
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), algorithm);
-        IvParameterSpec ivSpec = new IvParameterSpec(iv.getBytes());
-        Cipher cipher;
-        if(algorithm.equals("SM4")){
-             cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding), BouncyCastleProvider.PROVIDER_NAME);
-        }
-        else{
-            cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
-        }
-
-        if( mode.equals("ECB") ) {
-            cipher.init(cipherMode, secretKeySpec);
-        } else {
-            cipher.init(cipherMode, secretKeySpec, ivSpec);
-        }
+        Cipher cipher = createInitializedCipher(cipherMode, algorithm, mode, padding, key.getBytes(), iv.getBytes());
 
         String selectedInputMode = (String)inputMode.getSelectedItem();
         String selectedOutputMode = (String)outputMode.getSelectedItem();
@@ -78,6 +67,28 @@ public abstract class CryptOperation extends Operation {
             encrypted = Base64.encode(encrypted);
 
         return encrypted;
+    }
+
+    protected static Cipher createInitializedCipher(int cipherMode, String algorithm, String mode, String padding,
+            byte[] key, byte[] iv) throws Exception {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key, algorithm);
+        Cipher cipher;
+        if(algorithm.equals("SM4")){
+             cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding), BouncyCastleProvider.PROVIDER_NAME);
+        }
+        else{
+            cipher = Cipher.getInstance(String.format("%s/%s/%s", algorithm, mode, padding));
+        }
+
+        if( mode.equals("ECB") ) {
+            cipher.init(cipherMode, secretKeySpec);
+        } else if( mode.equals("GCM") ) {
+            // GCM requires a GCMParameterSpec; providers reject a plain IvParameterSpec.
+            cipher.init(cipherMode, secretKeySpec, new GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv));
+        } else {
+            cipher.init(cipherMode, secretKeySpec, new IvParameterSpec(iv));
+        }
+        return cipher;
     }
 
     public void createMyUI() {
