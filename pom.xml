@@ -10,7 +10,7 @@
 
         <properties>
 			<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-			<bouncycastle.version>1.86</bouncycastle.version>
+			<bouncycastle.version>1.87</bouncycastle.version>
         </properties>
 
         <dependencies>
@@ -48,13 +48,13 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.22.3</version>
+			<version>2.23.0</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.22.3</version>
+			<version>2.23.0</version>
 		</dependency>
 		
 		<dependency>
@@ -72,7 +72,7 @@
 		<dependency>
 		    <groupId>com.auth0</groupId>
 		    <artifactId>java-jwt</artifactId>
-		    <version>4.6.1</version>
+		    <version>4.6.2</version>
 		</dependency>
 
         <dependency>
@@ -122,7 +122,7 @@
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
                 <configuration>
         		  <trimStackTrace>false</trimStackTrace>
 				  <redirectTestOutputToFile>true</redirectTestOutputToFile>
