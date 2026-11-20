@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.xml.XMLConstants;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
@@ -78,6 +79,25 @@ public class SoapMultiSignature extends KeystoreOperation {
     protected JCheckBox subject;
     protected JCheckBox issuer;
     protected JCheckBox serialIssuer;
+
+    private DocumentBuilderFactory createSecureDocumentBuilderFactory() throws Exception {
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+      dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+      dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      dbf.setXIncludeAware(false);
+      dbf.setExpandEntityReferences(false);
+      dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      return dbf;
+    }
+
+    private TransformerFactory createSecureTransformerFactory() {
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+      transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+      return transformerFactory;
+    }
 
 
     private ArrayList<Reference> getReferences(XMLSignatureFactory fac) throws Exception {
@@ -151,8 +171,7 @@ public class SoapMultiSignature extends KeystoreOperation {
       KeyInfo keyInfo = this.getKeyInfo(fac, keyEntry);
       XMLSignature signature = fac.newXMLSignature(signatureInfo, keyInfo);
 
-      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
+      DocumentBuilderFactory dbf = this.createSecureDocumentBuilderFactory();
       Document doc = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
       try {
         validateIdAttributes(doc);
@@ -165,7 +184,7 @@ public class SoapMultiSignature extends KeystoreOperation {
       DOMSource source = new DOMSource(doc);
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       StreamResult result = new StreamResult(bos);
-      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      TransformerFactory transformerFactory = this.createSecureTransformerFactory();
       Transformer transformer = transformerFactory.newTransformer();
       transformer.transform(source, result);
       return factory.createByteArray(bos.toByteArray());

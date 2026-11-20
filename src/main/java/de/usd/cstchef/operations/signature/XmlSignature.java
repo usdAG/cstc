@@ -1,6 +1,7 @@
 package de.usd.cstchef.operations.signature;
 
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayInputStream;
 import java.security.KeyStore.PrivateKeyEntry;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.xml.XMLConstants;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
 import javax.xml.crypto.dsig.Reference;
@@ -25,6 +27,8 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -71,6 +75,30 @@ public abstract class XmlSignature extends KeystoreOperation {
         this.signatureMethods.put("rsa-sha1", SignatureMethod.RSA_SHA1);
         this.signatureFac = XMLSignatureFactory.getInstance("DOM");
         this.createMyUI();
+    }
+
+    protected Document parseXmlDocument(burp.api.montoya.core.ByteArray input) throws Exception {
+      DocumentBuilderFactory dbf = this.createSecureDocumentBuilderFactory();
+      return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(input.getBytes()));
+    }
+
+    protected DocumentBuilderFactory createSecureDocumentBuilderFactory() throws Exception {
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      dbf.setNamespaceAware(true);
+      dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+      dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+      dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+      dbf.setXIncludeAware(false);
+      dbf.setExpandEntityReferences(false);
+      dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      return dbf;
+    }
+
+    protected TransformerFactory createSecureTransformerFactory() {
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+      transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+      return transformerFactory;
     }
 
     protected ArrayList<Reference> getReferences() throws Exception {
